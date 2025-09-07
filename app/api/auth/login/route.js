@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { validateCredentials } from '../../../lib/auth';
-import { cookies } from 'next/headers';
+import jwt from 'jsonwebtoken';
 
 export async function POST(request) {
   try {
@@ -22,9 +22,20 @@ export async function POST(request) {
       );
     }
     
-    // Set authentication cookie
+    // Create JWT token
+    const token = jwt.sign(
+      { 
+        username: username,
+        authenticated: true,
+        iat: Math.floor(Date.now() / 1000)
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+    
+    // Set JWT cookie
     const response = NextResponse.json({ success: true });
-    response.cookies.set('authenticated', 'true', {
+    response.cookies.set('auth-token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
