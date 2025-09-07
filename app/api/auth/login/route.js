@@ -37,9 +37,10 @@ export async function POST(request) {
     const response = NextResponse.json({ success: true });
     response.cookies.set('auth-token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 60 * 60 * 24 // 24 hours
+      secure: true, // Always use secure cookies (Vercel uses HTTPS)
+      sameSite: 'lax', // Changed from 'strict' to 'lax' for better compatibility
+      maxAge: 60 * 60 * 24, // 24 hours
+      path: '/' // Explicitly set path to ensure cookie is available site-wide
     });
     
     return response;
