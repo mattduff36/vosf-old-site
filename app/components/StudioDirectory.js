@@ -163,15 +163,40 @@ export default function StudioDirectory() {
             {studios.map((studio) => (
               <div key={studio.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
                 <div className="flex justify-between items-start mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">
-                      {studio.username}
-                    </h3>
-                    {studio.display_name && studio.display_name !== studio.username && (
-                      <p className="text-gray-600 text-sm mb-2">
-                        {studio.display_name}
-                      </p>
-                    )}
+                  <div className="flex items-center flex-1">
+                    {/* Avatar */}
+                    <div className="flex-shrink-0 mr-4">
+                      {studio.avatar_url ? (
+                        <img 
+                          className="h-12 w-12 rounded-full object-cover border-2 border-gray-200"
+                          src={studio.avatar_url}
+                          alt={studio.display_name || studio.username}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'flex';
+                          }}
+                        />
+                      ) : null}
+                      <div 
+                        className={`h-12 w-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold ${studio.avatar_url ? 'hidden' : ''}`}
+                      >
+                        <span className="text-lg">
+                          {studio.display_name ? studio.display_name.charAt(0).toUpperCase() : studio.username.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {/* Studio Info */}
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-gray-900 mb-1">
+                        {studio.username}
+                      </h3>
+                      {studio.display_name && studio.display_name !== studio.username && (
+                        <p className="text-gray-600 text-sm mb-2">
+                          {studio.display_name}
+                        </p>
+                      )}
+                    </div>
                   </div>
                   <div className="flex-shrink-0 ml-4">
                     {getStatusBadge(studio.status)}
