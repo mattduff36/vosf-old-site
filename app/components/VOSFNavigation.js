@@ -86,10 +86,46 @@ export default function VOSFNavigation() {
               </Link>
             </div>
 
+            {/* Primary Navigation */}
+            <div className="hidden lg:ml-8 lg:flex lg:space-x-1">
+              {navigationItems.slice(0, 6).map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`${
+                    isActive(item.href)
+                      ? 'border-blue-500 text-blue-600 bg-blue-50'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  } inline-flex items-center px-3 py-2 border-b-2 text-sm font-medium transition-colors duration-200`}
+                  title={item.description}
+                >
+                  <span className="mr-2">{item.icon}</span>
+                  <span className="hidden xl:inline">{item.name}</span>
+                </Link>
+              ))}
+            </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center space-x-4">
+          {/* Secondary Navigation & Actions */}
+          <div className="flex items-center space-x-2">
+            {/* Tools Navigation */}
+            <div className="hidden lg:flex lg:space-x-1">
+              {navigationItems.slice(6).map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`${
+                    isActive(item.href)
+                      ? 'text-blue-600 bg-blue-50'
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                  } inline-flex items-center px-2 py-1 rounded-md text-sm font-medium transition-colors duration-200`}
+                  title={item.description}
+                >
+                  <span className="mr-1">{item.icon}</span>
+                  <span className="hidden xl:inline">{item.name}</span>
+                </Link>
+              ))}
+            </div>
 
             {/* Logout */}
             <form action="/api/auth/logout" method="POST" className="inline">
@@ -105,51 +141,8 @@ export default function VOSFNavigation() {
         </div>
       </div>
 
-      {/* Desktop Navigation - Two Lines */}
-      <div className="hidden md:block border-t border-gray-200 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Primary Navigation Line */}
-          <div className="flex justify-center py-2 space-x-1">
-            {navigationItems.slice(0, 6).map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`${
-                  isActive(item.href)
-                    ? 'border-blue-500 text-blue-600 bg-blue-50'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                } inline-flex items-center px-4 py-2 border-b-2 text-sm font-medium transition-colors duration-200`}
-                title={item.description}
-              >
-                <span className="mr-2">{item.icon}</span>
-                <span>{item.name}</span>
-              </Link>
-            ))}
-          </div>
-          
-          {/* Secondary Navigation Line */}
-          <div className="flex justify-center py-2 border-t border-gray-100 space-x-1">
-            {navigationItems.slice(6).map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`${
-                  isActive(item.href)
-                    ? 'border-blue-500 text-blue-600 bg-blue-50'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                } inline-flex items-center px-4 py-2 border-b-2 text-sm font-medium transition-colors duration-200`}
-                title={item.description}
-              >
-                <span className="mr-2">{item.icon}</span>
-                <span>{item.name}</span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* Mobile Navigation */}
-      <div className="md:hidden border-t border-gray-200">
+      <div className="lg:hidden border-t border-gray-200">
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 max-h-64 overflow-y-auto">
           {navigationItems.map((item) => (
             <Link
