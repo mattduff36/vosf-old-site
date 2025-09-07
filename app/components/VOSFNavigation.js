@@ -73,48 +73,31 @@ export default function VOSFNavigation() {
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex">
-            {/* Primary Navigation */}
-            <div className="hidden lg:flex lg:space-x-1 lg:items-center">
-              {navigationItems.slice(0, 6).map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`${
-                    isActive(item.href)
-                      ? 'border-blue-500 text-blue-600 bg-blue-50'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  } inline-flex items-center px-3 py-2 border-b-2 text-sm font-medium transition-colors duration-200`}
-                  title={item.description}
-                >
-                  <span className="mr-2">{item.icon}</span>
-                  <span>{item.name}</span>
-                </Link>
-              ))}
-            </div>
+        <div className="flex justify-between items-center h-16">
+          {/* Left spacer for centering */}
+          <div className="flex-1"></div>
+          
+          {/* Centered Navigation */}
+          <div className="hidden lg:flex lg:space-x-1 lg:items-center">
+            {navigationItems.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`${
+                  isActive(item.href)
+                    ? 'border-blue-500 text-blue-600 bg-blue-50'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                } inline-flex items-center px-3 py-2 border-b-2 text-sm font-medium transition-colors duration-200`}
+                title={item.description}
+              >
+                <span className="mr-2">{item.icon}</span>
+                <span>{item.name}</span>
+              </Link>
+            ))}
           </div>
 
-          {/* Secondary Navigation & Actions */}
-          <div className="flex items-center space-x-2">
-            {/* Tools Navigation */}
-            <div className="hidden lg:flex lg:space-x-1">
-              {navigationItems.slice(6).map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`${
-                    isActive(item.href)
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                  } inline-flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200`}
-                  title={item.description}
-                >
-                  <span className="mr-2">{item.icon}</span>
-                  <span>{item.name}</span>
-                </Link>
-              ))}
-            </div>
+          {/* Right side - Actions */}
+          <div className="flex-1 flex justify-end items-center">
 
             {/* Logout */}
             <form action="/api/auth/logout" method="POST" className="inline">
