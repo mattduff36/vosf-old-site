@@ -41,6 +41,12 @@ const navigationItems = [
     description: 'Data Insights'
   },
   {
+    name: 'Admin',
+    href: '/dashboard/admin',
+    icon: '⚙️',
+    description: 'Manage Studios'
+  },
+  {
     name: 'SQL Query',
     href: '/dashboard/query',
     icon: '💻',

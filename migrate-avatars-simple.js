@@ -83,13 +83,24 @@ async function uploadToCloudinary(imagePath, publicId) {
 }
 
 /**
- * Update database with avatar URL (using direct SQL)
+ * Update database with avatar URL (using Turso)
  */
 async function updateUserAvatar(username, avatarUrl) {
-  // For now, just log what we would do
-  // In a full implementation, we'd connect to Turso here
-  console.log(`Would update user ${username} with avatar: ${avatarUrl}`);
-  return true;
+  try {
+    // Import the database connection dynamically to avoid ES module issues
+    const { getConnection } = await import('./app/lib/database.js');
+    const client = await getConnection();
+    
+    await client.execute({
+      sql: 'UPDATE shows_users SET avatar_url = ? WHERE username = ?',
+      args: [avatarUrl, username]
+    });
+    
+    return true;
+  } catch (error) {
+    console.error(`Failed to update database for ${username}:`, error.message);
+    return false;
+  }
 }
 
 /**
@@ -111,9 +122,9 @@ async function migrateAvatars() {
     let successCount = 0;
     let errorCount = 0;
     
-    // Process first 10 for testing
-    const testFiles = avatarFiles.slice(0, 10);
-    console.log(`📤 Processing ${testFiles.length} avatars (test batch)...\n`);
+    // Process all avatars
+    const testFiles = avatarFiles;
+    console.log(`📤 Processing ${testFiles.length} avatars...\n`);
     
     for (const avatar of testFiles) {
       try {
@@ -123,9 +134,14 @@ async function migrateAvatars() {
         const result = await uploadToCloudinary(avatar.fullPath, publicId);
         
         if (result.success) {
-          await updateUserAvatar(avatar.username, result.url);
-          console.log(`✓ ${avatar.filename} → ${result.url}`);
-          successCount++;
+          const dbUpdated = await updateUserAvatar(avatar.username, result.url);
+          if (dbUpdated) {
+            console.log(`✓ ${avatar.filename} → ${result.url} (DB updated)`);
+            successCount++;
+          } else {
+            console.log(`⚠ ${avatar.filename} → ${result.url} (DB update failed)`);
+            errorCount++;
+          }
         } else {
           console.error(`✗ Failed to upload ${avatar.filename}:`, result.error);
           errorCount++;
