@@ -285,6 +285,40 @@ export default function EnhancedStudioProfile({ studioId }) {
         </div>
       )}
 
+      {/* Studio Gallery Section */}
+      {profile.gallery && profile.gallery.images && profile.gallery.images.length > 0 && (
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">🏢 Studio Gallery</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {profile.gallery.images.map((image, index) => (
+              <div key={index} className="relative group">
+                {image.url ? (
+                  <img
+                    src={image.url}
+                    alt={`Studio image ${index + 1}`}
+                    className="w-full h-48 object-cover rounded-lg border border-gray-200 group-hover:shadow-lg transition-shadow"
+                  />
+                ) : (
+                  <div className="w-full h-48 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
+                    <div className="text-center text-gray-500">
+                      <span className="text-2xl mb-2 block">🖼️</span>
+                      <span className="text-sm">{image.filename}</span>
+                      <div className="text-xs text-gray-400 mt-1">Image not uploaded yet</div>
+                    </div>
+                  </div>
+                )}
+                <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                  Image {index + 1}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 text-sm text-gray-600">
+            📸 {profile.gallery.images.length} studio image{profile.gallery.images.length !== 1 ? 's' : ''} available
+          </div>
+        </div>
+      )}
+
       {/* Media Links Section */}
       {profile.media && Object.values(profile.media).some(Boolean) && (
         <div className="bg-white border border-gray-200 rounded-lg p-6">

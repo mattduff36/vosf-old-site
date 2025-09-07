@@ -50,11 +50,46 @@ export async function GET(request, { params }) {
       args: [id]
     });
 
+    // Get studio gallery images
+    const galleryResult = await client.execute({
+      sql: `
+        SELECT image_type, image_filename, cloudinary_url, is_primary, display_order
+        FROM studio_gallery 
+        WHERE user_id = ?
+        ORDER BY is_primary DESC, display_order ASC
+      `,
+      args: [id]
+    });
+
     // Convert usermeta to object
     const meta = {};
     if (metaResult.rows) {
       metaResult.rows.forEach(row => {
         meta[row.meta_key] = row.meta_value;
+      });
+    }
+
+    // Process gallery images
+    const gallery = {
+      avatar: null,
+      images: []
+    };
+    
+    if (galleryResult.rows) {
+      galleryResult.rows.forEach(row => {
+        if (row.image_type === 'avatar' && row.is_primary) {
+          gallery.avatar = {
+            filename: row.image_filename,
+            url: row.cloudinary_url,
+            order: row.display_order
+          };
+        } else if (row.image_type === 'gallery') {
+          gallery.images.push({
+            filename: row.image_filename,
+            url: row.cloudinary_url,
+            order: row.display_order
+          });
+        }
       });
     }
 
@@ -131,6 +166,9 @@ export async function GET(request, { params }) {
       locale: meta.locale || 'en',
       last_login: meta.last_login || null,
       last_login_ip: meta.last_login_ip || null,
+      
+      // Gallery images
+      gallery: gallery,
       
       // Raw meta for debugging
       _meta: meta
