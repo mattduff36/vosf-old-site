@@ -161,12 +161,18 @@ export default function StudioProfileCard({ studio, showActions = false, onEdit,
       {!showActions && (
         <div className="border-t border-gray-200 pt-4 mt-4">
           <div className="flex justify-between items-center">
-            <button className="text-sm text-blue-600 hover:text-blue-800 font-medium">
+            <a 
+              href={`/dashboard/studios/${studio.id}`}
+              className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+            >
               View Full Profile
-            </button>
-            <button className="text-sm text-gray-500 hover:text-gray-700">
+            </a>
+            <a 
+              href={`mailto:${studio.email}`}
+              className="text-sm text-gray-500 hover:text-gray-700"
+            >
               Contact Studio
-            </button>
+            </a>
           </div>
         </div>
       )}
