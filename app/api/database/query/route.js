@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { executeSelectQuery } from '../../../lib/database';
 import { isAuthenticated } from '../../../lib/jwt';
 
+// Force dynamic rendering for authentication
+export const dynamic = 'force-dynamic';
+
 export async function POST(request) {
   try {
     // Check JWT authentication
