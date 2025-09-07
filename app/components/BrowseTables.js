@@ -230,7 +230,7 @@ export default function BrowseTables() {
               </svg>
               <h3 className="mt-2 text-sm font-medium text-gray-900">No data found</h3>
               <p className="mt-1 text-sm text-gray-500">
-                The table "{selectedTable}" appears to be empty or could not be loaded.
+                The table &quot;{selectedTable}&quot; appears to be empty or could not be loaded.
               </p>
             </div>
           ) : null}

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { getConnection } from '../../lib/database.js';
+import { getConnection } from '../../../lib/database.js';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,7 +24,7 @@ export async function GET(request) {
     let query = `
       SELECT 
         id, username, display_name, email, status, joined, 
-        avatar_url, last_activity, profile_data
+        avatar_url
       FROM shows_users
     `;
     

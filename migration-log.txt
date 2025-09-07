@@ -1330,3 +1330,181 @@ Configuring Cloudinary with: { cloud_name: 'dmvaawjnx', api_key: 'SET', api_secr
 ✓ avatar-voiceover-studio-finder-ThomasDalton.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285706/vosf/avatars/ThomasDalton.jpg
 ✓ Updated avatar for user: thurstonday
 ✓ avatar-voiceover-studio-finder-thurstonday.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285706/vosf/avatars/thurstonday.jpg
+✓ Updated avatar for user: TomBeuchel
+✓ avatar-voiceover-studio-finder-TomBeuchel.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285707/vosf/avatars/TomBeuchel.jpg
+✓ Updated avatar for user: TomDaniels
+✓ avatar-voiceover-studio-finder-TomDaniels.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285708/vosf/avatars/TomDaniels.jpg
+✓ Updated avatar for user: tommarshall
+✓ avatar-voiceover-studio-finder-tommarshall.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285709/vosf/avatars/tommarshall.jpg
+✓ Updated avatar for user: TomVanPaesschen
+✓ avatar-voiceover-studio-finder-TomVanPaesschen.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285710/vosf/avatars/TomVanPaesschen.jpg
+✓ Updated avatar for user: TomVanPaesschen
+✓ avatar-voiceover-studio-finder-TomVanPaesschen.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285711/vosf/avatars/TomVanPaesschen.png
+✓ Updated avatar for user: tonysalter
+✓ avatar-voiceover-studio-finder-tonysalter.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285712/vosf/avatars/tonysalter.png
+✓ Updated avatar for user: Torovoice
+✓ avatar-voiceover-studio-finder-Torovoice.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285713/vosf/avatars/Torovoice.jpg
+✓ Updated avatar for user: tpthai2
+✓ avatar-voiceover-studio-finder-tpthai2.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285714/vosf/avatars/tpthai2.jpg
+✓ Updated avatar for user: TrishsVoice
+✓ avatar-voiceover-studio-finder-TrishsVoice.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285714/vosf/avatars/TrishsVoice.jpg
+✓ Updated avatar for user: troyrodger
+✓ avatar-voiceover-studio-finder-troyrodger.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285715/vosf/avatars/troyrodger.jpg
+✓ Updated avatar for user: TSDsound
+✓ avatar-voiceover-studio-finder-TSDsound.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285716/vosf/avatars/TSDsound.jpg
+✓ Updated avatar for user: UKRD
+✓ avatar-voiceover-studio-finder-UKRD.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285717/vosf/avatars/UKRD.jpg
+✓ Updated avatar for user: UKVOICEARTIST
+✓ avatar-voiceover-studio-finder-UKVOICEARTIST.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285718/vosf/avatars/UKVOICEARTIST.jpg
+✓ Updated avatar for user: URBANO
+✓ avatar-voiceover-studio-finder-URBANO.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285719/vosf/avatars/URBANO.jpg
+✓ Updated avatar for user: URBANO_CARVELLI
+✓ avatar-voiceover-studio-finder-URBANO_CARVELLI.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285719/vosf/avatars/URBANO_CARVELLI.jpg
+✓ Updated avatar for user: velvetestudio
+✓ avatar-voiceover-studio-finder-velvetestudio.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285720/vosf/avatars/velvetestudio.png
+✓ Updated avatar for user: VersatileVoiceovers
+✓ avatar-voiceover-studio-finder-VersatileVoiceovers.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285721/vosf/avatars/VersatileVoiceovers.jpg
+✓ Updated avatar for user: VersatileVoiceovers
+✓ avatar-voiceover-studio-finder-VersatileVoiceovers.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285722/vosf/avatars/VersatileVoiceovers.jpg
+✓ Updated avatar for user: VickyTessio
+✓ avatar-voiceover-studio-finder-VickyTessio.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285723/vosf/avatars/VickyTessio.jpg
+✓ Updated avatar for user: VickyTessio_SpanishVO
+✓ avatar-voiceover-studio-finder-VickyTessio_SpanishVO.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285723/vosf/avatars/VickyTessio_SpanishVO.jpg
+✓ Updated avatar for user: VickyTessio_SpanishVO
+✓ avatar-voiceover-studio-finder-VickyTessio_SpanishVO.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285724/vosf/avatars/VickyTessio_SpanishVO.jpg
+✓ Updated avatar for user: vicsvoice
+✓ avatar-voiceover-studio-finder-vicsvoice.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285725/vosf/avatars/vicsvoice.jpg
+✓ Updated avatar for user: vicsvoice
+✓ avatar-voiceover-studio-finder-vicsvoice.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285726/vosf/avatars/vicsvoice.jpg
+✓ Updated avatar for user: VikramjitSardar
+✓ avatar-voiceover-studio-finder-VikramjitSardar.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285727/vosf/avatars/VikramjitSardar.png
+✓ Updated avatar for user: VOBS
+✓ avatar-voiceover-studio-finder-VOBS.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285728/vosf/avatars/VOBS.jpg
+✓ Updated avatar for user: Vocalbooth
+✓ avatar-voiceover-studio-finder-Vocalbooth.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285729/vosf/avatars/Vocalbooth.jpg
+✓ Updated avatar for user: Voice-Talent-Online
+✓ avatar-voiceover-studio-finder-Voice-Talent-Online.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285730/vosf/avatars/Voice-Talent-Online.jpg
+✓ Updated avatar for user: Voice-Talent-Online
+✓ avatar-voiceover-studio-finder-Voice-Talent-Online.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285730/vosf/avatars/Voice-Talent-Online.jpg
+✓ Updated avatar for user: VoiceArchiveADRenaline
+✓ avatar-voiceover-studio-finder-VoiceArchiveADRenaline.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285731/vosf/avatars/VoiceArchiveADRenaline.jpg
+✓ Updated avatar for user: Voicebooking
+✓ avatar-voiceover-studio-finder-Voicebooking.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285732/vosf/avatars/Voicebooking.png
+✓ Updated avatar for user: VOICEBOXLIVERPOOL
+✓ avatar-voiceover-studio-finder-VOICEBOXLIVERPOOL.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285733/vosf/avatars/VOICEBOXLIVERPOOL.jpg
+✓ Updated avatar for user: voicebubble
+✓ avatar-voiceover-studio-finder-voicebubble.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285733/vosf/avatars/voicebubble.jpg
+✓ Updated avatar for user: VoiceCowboys
+✓ avatar-voiceover-studio-finder-VoiceCowboys.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285734/vosf/avatars/VoiceCowboys.jpg
+✓ Updated avatar for user: voiceofdrew
+✓ avatar-voiceover-studio-finder-voiceofdrew.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285735/vosf/avatars/voiceofdrew.jpg
+✓ Updated avatar for user: voiceofdrew
+✓ avatar-voiceover-studio-finder-voiceofdrew.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285736/vosf/avatars/voiceofdrew.jpg
+✓ Updated avatar for user: voiceofdrew
+✓ avatar-voiceover-studio-finder-voiceofdrew.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285739/vosf/avatars/voiceofdrew.png
+✓ Updated avatar for user: VoiceofJayBritton
+✓ avatar-voiceover-studio-finder-VoiceofJayBritton.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285740/vosf/avatars/VoiceofJayBritton.jpg
+✓ Updated avatar for user: voiceone
+✓ avatar-voiceover-studio-finder-voiceone.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285741/vosf/avatars/voiceone.jpg
+✓ Updated avatar for user: voiceone
+✓ avatar-voiceover-studio-finder-voiceone.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285742/vosf/avatars/voiceone.png
+✓ Updated avatar for user: voiceover99
+✓ avatar-voiceover-studio-finder-voiceover99.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285744/vosf/avatars/voiceover99.jpg
+✓ Updated avatar for user: Voiceoverau
+✓ avatar-voiceover-studio-finder-Voiceoverau.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285745/vosf/avatars/Voiceoverau.jpg
+✓ Updated avatar for user: Voiceoverben
+✓ avatar-voiceover-studio-finder-Voiceoverben.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285746/vosf/avatars/Voiceoverben.jpg
+✓ Updated avatar for user: Voiceoverben
+✓ avatar-voiceover-studio-finder-Voiceoverben.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285746/vosf/avatars/Voiceoverben.png
+✓ Updated avatar for user: VoiceOverBrian
+✓ avatar-voiceover-studio-finder-VoiceOverBrian.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285747/vosf/avatars/VoiceOverBrian.jpg
+✓ Updated avatar for user: voiceovergirl
+✓ avatar-voiceover-studio-finder-voiceovergirl.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285748/vosf/avatars/voiceovergirl.jpg
+✓ Updated avatar for user: VoiceoverGuy
+✓ avatar-voiceover-studio-finder-VoiceoverGuy.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285749/vosf/avatars/VoiceoverGuy.jpg
+✓ Updated avatar for user: VoiceoverGuy
+✓ avatar-voiceover-studio-finder-VoiceoverGuy.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285750/vosf/avatars/VoiceoverGuy.jpg
+✓ Updated avatar for user: VoiceoverKickstart
+✓ avatar-voiceover-studio-finder-VoiceoverKickstart.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285751/vosf/avatars/VoiceoverKickstart.jpg
+✓ Updated avatar for user: VoiceoverKickstart
+✓ avatar-voiceover-studio-finder-VoiceoverKickstart.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285752/vosf/avatars/VoiceoverKickstart.png
+✓ Updated avatar for user: voiceoverkids
+✓ avatar-voiceover-studio-finder-voiceoverkids.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285753/vosf/avatars/voiceoverkids.jpg
+✓ Updated avatar for user: Voiceoveroliver
+✓ avatar-voiceover-studio-finder-Voiceoveroliver.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285754/vosf/avatars/Voiceoveroliver.jpg
+✓ Updated avatar for user: Voiceoveroliver
+✓ avatar-voiceover-studio-finder-Voiceoveroliver.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285755/vosf/avatars/Voiceoveroliver.png
+✓ Updated avatar for user: VoiceoverPaul
+✓ avatar-voiceover-studio-finder-VoiceoverPaul.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285755/vosf/avatars/VoiceoverPaul.jpg
+✓ Updated avatar for user: VoiceOverPortuguese
+✓ avatar-voiceover-studio-finder-VoiceOverPortuguese.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285756/vosf/avatars/VoiceOverPortuguese.jpg
+✓ Updated avatar for user: Voiceovers-UK
+✓ avatar-voiceover-studio-finder-Voiceovers-UK.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285757/vosf/avatars/Voiceovers-UK.jpg
+✓ Updated avatar for user: VoiceOverVoice
+✓ avatar-voiceover-studio-finder-VoiceOverVoice.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285758/vosf/avatars/VoiceOverVoice.jpg
+✓ Updated avatar for user: VoiceSoundStudio
+✓ avatar-voiceover-studio-finder-VoiceSoundStudio.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285759/vosf/avatars/VoiceSoundStudio.jpg
+✓ Updated avatar for user: VoiceSoundStudio
+✓ avatar-voiceover-studio-finder-VoiceSoundStudio.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285760/vosf/avatars/VoiceSoundStudio.jpg
+✓ Updated avatar for user: Voicesther
+✓ avatar-voiceover-studio-finder-Voicesther.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285761/vosf/avatars/Voicesther.jpg
+✓ Updated avatar for user: voicesuk
+✓ avatar-voiceover-studio-finder-voicesuk.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285762/vosf/avatars/voicesuk.jpg
+✓ Updated avatar for user: voicesuk
+✓ avatar-voiceover-studio-finder-voicesuk.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285763/vosf/avatars/voicesuk.jpg
+✓ Updated avatar for user: voicesuk
+✓ avatar-voiceover-studio-finder-voicesuk.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285764/vosf/avatars/voicesuk.jpg
+✓ Updated avatar for user: voicesus
+✓ avatar-voiceover-studio-finder-voicesus.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285765/vosf/avatars/voicesus.jpg
+✓ Updated avatar for user: voicesus
+✓ avatar-voiceover-studio-finder-voicesus.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285766/vosf/avatars/voicesus.jpg
+✓ Updated avatar for user: voicetraxwest
+✓ avatar-voiceover-studio-finder-voicetraxwest.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285767/vosf/avatars/voicetraxwest.jpg
+✓ Updated avatar for user: VOIX-LA
+✓ avatar-voiceover-studio-finder-VOIX-LA.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285768/vosf/avatars/VOIX-LA.jpg
+✓ Updated avatar for user: Voprod
+✓ avatar-voiceover-studio-finder-Voprod.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285769/vosf/avatars/Voprod.jpg
+✓ Updated avatar for user: Voxfarm
+✓ avatar-voiceover-studio-finder-Voxfarm.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285770/vosf/avatars/Voxfarm.jpg
+✓ Updated avatar for user: VoxPros
+✓ avatar-voiceover-studio-finder-VoxPros.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285771/vosf/avatars/VoxPros.jpg
+✓ Updated avatar for user: Voxultra
+✓ avatar-voiceover-studio-finder-Voxultra.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285772/vosf/avatars/Voxultra.jpg
+✓ Updated avatar for user: Vozmedia
+✓ avatar-voiceover-studio-finder-Vozmedia.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285773/vosf/avatars/Vozmedia.jpg
+✓ Updated avatar for user: VTRNorth
+✓ avatar-voiceover-studio-finder-VTRNorth.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285774/vosf/avatars/VTRNorth.jpg
+✓ Updated avatar for user: Webby
+✓ avatar-voiceover-studio-finder-Webby.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285775/vosf/avatars/Webby.jpg
+✓ Updated avatar for user: WhatHeSaidVO
+✓ avatar-voiceover-studio-finder-WhatHeSaidVO.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285776/vosf/avatars/WhatHeSaidVO.jpg
+✓ Updated avatar for user: WillJenkynsVoices
+✓ avatar-voiceover-studio-finder-WillJenkynsVoices.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285777/vosf/avatars/WillJenkynsVoices.jpg
+✓ Updated avatar for user: wolverinebass
+✓ avatar-voiceover-studio-finder-wolverinebass.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285778/vosf/avatars/wolverinebass.jpg
+✓ Updated avatar for user: WorldVoicesSRL
+✓ avatar-voiceover-studio-finder-WorldVoicesSRL.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285779/vosf/avatars/WorldVoicesSRL.jpg
+✓ Updated avatar for user: wrightcommunicators
+✓ avatar-voiceover-studio-finder-wrightcommunicators.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285779/vosf/avatars/wrightcommunicators.jpg
+✓ Updated avatar for user: yasirbright
+✓ avatar-voiceover-studio-finder-yasirbright.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285780/vosf/avatars/yasirbright.png
+✓ Updated avatar for user: yo1radio
+✓ avatar-voiceover-studio-finder-yo1radio.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285782/vosf/avatars/yo1radio.jpg
+✓ Updated avatar for user: yogimarlon
+✓ avatar-voiceover-studio-finder-yogimarlon.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285783/vosf/avatars/yogimarlon.jpg
+✓ Updated avatar for user: YorkshirePodcastStudios
+✓ avatar-voiceover-studio-finder-YorkshirePodcastStudios.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285784/vosf/avatars/YorkshirePodcastStudios.jpg
+✓ Updated avatar for user: YorkshirePodcastStudios
+✓ avatar-voiceover-studio-finder-YorkshirePodcastStudios.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285785/vosf/avatars/YorkshirePodcastStudios.jpg
+✓ Updated avatar for user: YvonneChoiceVoices
+✓ avatar-voiceover-studio-finder-YvonneChoiceVoices.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285786/vosf/avatars/YvonneChoiceVoices.jpg
+✓ Updated avatar for user: Zweidorff
+✓ avatar-voiceover-studio-finder-Zweidorff.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285786/vosf/avatars/Zweidorff.png
+
+⏭️ Skipping other images for now (focusing on avatars)...
+
+🎉 Migration completed!
+✅ Successfully uploaded: 745 images
+❌ Failed uploads: 0 images
+
+✨ Image migration process completed
