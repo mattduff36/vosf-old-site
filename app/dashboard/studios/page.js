@@ -1,8 +1,8 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import VOSFDashboard from '../components/VOSFDashboard';
+import StudioDirectory from '../../components/StudioDirectory';
 
-export default function Dashboard() {
+export default function StudiosPage() {
   const cookieStore = cookies();
   const authenticated = cookieStore.get('authenticated');
   
@@ -10,5 +10,5 @@ export default function Dashboard() {
     redirect('/');
   }
 
-  return <VOSFDashboard />;
+  return <StudioDirectory />;
 }
