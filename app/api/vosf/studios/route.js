@@ -30,8 +30,7 @@ export async function GET(request) {
         display_name,
         email,
         status,
-        joined,
-        last_login
+        joined
       FROM shows_users
       WHERE 1=1
     `;

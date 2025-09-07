@@ -233,7 +233,7 @@ export default function BrowseTables() {
                 The table "{selectedTable}" appears to be empty or could not be loaded.
               </p>
             </div>
-          )}
+          ) : null}
         </div>
       )}
 

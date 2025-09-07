@@ -250,7 +250,7 @@ export default function SchemaViewer() {
                 Could not load schema information for table "{selectedTable}".
               </p>
             </div>
-          )}
+          ) : null}
         </div>
       )}
 
