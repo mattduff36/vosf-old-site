@@ -1,0 +1,28 @@
+{
+  "name": "nextjs-database-query",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.15.14",
+    "@tailwindcss/forms": "^0.5.0",
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^12.2.0",
+    "dotenv": "^17.2.2",
+    "mysql2": "^3.6.0",
+    "next": "^14.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "sqlite3": "^5.1.7",
+    "tailwindcss": "^3.3.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0"
+  }
+}

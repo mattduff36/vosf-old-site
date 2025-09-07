@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Next.js
+.next/
+out/
+build/
+
+# Environment variables
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Database files (using Turso now)
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+database_backup_*.sqlite
+
+# Large directories not needed for deployment
+FULL WEBSITE/
+database-query-site/
+MAIN DATABASE/
+Other Databases/
+
+# Setup and import scripts (not needed for production)
+*.bat
+*.ps1
+convert-to-sqlite.js
+fix-import.js
+import-*.js
+install-*.bat
+setup-*.bat
+migrate-to-turso.js
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Workspace files
+*.code-workspace
