@@ -74,10 +74,7 @@ export default function VOSFNavigation() {
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Left spacer for centering */}
-          <div className="flex-1"></div>
-          
-          {/* Centered Navigation */}
+          {/* Left-aligned Navigation */}
           <div className="hidden lg:flex lg:space-x-1 lg:items-center">
             {navigationItems.map((item) => (
               <Link
@@ -97,7 +94,7 @@ export default function VOSFNavigation() {
           </div>
 
           {/* Right side - Actions */}
-          <div className="flex-1 flex justify-end items-center">
+          <div className="flex items-center">
 
             {/* Logout */}
             <form action="/api/auth/logout" method="POST" className="inline">
