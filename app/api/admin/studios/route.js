@@ -19,6 +19,11 @@ export async function GET(request) {
     const limit = parseInt(searchParams.get('limit') || '20', 10);
     const search = searchParams.get('search') || '';
     const status = searchParams.get('status') || '';
+    const joinedAfter = searchParams.get('joinedAfter') || '';
+    const joinedBefore = searchParams.get('joinedBefore') || '';
+    const hasAvatar = searchParams.get('hasAvatar') || '';
+    const sortBy = searchParams.get('sortBy') || 'joined';
+    const sortOrder = searchParams.get('sortOrder') || 'desc';
     const offset = (page - 1) * limit;
 
     let query = `
@@ -41,11 +46,34 @@ export async function GET(request) {
       params.push(parseInt(status, 10));
     }
 
+    if (joinedAfter) {
+      conditions.push('joined >= ?');
+      params.push(joinedAfter);
+    }
+
+    if (joinedBefore) {
+      conditions.push('joined <= ?');
+      params.push(joinedBefore + ' 23:59:59');
+    }
+
+    if (hasAvatar) {
+      if (hasAvatar === '1') {
+        conditions.push('avatar_url IS NOT NULL AND avatar_url != ""');
+      } else if (hasAvatar === '0') {
+        conditions.push('(avatar_url IS NULL OR avatar_url = "")');
+      }
+    }
+
     if (conditions.length > 0) {
       query += ' WHERE ' + conditions.join(' AND ');
     }
 
-    query += ' ORDER BY joined DESC LIMIT ? OFFSET ?';
+    // Validate sortBy to prevent SQL injection
+    const validSortColumns = ['joined', 'username', 'display_name', 'email', 'status'];
+    const validSortBy = validSortColumns.includes(sortBy) ? sortBy : 'joined';
+    const validSortOrder = ['asc', 'desc'].includes(sortOrder.toLowerCase()) ? sortOrder.toUpperCase() : 'DESC';
+
+    query += ` ORDER BY ${validSortBy} ${validSortOrder} LIMIT ? OFFSET ?`;
     params.push(limit, offset);
 
     const client = await getConnection();

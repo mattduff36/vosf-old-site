@@ -1,14 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import StudioProfileCard from './StudioProfileCard';
 
 export default function StudioDirectory() {
   const [studios, setStudios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
-  const [pagination, setPagination] = useState({ total: 0, limit: 20, offset: 0, hasMore: false });
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [pagination, setPagination] = useState({ 
+    offset: 0, 
+    limit: 12, 
+    total: 0, 
+    hasMore: false 
+  });
 
   useEffect(() => {
     fetchStudios();
@@ -19,20 +25,28 @@ export default function StudioDirectory() {
       setLoading(true);
       const params = new URLSearchParams({
         limit: pagination.limit.toString(),
-        offset: pagination.offset.toString()
+        offset: pagination.offset.toString(),
       });
-      
+
       if (search) params.append('search', search);
-      if (statusFilter !== '') params.append('status', statusFilter);
+      if (statusFilter !== 'all') params.append('status', statusFilter);
 
       const response = await fetch(`/api/vosf/studios?${params}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch studios');
+      if (!response.ok) throw new Error('Failed to fetch studios');
+
+      const data = await response.json();
+      
+      if (pagination.offset === 0) {
+        setStudios(data.studios || []);
+      } else {
+        setStudios(prev => [...prev, ...(data.studios || [])]);
       }
       
-      const data = await response.json();
-      setStudios(data.studios || []);
-      setPagination(data.pagination);
+      setPagination(prev => ({
+        ...prev,
+        total: data.pagination?.total || 0,
+        hasMore: data.pagination?.hasMore || false
+      }));
     } catch (err) {
       setError(err.message);
     } finally {
@@ -52,35 +66,6 @@ export default function StudioDirectory() {
 
   const loadMore = () => {
     setPagination(prev => ({ ...prev, offset: prev.offset + prev.limit }));
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return 'Unknown';
-    try {
-      return new Date(dateString).toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-      });
-    } catch {
-      return 'Invalid date';
-    }
-  };
-
-  const getStatusBadge = (status) => {
-    if (status === 1) {
-      return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-          ✓ Active
-        </span>
-      );
-    } else {
-      return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-          ⏳ Pending
-        </span>
-      );
-    }
   };
 
   if (error) {
@@ -136,17 +121,17 @@ export default function StudioDirectory() {
           
           <div className="sm:w-48">
             <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
-              Status Filter
+              Filter by Status
             </label>
             <select
               id="status"
               value={statusFilter}
               onChange={handleStatusChange}
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="">All Status</option>
+              <option value="all">All Studios</option>
               <option value="1">Active Only</option>
-              <option value="0">Pending Only</option>
+              <option value="0">Inactive Only</option>
             </select>
           </div>
         </div>
@@ -161,81 +146,11 @@ export default function StudioDirectory() {
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {studios.map((studio) => (
-              <div key={studio.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-center flex-1">
-                    {/* Avatar */}
-                    <div className="flex-shrink-0 mr-4">
-                      {studio.avatar_url ? (
-                        <img 
-                          className="h-12 w-12 rounded-full object-cover border-2 border-gray-200"
-                          src={studio.avatar_url}
-                          alt={studio.display_name || studio.username}
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                            e.target.nextSibling.style.display = 'flex';
-                          }}
-                        />
-                      ) : null}
-                      <div 
-                        className={`h-12 w-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold ${studio.avatar_url ? 'hidden' : ''}`}
-                      >
-                        <span className="text-lg">
-                          {studio.display_name ? studio.display_name.charAt(0).toUpperCase() : studio.username.charAt(0).toUpperCase()}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    {/* Studio Info */}
-                    <div className="flex-1">
-                      <h3 className="text-lg font-bold text-gray-900 mb-1">
-                        {studio.username}
-                      </h3>
-                      {studio.display_name && studio.display_name !== studio.username && (
-                        <p className="text-gray-600 text-sm mb-2">
-                          {studio.display_name}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex-shrink-0 ml-4">
-                    {getStatusBadge(studio.status)}
-                  </div>
-                </div>
-
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center text-sm text-gray-600">
-                    <svg className="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                    <span className="truncate">{studio.email}</span>
-                  </div>
-                  
-                  <div className="flex items-center text-sm text-gray-600">
-                    <svg className="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 4v10m6-10v10m-6 0h6" />
-                    </svg>
-                    <span>Joined {formatDate(studio.joined)}</span>
-                  </div>
-
-                  {studio.last_login && (
-                    <div className="flex items-center text-sm text-gray-600">
-                      <svg className="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <span>Last seen {formatDate(studio.last_login)}</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex justify-between items-center text-xs text-gray-400 pt-4 border-t border-gray-100">
-                  <span>Studio ID: {studio.id}</span>
-                  <span>
-                    {studio.status === 1 ? '🟢' : '🟡'} 
-                    {studio.status === 1 ? 'Active' : 'Pending'}
-                  </span>
-                </div>
-              </div>
+              <StudioProfileCard 
+                key={studio.id} 
+                studio={studio}
+                showActions={false}
+              />
             ))}
           </div>
 

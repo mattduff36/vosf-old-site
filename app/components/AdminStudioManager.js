@@ -1,7 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import AdminStudioForm from './AdminStudioForm';
+import AdminBulkOperations from './AdminBulkOperations';
+import AdminAdvancedFilters from './AdminAdvancedFilters';
+import AdminStatsCards from './AdminStatsCards';
+import StudioProfileCard from './StudioProfileCard';
 
 export default function AdminStudioManager() {
   const [studios, setStudios] = useState([]);
@@ -10,24 +14,18 @@ export default function AdminStudioManager() {
   const [showForm, setShowForm] = useState(false);
   const [editingStudio, setEditingStudio] = useState(null);
   const [formLoading, setFormLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [filters, setFilters] = useState({});
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, totalPages: 0 });
+  const [selectedStudios, setSelectedStudios] = useState([]);
 
-  useEffect(() => {
-    fetchStudios();
-  }, [pagination.page, searchTerm, statusFilter]);
-
-  const fetchStudios = async () => {
+  const fetchStudios = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
         page: pagination.page.toString(),
         limit: pagination.limit.toString(),
+        ...filters
       });
-
-      if (searchTerm) params.append('search', searchTerm);
-      if (statusFilter !== 'all') params.append('status', statusFilter);
 
       const response = await fetch(`/api/admin/studios?${params}`);
       if (!response.ok) throw new Error('Failed to fetch studios');
@@ -40,6 +38,65 @@ export default function AdminStudioManager() {
     } finally {
       setLoading(false);
     }
+  }, [pagination.page, filters]);
+
+  useEffect(() => {
+    fetchStudios();
+  }, [fetchStudios]);
+
+  const handleFiltersChange = useCallback((newFilters) => {
+    setFilters(newFilters);
+    setPagination(prev => ({ ...prev, page: 1 })); // Reset to first page when filters change
+  }, []);
+
+  const handleBulkAction = async (action, studioIds) => {
+    try {
+      const response = await fetch('/api/admin/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, studioIds })
+      });
+
+      if (action === 'export') {
+        // Handle file download
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `studios_export_${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        return;
+      }
+
+      if (!response.ok) throw new Error('Bulk operation failed');
+      
+      const result = await response.json();
+      alert(result.message);
+      
+      // Refresh the studios list
+      fetchStudios();
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+    }
+  };
+
+  const handleSelectStudio = (studioId, isSelected) => {
+    setSelectedStudios(prev => 
+      isSelected 
+        ? [...prev, studioId]
+        : prev.filter(id => id !== studioId)
+    );
+  };
+
+  const handleSelectAll = (isSelected) => {
+    setSelectedStudios(isSelected ? studios.map(studio => studio.id) : []);
+  };
+
+  const handleClearSelection = () => {
+    setSelectedStudios([]);
   };
 
   const handleCreateStudio = () => {
@@ -52,35 +109,28 @@ export default function AdminStudioManager() {
     setShowForm(true);
   };
 
-  const handleDeleteStudio = async (studio) => {
-    if (!confirm(`Are you sure you want to delete studio "${studio.username}"? This action cannot be undone.`)) {
+  const handleDeleteStudio = async (studioId) => {
+    if (!confirm('Are you sure you want to delete this studio? This action cannot be undone.')) {
       return;
     }
 
     try {
-      const response = await fetch(`/api/admin/studios/${studio.id}`, {
-        method: 'DELETE',
+      const response = await fetch(`/api/admin/studios/${studioId}`, {
+        method: 'DELETE'
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to delete studio');
-      }
-
-      // Refresh the list
-      await fetchStudios();
+      if (!response.ok) throw new Error('Failed to delete studio');
       
-      // Show success message (you could use a toast library here)
       alert('Studio deleted successfully');
+      fetchStudios();
     } catch (error) {
-      alert('Error deleting studio: ' + error.message);
+      alert(`Error deleting studio: ${error.message}`);
     }
   };
 
-  const handleSaveStudio = async (formData) => {
+  const handleFormSubmit = async (formData) => {
     try {
       setFormLoading(true);
-      
       const url = editingStudio 
         ? `/api/admin/studios/${editingStudio.id}`
         : '/api/admin/studios';
@@ -89,59 +139,36 @@ export default function AdminStudioManager() {
 
       const response = await fetch(url, {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to save studio');
-      }
+      if (!response.ok) throw new Error('Failed to save studio');
 
-      // Close form and refresh list
+      const result = await response.json();
+      alert(`Studio ${editingStudio ? 'updated' : 'created'} successfully`);
+      
       setShowForm(false);
       setEditingStudio(null);
-      await fetchStudios();
-      
-      // Show success message
-      alert(editingStudio ? 'Studio updated successfully' : 'Studio created successfully');
+      fetchStudios();
     } catch (error) {
-      alert('Error saving studio: ' + error.message);
+      alert(`Error: ${error.message}`);
     } finally {
       setFormLoading(false);
     }
   };
 
-  const handleCancelForm = () => {
-    setShowForm(false);
-    setEditingStudio(null);
-  };
-
-  const getStatusBadge = (status) => {
-    const statusConfig = {
-      1: { label: 'Active', class: 'bg-green-100 text-green-800' },
-      0: { label: 'Pending', class: 'bg-yellow-100 text-yellow-800' },
-      '-1': { label: 'Suspended', class: 'bg-red-100 text-red-800' }
-    };
-    
-    const config = statusConfig[status] || statusConfig[0];
-    
-    return (
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.class}`}>
-        {config.label}
-      </span>
-    );
+  const handlePageChange = (newPage) => {
+    setPagination(prev => ({ ...prev, page: newPage }));
   };
 
   if (showForm) {
     return (
       <AdminStudioForm
         studio={editingStudio}
-        onSave={handleSaveStudio}
-        onCancel={handleCancelForm}
-        isLoading={formLoading}
+        onSubmit={handleFormSubmit}
+        onCancel={() => setShowForm(false)}
+        loading={formLoading}
       />
     );
   }
@@ -150,177 +177,210 @@ export default function AdminStudioManager() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Studio Management</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">⚙️ Studio Management</h1>
+          <p className="text-gray-600">Manage studio profiles, bulk operations, and user data</p>
+        </div>
         <button
           onClick={handleCreateStudio}
-          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
         >
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          Add New Studio
+          ➕ Add New Studio
         </button>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white p-4 rounded-lg shadow space-y-4 sm:space-y-0 sm:flex sm:items-center sm:space-x-4">
-        <div className="flex-1">
-          <input
-            type="text"
-            placeholder="Search studios..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <div>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="all">All Status</option>
-            <option value="1">Active</option>
-            <option value="0">Pending</option>
-            <option value="-1">Suspended</option>
-          </select>
-        </div>
-      </div>
+      {/* Statistics Cards */}
+      <AdminStatsCards />
 
-      {/* Error State */}
+      {/* Advanced Filters */}
+      <AdminAdvancedFilters 
+        onFiltersChange={handleFiltersChange}
+        initialFilters={filters}
+      />
+
+      {/* Bulk Operations */}
+      <AdminBulkOperations
+        selectedStudios={selectedStudios}
+        onBulkAction={handleBulkAction}
+        onClearSelection={handleClearSelection}
+      />
+
+      {/* Error Display */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-md p-4">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <p className="text-red-800">Error: {error}</p>
+          <button 
+            onClick={fetchStudios}
+            className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+          >
+            Try Again
+          </button>
         </div>
       )}
 
-      {/* Loading State */}
-      {loading ? (
-        <div className="flex items-center justify-center min-h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
-      ) : (
-        <>
-          {/* Studios Table */}
-          <div className="bg-white shadow overflow-hidden sm:rounded-md">
-            <ul className="divide-y divide-gray-200">
-              {studios.map((studio) => (
-                <li key={studio.id} className="px-6 py-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      {/* Avatar */}
-                      <div className="flex-shrink-0">
-                        {studio.avatar_url ? (
-                          <img 
-                            className="h-12 w-12 rounded-full object-cover border-2 border-gray-200"
-                            src={studio.avatar_url}
-                            alt={studio.display_name || studio.username}
-                          />
-                        ) : (
-                          <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold">
-                            <span className="text-lg">
-                              {studio.display_name ? studio.display_name.charAt(0).toUpperCase() : studio.username.charAt(0).toUpperCase()}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                      
-                      {/* Studio Info */}
-                      <div className="flex-1">
-                        <h3 className="text-lg font-medium text-gray-900">
-                          {studio.username}
-                        </h3>
-                        {studio.display_name && studio.display_name !== studio.username && (
-                          <p className="text-sm text-gray-600">{studio.display_name}</p>
-                        )}
-                        <p className="text-sm text-gray-500">{studio.email}</p>
-                        <p className="text-xs text-gray-400">
-                          Joined: {new Date(studio.joined).toLocaleDateString()}
-                        </p>
-                      </div>
-                      
-                      {/* Status */}
-                      <div className="flex-shrink-0">
-                        {getStatusBadge(studio.status)}
-                      </div>
-                    </div>
-                    
-                    {/* Actions */}
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => handleEditStudio(studio)}
-                        className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      >
-                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDeleteStudio(studio)}
-                        className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md text-sm font-medium text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                      >
-                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+      {/* Studios Table */}
+      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-900">
+              Studios ({pagination.total || 0})
+            </h2>
+            {studios.length > 0 && (
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={selectedStudios.length === studios.length}
+                  onChange={(e) => handleSelectAll(e.target.checked)}
+                  className="rounded border-gray-300"
+                />
+                <span className="text-sm text-gray-600">Select All</span>
+              </label>
+            )}
           </div>
+        </div>
 
-          {/* Pagination */}
-          {pagination.totalPages > 1 && (
-            <div className="flex items-center justify-between bg-white px-4 py-3 sm:px-6 rounded-lg shadow">
-              <div className="flex-1 flex justify-between sm:hidden">
-                <button
-                  onClick={() => setPagination(prev => ({ ...prev, page: Math.max(1, prev.page - 1) }))}
-                  disabled={pagination.page === 1}
-                  className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-                >
-                  Previous
-                </button>
-                <button
-                  onClick={() => setPagination(prev => ({ ...prev, page: Math.min(prev.totalPages, prev.page + 1) }))}
-                  disabled={pagination.page === pagination.totalPages}
-                  className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-                >
-                  Next
-                </button>
-              </div>
-              <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-sm text-gray-700">
-                    Showing page <span className="font-medium">{pagination.page}</span> of{' '}
-                    <span className="font-medium">{pagination.totalPages}</span> ({pagination.total} total studios)
-                  </p>
-                </div>
-                <div>
-                  <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-                    <button
-                      onClick={() => setPagination(prev => ({ ...prev, page: Math.max(1, prev.page - 1) }))}
-                      disabled={pagination.page === 1}
-                      className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-                    >
-                      Previous
-                    </button>
-                    <button
-                      onClick={() => setPagination(prev => ({ ...prev, page: Math.min(prev.totalPages, prev.page + 1) }))}
-                      disabled={pagination.page === pagination.totalPages}
-                      className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-                    >
-                      Next
-                    </button>
-                  </nav>
-                </div>
-              </div>
+        {loading ? (
+          <div className="p-8 text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-2 text-gray-600">Loading studios...</p>
+          </div>
+        ) : studios.length === 0 ? (
+          <div className="p-8 text-center">
+            <p className="text-gray-500">No studios found matching your criteria.</p>
+            <button
+              onClick={handleCreateStudio}
+              className="mt-4 text-blue-600 hover:text-blue-800 underline"
+            >
+              Create the first studio
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Select
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Studio
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Contact
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Joined
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {studios.map((studio) => (
+                    <tr key={studio.id} className={selectedStudios.includes(studio.id) ? 'bg-blue-50' : ''}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <input
+                          type="checkbox"
+                          checked={selectedStudios.includes(studio.id)}
+                          onChange={(e) => handleSelectStudio(studio.id, e.target.checked)}
+                          className="rounded border-gray-300"
+                        />
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          {studio.avatar_url ? (
+                            <img
+                              src={studio.avatar_url}
+                              alt={studio.display_name}
+                              className="h-10 w-10 rounded-full object-cover mr-3"
+                            />
+                          ) : (
+                            <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center mr-3">
+                              <span className="text-gray-500 text-sm font-medium">
+                                {studio.display_name?.charAt(0) || studio.username?.charAt(0) || '?'}
+                              </span>
+                            </div>
+                          )}
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {studio.display_name || studio.username}
+                            </div>
+                            <div className="text-sm text-gray-500">@{studio.username}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{studio.email}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          studio.status === 1 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-red-100 text-red-800'
+                        }`}>
+                          {studio.status === 1 ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {new Date(studio.joined).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                        <button
+                          onClick={() => handleEditStudio(studio)}
+                          className="text-blue-600 hover:text-blue-900"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteStudio(studio.id)}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          )}
-        </>
-      )}
+
+            {/* Pagination */}
+            {pagination.totalPages > 1 && (
+              <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                <div className="text-sm text-gray-700">
+                  Showing {((pagination.page - 1) * pagination.limit) + 1} to{' '}
+                  {Math.min(pagination.page * pagination.limit, pagination.total)} of{' '}
+                  {pagination.total} results
+                </div>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => handlePageChange(pagination.page - 1)}
+                    disabled={pagination.page <= 1}
+                    className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                  >
+                    Previous
+                  </button>
+                  <span className="px-3 py-1 text-sm text-gray-700">
+                    Page {pagination.page} of {pagination.totalPages}
+                  </span>
+                  <button
+                    onClick={() => handlePageChange(pagination.page + 1)}
+                    disabled={pagination.page >= pagination.totalPages}
+                    className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }
