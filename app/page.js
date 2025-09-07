@@ -4,9 +4,9 @@ import LoginForm from './components/LoginForm';
 
 export default function Home() {
   const cookieStore = cookies();
-  const authenticated = cookieStore.get('authenticated');
+  const authToken = cookieStore.get('auth-token');
   
-  if (authenticated && authenticated.value === 'true') {
+  if (authToken?.value) {
     redirect('/dashboard');
   }
 
