@@ -14,12 +14,14 @@ export function middleware(request) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
   
-  // If user has no token and trying to access protected routes, redirect to login
-  if (!isAuthenticated && (isDashboard || isApiRoute)) {
-    if (isApiRoute) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+  // If user has no token and trying to access dashboard, redirect to login
+  if (!isAuthenticated && isDashboard) {
     return NextResponse.redirect(new URL('/', request.url));
+  }
+  
+  // If user has no token and trying to access API routes, return 401
+  if (!isAuthenticated && isApiRoute) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   
   return NextResponse.next();
