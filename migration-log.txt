@@ -102,3 +102,391 @@ Configuring Cloudinary with: { cloud_name: 'dmvaawjnx', api_key: 'SET', api_secr
 ✓ avatar-voiceover-studio-finder-AppStyleUK.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285048/vosf/avatars/AppStyleUK.jpg
 ✓ Updated avatar for user: Aprilwattsvoiceover
 ✓ avatar-voiceover-studio-finder-Aprilwattsvoiceover.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285049/vosf/avatars/Aprilwattsvoiceover.jpg
+✓ Updated avatar for user: ArleneT
+✓ avatar-voiceover-studio-finder-ArleneT.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285050/vosf/avatars/ArleneT.jpg
+✓ Updated avatar for user: armadilloaudiogroup
+✓ avatar-voiceover-studio-finder-armadilloaudiogroup.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285051/vosf/avatars/armadilloaudiogroup.jpg
+✓ Updated avatar for user: Arthur
+✓ avatar-voiceover-studio-finder-Arthur.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285051/vosf/avatars/Arthur.jpg
+✓ Updated avatar for user: atlvostud
+✓ avatar-voiceover-studio-finder-atlvostud.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285052/vosf/avatars/atlvostud.png
+✓ Updated avatar for user: ATLVOStudio
+✓ avatar-voiceover-studio-finder-ATLVOStudio.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285147/vosf/avatars/ATLVOStudio.jpg
+✓ Updated avatar for user: audioalways
+✓ avatar-voiceover-studio-finder-audioalways.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285148/vosf/avatars/audioalways.jpg
+✓ Updated avatar for user: audioberlin
+✓ avatar-voiceover-studio-finder-audioberlin.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285149/vosf/avatars/audioberlin.jpg
+✓ Updated avatar for user: Audiomaxnet
+✓ avatar-voiceover-studio-finder-Audiomaxnet.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285150/vosf/avatars/Audiomaxnet.jpg
+✓ Updated avatar for user: Audiomaxnet
+✓ avatar-voiceover-studio-finder-Audiomaxnet.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285151/vosf/avatars/Audiomaxnet.png
+✓ Updated avatar for user: AudioTake
+✓ avatar-voiceover-studio-finder-AudioTake.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285152/vosf/avatars/AudioTake.png
+✓ Updated avatar for user: AudioTango
+✓ avatar-voiceover-studio-finder-AudioTango.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285153/vosf/avatars/AudioTango.jpg
+✓ Updated avatar for user: Audiotricks
+✓ avatar-voiceover-studio-finder-Audiotricks.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285154/vosf/avatars/Audiotricks.jpg
+✓ Updated avatar for user: augustocasanovas
+✓ avatar-voiceover-studio-finder-augustocasanovas.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285155/vosf/avatars/augustocasanovas.jpg
+✓ Updated avatar for user: Aurelien
+✓ avatar-voiceover-studio-finder-Aurelien.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285156/vosf/avatars/Aurelien.jpg
+✓ Updated avatar for user: Aurelien
+✓ avatar-voiceover-studio-finder-Aurelien.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285157/vosf/avatars/Aurelien.jpg
+✓ Updated avatar for user: Aurora_Locutora
+✓ avatar-voiceover-studio-finder-Aurora_Locutora.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285157/vosf/avatars/Aurora_Locutora.jpg
+✓ Updated avatar for user: avlocucionprofesional
+✓ avatar-voiceover-studio-finder-avlocucionprofesional.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285158/vosf/avatars/avlocucionprofesional.jpg
+✓ Updated avatar for user: AxolonERP
+✓ avatar-voiceover-studio-finder-AxolonERP.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285160/vosf/avatars/AxolonERP.jpg
+✓ Updated avatar for user: Azimuth
+✓ avatar-voiceover-studio-finder-Azimuth.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285160/vosf/avatars/Azimuth.png
+✓ Updated avatar for user: backstreet
+✓ avatar-voiceover-studio-finder-backstreet.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285163/vosf/avatars/backstreet.png
+✓ Updated avatar for user: bcorkery
+✓ avatar-voiceover-studio-finder-bcorkery.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285164/vosf/avatars/bcorkery.jpg
+✓ Updated avatar for user: bcorkery
+✓ avatar-voiceover-studio-finder-bcorkery.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285165/vosf/avatars/bcorkery.png
+✓ Updated avatar for user: beaconstreetstudios
+✓ avatar-voiceover-studio-finder-beaconstreetstudios.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285165/vosf/avatars/beaconstreetstudios.jpg
+✓ Updated avatar for user: beaconstreetstudios
+✓ avatar-voiceover-studio-finder-beaconstreetstudios.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285166/vosf/avatars/beaconstreetstudios.jpg
+✓ Updated avatar for user: BeeProductive
+✓ avatar-voiceover-studio-finder-BeeProductive.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285167/vosf/avatars/BeeProductive.jpg
+✓ Updated avatar for user: bendingsoundvoiceover
+✓ avatar-voiceover-studio-finder-bendingsoundvoiceover.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285168/vosf/avatars/bendingsoundvoiceover.jpg
+✓ Updated avatar for user: betaalbarestemmen
+✓ avatar-voiceover-studio-finder-betaalbarestemmen.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285169/vosf/avatars/betaalbarestemmen.jpg
+✓ Updated avatar for user: BethDavisonPresents
+✓ avatar-voiceover-studio-finder-BethDavisonPresents.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285170/vosf/avatars/BethDavisonPresents.jpg
+✓ Updated avatar for user: BethDavisonSounds
+✓ avatar-voiceover-studio-finder-BethDavisonSounds.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285171/vosf/avatars/BethDavisonSounds.jpg
+✓ Updated avatar for user: BigFishMedia
+✓ avatar-voiceover-studio-finder-BigFishMedia.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285172/vosf/avatars/BigFishMedia.jpg
+✓ Updated avatar for user: bigmouthstudios
+✓ avatar-voiceover-studio-finder-bigmouthstudios.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285173/vosf/avatars/bigmouthstudios.png
+✓ Updated avatar for user: BigmouthVoices
+✓ avatar-voiceover-studio-finder-BigmouthVoices.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285173/vosf/avatars/BigmouthVoices.jpg
+✓ Updated avatar for user: billyboy
+✓ avatar-voiceover-studio-finder-billyboy.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285174/vosf/avatars/billyboy.jpg
+✓ Updated avatar for user: billyboy
+✓ avatar-voiceover-studio-finder-billyboy.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285175/vosf/avatars/billyboy.jpg
+✓ Updated avatar for user: billyboy
+✓ avatar-voiceover-studio-finder-billyboy.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285176/vosf/avatars/billyboy.png
+✓ Updated avatar for user: Bkpmediagroup
+✓ avatar-voiceover-studio-finder-Bkpmediagroup.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285178/vosf/avatars/Bkpmediagroup.jpg
+✓ Updated avatar for user: BlackBoxVoiceProductions
+✓ avatar-voiceover-studio-finder-BlackBoxVoiceProductions.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285178/vosf/avatars/BlackBoxVoiceProductions.jpg
+✓ Updated avatar for user: blackcaverecordings
+✓ avatar-voiceover-studio-finder-blackcaverecordings.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285179/vosf/avatars/blackcaverecordings.jpg
+✓ Updated avatar for user: blancheanderson
+✓ avatar-voiceover-studio-finder-blancheanderson.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285180/vosf/avatars/blancheanderson.jpg
+✓ Updated avatar for user: bleach
+✓ avatar-voiceover-studio-finder-bleach.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285181/vosf/avatars/bleach.jpg
+✓ Updated avatar for user: BloombergVO
+✓ avatar-voiceover-studio-finder-BloombergVO.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285182/vosf/avatars/BloombergVO.png
+✓ Updated avatar for user: blue1media
+✓ avatar-voiceover-studio-finder-blue1media.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285183/vosf/avatars/blue1media.jpg
+✓ Updated avatar for user: BlueRoomDC
+✓ avatar-voiceover-studio-finder-BlueRoomDC.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285183/vosf/avatars/BlueRoomDC.jpg
+✓ Updated avatar for user: bobbimaxwell
+✓ avatar-voiceover-studio-finder-bobbimaxwell.gif → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285184/vosf/avatars/bobbimaxwell.gif
+✓ Updated avatar for user: Bobbin
+✓ avatar-voiceover-studio-finder-Bobbin.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285185/vosf/avatars/Bobbin.jpg
+✓ Updated avatar for user: Bobbin
+✓ avatar-voiceover-studio-finder-Bobbin.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285186/vosf/avatars/Bobbin.jpg
+✓ Updated avatar for user: BobbinBeam
+✓ avatar-voiceover-studio-finder-BobbinBeam.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285186/vosf/avatars/BobbinBeam.jpg
+✓ Updated avatar for user: BobbinBeam
+✓ avatar-voiceover-studio-finder-BobbinBeam.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285187/vosf/avatars/BobbinBeam.jpg
+✓ Updated avatar for user: bolensoundproductions
+✓ avatar-voiceover-studio-finder-bolensoundproductions.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285188/vosf/avatars/bolensoundproductions.jpg
+✓ Updated avatar for user: Bolivar
+✓ avatar-voiceover-studio-finder-Bolivar.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285189/vosf/avatars/Bolivar.png
+✓ Updated avatar for user: bonamistudios
+✓ avatar-voiceover-studio-finder-bonamistudios.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285190/vosf/avatars/bonamistudios.jpg
+✓ Updated avatar for user: borja
+✓ avatar-voiceover-studio-finder-borja.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285190/vosf/avatars/borja.jpg
+✓ Updated avatar for user: BPS
+✓ avatar-voiceover-studio-finder-BPS.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285191/vosf/avatars/BPS.png
+✓ Updated avatar for user: BraybrookeStudios
+✓ avatar-voiceover-studio-finder-BraybrookeStudios.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285192/vosf/avatars/BraybrookeStudios.png
+✓ Updated avatar for user: BrilliantVO
+✓ avatar-voiceover-studio-finder-BrilliantVO.gif → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285193/vosf/avatars/BrilliantVO.gif
+✓ Updated avatar for user: BritishSarah
+✓ avatar-voiceover-studio-finder-BritishSarah.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285194/vosf/avatars/BritishSarah.jpg
+✓ Updated avatar for user: Bruceduncanvo
+✓ avatar-voiceover-studio-finder-Bruceduncanvo.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285194/vosf/avatars/Bruceduncanvo.jpg
+✓ Updated avatar for user: BruceDuncanVO
+✓ avatar-voiceover-studio-finder-BruceDuncanVO.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285195/vosf/avatars/Bruceduncanvo.jpg
+✓ Updated avatar for user: BudapestAudio
+✓ avatar-voiceover-studio-finder-BudapestAudio.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285196/vosf/avatars/BudapestAudio.jpg
+✓ Updated avatar for user: BudapestAudio
+✓ avatar-voiceover-studio-finder-BudapestAudio.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285197/vosf/avatars/BudapestAudio.png
+✓ Updated avatar for user: Cabininthewords
+✓ avatar-voiceover-studio-finder-Cabininthewords.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285198/vosf/avatars/Cabininthewords.jpg
+✓ Updated avatar for user: CameronMcGarva
+✓ avatar-voiceover-studio-finder-CameronMcGarva.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285199/vosf/avatars/CameronMcGarva.jpg
+✓ Updated avatar for user: cankoray
+✓ avatar-voiceover-studio-finder-cankoray.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285200/vosf/avatars/cankoray.jpg
+✓ Updated avatar for user: cannongatestudios
+✓ avatar-voiceover-studio-finder-cannongatestudios.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285201/vosf/avatars/cannongatestudios.jpg
+✓ Updated avatar for user: CarlosConde
+✓ avatar-voiceover-studio-finder-CarlosConde.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285201/vosf/avatars/CarlosConde.jpg
+✓ Updated avatar for user: Carlos_Conde
+✓ avatar-voiceover-studio-finder-Carlos_Conde.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285202/vosf/avatars/Carlos_Conde.jpg
+✓ Updated avatar for user: carrieafrin
+✓ avatar-voiceover-studio-finder-carrieafrin.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285202/vosf/avatars/carrieafrin.jpg
+✓ Updated avatar for user: CarrieOlsenVO
+✓ avatar-voiceover-studio-finder-CarrieOlsenVO.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285203/vosf/avatars/CarrieOlsenVO.png
+✓ Updated avatar for user: CarrieOlsenVO
+✓ avatar-voiceover-studio-finder-CarrieOlsenVO.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285204/vosf/avatars/CarrieOlsenVO.jpg
+✓ Updated avatar for user: CatalystRecording
+✓ avatar-voiceover-studio-finder-CatalystRecording.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285205/vosf/avatars/CatalystRecording.jpg
+✓ Updated avatar for user: Chase3587
+✓ avatar-voiceover-studio-finder-Chase3587.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285206/vosf/avatars/Chase3587.jpg
+✓ Updated avatar for user: Chavres-Voiceover
+✓ avatar-voiceover-studio-finder-Chavres-Voiceover.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285207/vosf/avatars/Chavres-Voiceover.jpg
+✓ Updated avatar for user: chemabazan
+✓ avatar-voiceover-studio-finder-chemabazan.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285208/vosf/avatars/chemabazan.jpg
+✓ Updated avatar for user: CherentRanchStudio
+✓ avatar-voiceover-studio-finder-CherentRanchStudio.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285209/vosf/avatars/CherentRanchStudio.jpg
+✓ Updated avatar for user: ChocolateFox
+✓ avatar-voiceover-studio-finder-ChocolateFox.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285210/vosf/avatars/ChocolateFox.jpg
+✓ Updated avatar for user: chrisdabbsvoiceovers
+✓ avatar-voiceover-studio-finder-chrisdabbsvoiceovers.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285211/vosf/avatars/chrisdabbsvoiceovers.jpg
+✓ Updated avatar for user: chrisdabbsvoiceovers
+✓ avatar-voiceover-studio-finder-chrisdabbsvoiceovers.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285212/vosf/avatars/chrisdabbsvoiceovers.jpg
+✓ Updated avatar for user: chrisduke
+✓ avatar-voiceover-studio-finder-chrisduke.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285212/vosf/avatars/chrisduke.jpg
+✓ Updated avatar for user: ChristophWalter
+✓ avatar-voiceover-studio-finder-ChristophWalter.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285213/vosf/avatars/ChristophWalter.jpg
+✓ Updated avatar for user: chuckdaviscreative
+✓ avatar-voiceover-studio-finder-chuckdaviscreative.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285214/vosf/avatars/chuckdaviscreative.jpg
+✓ Updated avatar for user: ClaireWyatt
+✓ avatar-voiceover-studio-finder-ClaireWyatt.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285215/vosf/avatars/ClaireWyatt.jpg
+✓ Updated avatar for user: ClaireWyatt
+✓ avatar-voiceover-studio-finder-ClaireWyatt.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285216/vosf/avatars/ClaireWyatt.jpg
+✓ Updated avatar for user: ClareReevesVoiceovers
+✓ avatar-voiceover-studio-finder-ClareReevesVoiceovers.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285217/vosf/avatars/ClareReevesVoiceovers.jpg
+✓ Updated avatar for user: ClaudiaVoixOff
+✓ avatar-voiceover-studio-finder-ClaudiaVoixOff.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285218/vosf/avatars/ClaudiaVoixOff.jpg
+✓ Updated avatar for user: ClearWaveProductions
+✓ avatar-voiceover-studio-finder-ClearWaveProductions.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285219/vosf/avatars/ClearWaveProductions.jpg
+✓ Updated avatar for user: Clocktower
+✓ avatar-voiceover-studio-finder-Clocktower.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285219/vosf/avatars/Clocktower.jpg
+✓ Updated avatar for user: clocktowerltd
+✓ avatar-voiceover-studio-finder-clocktowerltd.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285220/vosf/avatars/clocktowerltd.jpg
+✓ Updated avatar for user: CMRstudio
+✓ avatar-voiceover-studio-finder-CMRstudio.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285221/vosf/avatars/CMRstudio.jpg
+✓ Updated avatar for user: CofeinaStudio
+✓ avatar-voiceover-studio-finder-CofeinaStudio.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285222/vosf/avatars/CofeinaStudio.jpg
+✓ Updated avatar for user: ColinCassidyMedia
+✓ avatar-voiceover-studio-finder-ColinCassidyMedia.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285222/vosf/avatars/ColinCassidyMedia.jpg
+✓ Updated avatar for user: ColinCassidyMedia
+✓ avatar-voiceover-studio-finder-ColinCassidyMedia.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285223/vosf/avatars/ColinCassidyMedia.png
+✓ Updated avatar for user: connieterwilliger
+✓ avatar-voiceover-studio-finder-connieterwilliger.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285224/vosf/avatars/connieterwilliger.jpg
+✓ Updated avatar for user: coolmedia
+✓ avatar-voiceover-studio-finder-coolmedia.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285225/vosf/avatars/coolmedia.png
+✓ Updated avatar for user: CoolMoonMusic
+✓ avatar-voiceover-studio-finder-CoolMoonMusic.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285226/vosf/avatars/CoolMoonMusic.jpg
+✓ Updated avatar for user: courvo
+✓ avatar-voiceover-studio-finder-courvo.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285227/vosf/avatars/courvo.jpg
+✓ Updated avatar for user: creamroom
+✓ avatar-voiceover-studio-finder-creamroom.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285228/vosf/avatars/creamroom.png
+✓ Updated avatar for user: CreativeForce
+✓ avatar-voiceover-studio-finder-CreativeForce.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285228/vosf/avatars/CreativeForce.png
+✓ Updated avatar for user: creativoices
+✓ avatar-voiceover-studio-finder-creativoices.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285229/vosf/avatars/creativoices.jpg
+✓ Updated avatar for user: Cromerty
+✓ avatar-voiceover-studio-finder-Cromerty.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285230/vosf/avatars/Cromerty.jpg
+✓ Updated avatar for user: cryingoutloud
+✓ avatar-voiceover-studio-finder-cryingoutloud.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285231/vosf/avatars/cryingoutloud.jpg
+✓ Updated avatar for user: Csharp
+✓ avatar-voiceover-studio-finder-Csharp.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285232/vosf/avatars/Csharp.jpg
+✓ Updated avatar for user: currentsound
+✓ avatar-voiceover-studio-finder-currentsound.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285232/vosf/avatars/currentsound.jpg
+✓ Updated avatar for user: danahurley
+✓ avatar-voiceover-studio-finder-danahurley.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285233/vosf/avatars/danahurley.jpg
+✓ Updated avatar for user: DanFriedman
+✓ avatar-voiceover-studio-finder-DanFriedman.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285234/vosf/avatars/DanFriedman.jpg
+✓ Updated avatar for user: daniellocutor
+✓ avatar-voiceover-studio-finder-daniellocutor.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285235/vosf/avatars/daniellocutor.jpg
+✓ Updated avatar for user: DannyRhodesMedia
+✓ avatar-voiceover-studio-finder-DannyRhodesMedia.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285236/vosf/avatars/DannyRhodesMedia.jpg
+✓ Updated avatar for user: Danrichards
+✓ avatar-voiceover-studio-finder-Danrichards.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285237/vosf/avatars/Danrichards.jpg
+✓ Updated avatar for user: Dansvoice
+✓ avatar-voiceover-studio-finder-Dansvoice.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285237/vosf/avatars/Dansvoice.jpg
+✓ Updated avatar for user: DarrenAltman
+✓ avatar-voiceover-studio-finder-DarrenAltman.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285238/vosf/avatars/DarrenAltman.jpg
+✓ Updated avatar for user: darrenkvo
+✓ avatar-voiceover-studio-finder-darrenkvo.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285239/vosf/avatars/darrenkvo.jpg
+✓ Updated avatar for user: DavePettitt
+✓ avatar-voiceover-studio-finder-DavePettitt.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285240/vosf/avatars/DavePettitt.jpg
+✓ Updated avatar for user: davestuck
+✓ avatar-voiceover-studio-finder-davestuck.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285241/vosf/avatars/davestuck.jpg
+✓ Updated avatar for user: DavidDubTejeda
+✓ avatar-voiceover-studio-finder-DavidDubTejeda.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285241/vosf/avatars/DavidDubTejeda.jpg
+✓ Updated avatar for user: DavidDubTejeda
+✓ avatar-voiceover-studio-finder-DavidDubTejeda.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285242/vosf/avatars/DavidDubTejeda.png
+✓ Updated avatar for user: DavidMorales
+✓ avatar-voiceover-studio-finder-DavidMorales.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285243/vosf/avatars/DavidMorales.jpg
+✓ Updated avatar for user: DavidMorales
+✓ avatar-voiceover-studio-finder-DavidMorales.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285244/vosf/avatars/DavidMorales.png
+✓ Updated avatar for user: DavidWartnaby
+✓ avatar-voiceover-studio-finder-DavidWartnaby.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285245/vosf/avatars/DavidWartnaby.jpg
+✓ Updated avatar for user: DawnofVoice
+✓ avatar-voiceover-studio-finder-DawnofVoice.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285246/vosf/avatars/DawnofVoice.png
+✓ Updated avatar for user: DbVO14
+✓ avatar-voiceover-studio-finder-DbVO14.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285246/vosf/avatars/DbVO14.jpg
+✓ Updated avatar for user: DbVO14
+✓ avatar-voiceover-studio-finder-DbVO14.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285247/vosf/avatars/DbVO14.jpg
+✓ Updated avatar for user: deaudiofabrique
+✓ avatar-voiceover-studio-finder-deaudiofabrique.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285248/vosf/avatars/deaudiofabrique.jpg
+✓ Updated avatar for user: deaudiofabrique
+✓ avatar-voiceover-studio-finder-deaudiofabrique.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285249/vosf/avatars/deaudiofabrique.png
+✓ Updated avatar for user: DefinitiveMedia
+✓ avatar-voiceover-studio-finder-DefinitiveMedia.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285250/vosf/avatars/DefinitiveMedia.jpg
+✓ Updated avatar for user: DefinitiveMedia
+✓ avatar-voiceover-studio-finder-DefinitiveMedia.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285251/vosf/avatars/DefinitiveMedia.png
+✓ Updated avatar for user: delete
+✓ avatar-voiceover-studio-finder-delete.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285252/vosf/avatars/delete.jpg
+✓ Updated avatar for user: DellaPhillips
+✓ avatar-voiceover-studio-finder-DellaPhillips.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285253/vosf/avatars/DellaPhillips.jpg
+✓ Updated avatar for user: DellaPhillipsVO
+✓ avatar-voiceover-studio-finder-DellaPhillipsVO.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285254/vosf/avatars/DellaPhillipsVO.jpg
+✓ Updated avatar for user: DestmarkStudio
+✓ avatar-voiceover-studio-finder-DestmarkStudio.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285255/vosf/avatars/DestmarkStudio.jpg
+✓ Updated avatar for user: DevroxPrime
+✓ avatar-voiceover-studio-finder-DevroxPrime.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285255/vosf/avatars/DevroxPrime.jpg
+✓ Updated avatar for user: DevroxPrime
+✓ avatar-voiceover-studio-finder-DevroxPrime.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285256/vosf/avatars/DevroxPrime.jpg
+✓ Updated avatar for user: DianeMerritt
+✓ avatar-voiceover-studio-finder-DianeMerritt.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285257/vosf/avatars/DianeMerritt.jpg
+✓ Updated avatar for user: DianeMerritt
+✓ avatar-voiceover-studio-finder-DianeMerritt.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285258/vosf/avatars/DianeMerritt.jpg
+✓ Updated avatar for user: dianneweller
+✓ avatar-voiceover-studio-finder-dianneweller.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285259/vosf/avatars/dianneweller.jpg
+✓ Updated avatar for user: DiBritanniaVO
+✓ avatar-voiceover-studio-finder-DiBritanniaVO.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285260/vosf/avatars/DiBritanniaVO.jpg
+✓ Updated avatar for user: digitalsoundmagic
+✓ avatar-voiceover-studio-finder-digitalsoundmagic.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285261/vosf/avatars/digitalsoundmagic.jpg
+✓ Updated avatar for user: DJdunc
+✓ avatar-voiceover-studio-finder-DJdunc.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285261/vosf/avatars/DJdunc.jpg
+✓ Updated avatar for user: DJdunc
+✓ avatar-voiceover-studio-finder-DJdunc.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285262/vosf/avatars/DJdunc.jpg
+✓ Updated avatar for user: DJdunc
+✓ avatar-voiceover-studio-finder-DJdunc.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285263/vosf/avatars/DJdunc.png
+✓ Updated avatar for user: DnPSound
+✓ avatar-voiceover-studio-finder-DnPSound.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285264/vosf/avatars/DnPSound.png
+✓ Updated avatar for user: Dogandpony
+✓ avatar-voiceover-studio-finder-Dogandpony.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285265/vosf/avatars/Dogandpony.png
+✓ Updated avatar for user: DoryHayman
+✓ avatar-voiceover-studio-finder-DoryHayman.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285266/vosf/avatars/DoryHayman.jpg
+✓ Updated avatar for user: DoubleRRStudios
+✓ avatar-voiceover-studio-finder-DoubleRRStudios.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285266/vosf/avatars/DoubleRRStudios.jpg
+✓ Updated avatar for user: DougdeNance
+✓ avatar-voiceover-studio-finder-DougdeNance.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285267/vosf/avatars/DougdeNance.jpg
+✓ Updated avatar for user: downundervo
+✓ avatar-voiceover-studio-finder-downundervo.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285268/vosf/avatars/downundervo.jpg
+✓ Updated avatar for user: DRS
+✓ avatar-voiceover-studio-finder-DRS.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285269/vosf/avatars/DRS.jpg
+✓ Updated avatar for user: drvoz
+✓ avatar-voiceover-studio-finder-drvoz.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285270/vosf/avatars/drvoz.jpg
+✓ Updated avatar for user: dubmaster
+✓ avatar-voiceover-studio-finder-dubmaster.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285270/vosf/avatars/dubmaster.jpg
+✓ Updated avatar for user: dubwaystudios
+✓ avatar-voiceover-studio-finder-dubwaystudios.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285271/vosf/avatars/dubwaystudios.jpg
+✓ Updated avatar for user: DudeVO
+✓ avatar-voiceover-studio-finder-DudeVO.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285272/vosf/avatars/DudeVO.jpg
+✓ Updated avatar for user: duncan
+✓ avatar-voiceover-studio-finder-duncan.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285273/vosf/avatars/duncan.jpg
+✓ Updated avatar for user: duncan
+✓ avatar-voiceover-studio-finder-duncan.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285273/vosf/avatars/duncan.jpg
+✓ Updated avatar for user: DuncanCuthbertson
+✓ avatar-voiceover-studio-finder-DuncanCuthbertson.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285274/vosf/avatars/DuncanCuthbertson.jpg
+✓ Updated avatar for user: duncanstest
+✓ avatar-voiceover-studio-finder-duncanstest.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285275/vosf/avatars/duncanstest.jpg
+✓ Updated avatar for user: duncantest1
+✓ avatar-voiceover-studio-finder-duncantest1.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285276/vosf/avatars/duncantest1.jpg
+✓ Updated avatar for user: duncsstudio
+✓ avatar-voiceover-studio-finder-duncsstudio.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285277/vosf/avatars/duncsstudio.jpg
+✓ Updated avatar for user: DustinEbaugh
+✓ avatar-voiceover-studio-finder-DustinEbaugh.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285277/vosf/avatars/DustinEbaugh.jpg
+✓ Updated avatar for user: dVoiceBoxStudio
+✓ avatar-voiceover-studio-finder-dVoiceBoxStudio.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285278/vosf/avatars/dVoiceBoxStudio.jpg
+✓ Updated avatar for user: dwinograd
+✓ avatar-voiceover-studio-finder-dwinograd.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285279/vosf/avatars/dwinograd.jpg
+✓ Updated avatar for user: eastbourneisdn
+✓ avatar-voiceover-studio-finder-eastbourneisdn.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285280/vosf/avatars/eastbourneisdn.jpg
+✓ Updated avatar for user: echo7recordingstudio
+✓ avatar-voiceover-studio-finder-echo7recordingstudio.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285284/vosf/avatars/echo7recordingstudio.jpg
+✓ Updated avatar for user: echomagic
+✓ avatar-voiceover-studio-finder-echomagic.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285285/vosf/avatars/echomagic.jpg
+✓ Updated avatar for user: ecradiocreative
+✓ avatar-voiceover-studio-finder-ecradiocreative.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285286/vosf/avatars/ecradiocreative.png
+✓ Updated avatar for user: ECRStudio
+✓ avatar-voiceover-studio-finder-ECRStudio.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285286/vosf/avatars/ECRStudio.jpg
+✓ Updated avatar for user: EdandGrace
+✓ avatar-voiceover-studio-finder-EdandGrace.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285287/vosf/avatars/EdandGrace.jpg
+✓ Updated avatar for user: edwinvoixoff
+✓ avatar-voiceover-studio-finder-edwinvoixoff.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285288/vosf/avatars/edwinvoixoff.jpg
+✓ Updated avatar for user: EEVO
+✓ avatar-voiceover-studio-finder-EEVO.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285289/vosf/avatars/EEVO.jpg
+✓ Updated avatar for user: EliranHaKaryan
+✓ avatar-voiceover-studio-finder-EliranHaKaryan.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285290/vosf/avatars/EliranHaKaryan.jpg
+✓ Updated avatar for user: EliranHaKaryan
+✓ avatar-voiceover-studio-finder-EliranHaKaryan.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285291/vosf/avatars/EliranHaKaryan.jpg
+✓ Updated avatar for user: Elisacanas
+✓ avatar-voiceover-studio-finder-Elisacanas.jpeg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285292/vosf/avatars/Elisacanas.jpg
+✓ Updated avatar for user: ellihoy
+✓ avatar-voiceover-studio-finder-ellihoy.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285293/vosf/avatars/ellihoy.jpg
+✓ Updated avatar for user: ElLocutorio
+✓ avatar-voiceover-studio-finder-ElLocutorio.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285293/vosf/avatars/ElLocutorio.png
+✓ Updated avatar for user: EmmaDavis
+✓ avatar-voiceover-studio-finder-EmmaDavis.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285294/vosf/avatars/EmmaDavis.jpg
+✓ Updated avatar for user: Engine7
+✓ avatar-voiceover-studio-finder-Engine7.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285295/vosf/avatars/Engine7.jpg
+✓ Updated avatar for user: enmoreaudio
+✓ avatar-voiceover-studio-finder-enmoreaudio.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285296/vosf/avatars/enmoreaudio.jpg
+✓ Updated avatar for user: EnWorshipMedia
+✓ avatar-voiceover-studio-finder-EnWorshipMedia.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285297/vosf/avatars/EnWorshipMedia.jpg
+✓ Updated avatar for user: Erindigo
+✓ avatar-voiceover-studio-finder-Erindigo.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285298/vosf/avatars/Erindigo.jpg
+✓ Updated avatar for user: Essex-Recording-Studios
+✓ avatar-voiceover-studio-finder-Essex-Recording-Studios.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285299/vosf/avatars/Essex-Recording-Studios.jpg
+✓ Updated avatar for user: Essex-Recording-Studios
+✓ avatar-voiceover-studio-finder-Essex-Recording-Studios.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285300/vosf/avatars/Essex-Recording-Studios.png
+✓ Updated avatar for user: estellehubert
+✓ avatar-voiceover-studio-finder-estellehubert.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285307/vosf/avatars/estellehubert.jpg
+✓ Updated avatar for user: everlandstudios
+✓ avatar-voiceover-studio-finder-everlandstudios.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285308/vosf/avatars/everlandstudios.jpg
+✓ Updated avatar for user: Evolutionstudios
+✓ avatar-voiceover-studio-finder-Evolutionstudios.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285309/vosf/avatars/Evolutionstudios.jpg
+✓ Updated avatar for user: Evolutionstudios
+✓ avatar-voiceover-studio-finder-Evolutionstudios.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285310/vosf/avatars/Evolutionstudios.png
+✓ Updated avatar for user: ExampleStudio
+✓ avatar-voiceover-studio-finder-ExampleStudio.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285311/vosf/avatars/ExampleStudio.jpg
+✓ Updated avatar for user: FayeBradbrook
+✓ avatar-voiceover-studio-finder-FayeBradbrook.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285312/vosf/avatars/FayeBradbrook.jpg
+✓ Updated avatar for user: FeelTheVoice
+✓ avatar-voiceover-studio-finder-FeelTheVoice.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285313/vosf/avatars/FeelTheVoice.jpg
+✓ Updated avatar for user: Finnigan
+✓ avatar-voiceover-studio-finder-Finnigan.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285314/vosf/avatars/Finnigan.jpg
+✓ Updated avatar for user: firstexclusive
+✓ avatar-voiceover-studio-finder-firstexclusive.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285315/vosf/avatars/firstexclusive.jpg
+✓ Updated avatar for user: ForestStudiosLebanon
+✓ avatar-voiceover-studio-finder-ForestStudiosLebanon.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285315/vosf/avatars/ForestStudiosLebanon.jpg
+✓ Updated avatar for user: francescapavone
+✓ avatar-voiceover-studio-finder-francescapavone.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285316/vosf/avatars/francescapavone.jpg
+✓ Updated avatar for user: FrankS
+✓ avatar-voiceover-studio-finder-FrankS.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285317/vosf/avatars/FrankS.jpg
+✓ Updated avatar for user: FranMcClellan
+✓ avatar-voiceover-studio-finder-FranMcClellan.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285318/vosf/avatars/FranMcClellan.jpg
+✓ Updated avatar for user: frenchvoiceover
+✓ avatar-voiceover-studio-finder-frenchvoiceover.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285319/vosf/avatars/frenchvoiceover.jpg
+✓ Updated avatar for user: FreshAirStudios
+✓ avatar-voiceover-studio-finder-FreshAirStudios.jpg → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285320/vosf/avatars/FreshAirStudios.jpg
+✓ Updated avatar for user: FreshAirStudios
+✓ avatar-voiceover-studio-finder-FreshAirStudios.png → https://res.cloudinary.com/dmvaawjnx/image/upload/v1757285321/vosf/avatars/FreshAirStudios.png
