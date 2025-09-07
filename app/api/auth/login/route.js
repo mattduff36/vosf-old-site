@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { validateCredentials } from '../../../lib/auth';
-import jwt from 'jsonwebtoken';
 
 export async function POST(request) {
   try {
@@ -22,25 +21,14 @@ export async function POST(request) {
       );
     }
     
-    // Create JWT token
-    const token = jwt.sign(
-      { 
-        username: username,
-        authenticated: true,
-        iat: Math.floor(Date.now() / 1000)
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-    
-    // Set JWT cookie
+    // Set simple authentication cookie
     const response = NextResponse.json({ success: true });
-    response.cookies.set('auth-token', token, {
+    response.cookies.set('authenticated', 'true', {
       httpOnly: true,
-      secure: true, // Always use secure cookies (Vercel uses HTTPS)
-      sameSite: 'lax', // Changed from 'strict' to 'lax' for better compatibility
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       maxAge: 60 * 60 * 24, // 24 hours
-      path: '/' // Explicitly set path to ensure cookie is available site-wide
+      path: '/'
     });
     
     return response;

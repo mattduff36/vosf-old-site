@@ -4,14 +4,9 @@ import LoginForm from './components/LoginForm';
 
 export default function Home() {
   const cookieStore = cookies();
-  const authToken = cookieStore.get('auth-token');
+  const authenticated = cookieStore.get('authenticated');
   
-  // Debug logging for production
-  console.log('Home page - Auth token exists:', !!authToken?.value);
-  console.log('Home page - Environment:', process.env.NODE_ENV);
-  
-  if (authToken?.value) {
-    console.log('Home page - Redirecting to dashboard');
+  if (authenticated && authenticated.value === 'true') {
     redirect('/dashboard');
   }
 

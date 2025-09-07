@@ -1,14 +1,17 @@
 import { NextResponse } from 'next/server';
 import { getDatabaseOverview } from '../../../lib/database.js';
-import { isAuthenticated } from '../../../lib/jwt.js';
+import { cookies } from 'next/headers';
 
 // Force dynamic rendering for authentication
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    // Check JWT authentication
-    if (!isAuthenticated()) {
+    // Check simple cookie authentication
+    const cookieStore = cookies();
+    const authenticated = cookieStore.get('authenticated');
+    
+    if (!authenticated || authenticated.value !== 'true') {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
