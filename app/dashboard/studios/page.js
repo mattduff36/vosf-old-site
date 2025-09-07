@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import DashboardLayout from '../../components/DashboardLayout';
 import StudioDirectory from '../../components/StudioDirectory';
 
 export default function StudiosPage() {
@@ -10,5 +11,9 @@ export default function StudiosPage() {
     redirect('/');
   }
 
-  return <StudioDirectory />;
+  return (
+    <DashboardLayout>
+      <StudioDirectory />
+    </DashboardLayout>
+  );
 }

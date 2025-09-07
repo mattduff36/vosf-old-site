@@ -1,9 +1,9 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import DashboardLayout from '../components/DashboardLayout';
-import VOSFDashboard from '../components/VOSFDashboard';
+import DashboardLayout from '../../components/DashboardLayout';
+import QueryInterface from '../../components/QueryInterface';
 
-export default function Dashboard() {
+export default function QueryPage() {
   const cookieStore = cookies();
   const authenticated = cookieStore.get('authenticated');
   
@@ -13,7 +13,7 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout>
-      <VOSFDashboard />
+      <QueryInterface />
     </DashboardLayout>
   );
 }
