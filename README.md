@@ -57,6 +57,8 @@ TURSO_DATABASE_URL="your-turso-database-url"
 TURSO_AUTH_TOKEN="your-turso-auth-token"
 
 # Authentication
+AUTH_USERNAME="admin"
+AUTH_PASSWORD="your-secure-password"
 JWT_SECRET="your-jwt-secret-key"
 ```
 
@@ -78,9 +80,10 @@ npm start
 
 ## 🔐 Authentication
 
-Default login credentials:
-- **Username**: `admin`
-- **Password**: `GuyM@tt2025!`
+Login credentials are configured via environment variables:
+- **Username**: Set via `AUTH_USERNAME` environment variable (default: `admin`)
+- **Password**: Set via `AUTH_PASSWORD` environment variable
+- **Security**: Uses JWT tokens with configurable `JWT_SECRET`
 
 ## 📁 Project Structure
 
@@ -113,7 +116,9 @@ Default login credentials:
 Set these in your Vercel dashboard:
 
 - `TURSO_DATABASE_URL`: Your Turso database URL
-- `TURSO_AUTH_TOKEN`: Your Turso authentication token  
+- `TURSO_AUTH_TOKEN`: Your Turso authentication token
+- `AUTH_USERNAME`: Login username (e.g., `admin`)
+- `AUTH_PASSWORD`: Login password (secure password)
 - `JWT_SECRET`: Secret key for JWT tokens
 
 ## 🔧 API Endpoints
@@ -143,11 +148,13 @@ Set these in your Vercel dashboard:
 
 ## 🔒 Security Features
 
-- JWT-based authentication
+- JWT-based authentication with configurable credentials
+- Environment variable-based authentication (no hardcoded passwords)
 - SQL injection protection
 - Query validation (SELECT-only)
-- Secure environment variable handling
-- Protected API routes
+- Secure HTTP-only cookies
+- Protected API routes with token verification
+- Configurable JWT secret for token signing
 
 ## 📈 Performance
 
