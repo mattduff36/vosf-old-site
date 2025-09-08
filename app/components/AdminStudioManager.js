@@ -6,6 +6,7 @@ import AdminBulkOperations from './AdminBulkOperations';
 import AdminAdvancedFilters from './AdminAdvancedFilters';
 import AdminStatsCards from './AdminStatsCards';
 import StudioProfileCard from './StudioProfileCard';
+import AdvancedStudioEditor from './AdvancedStudioEditor';
 
 export default function AdminStudioManager() {
   const [studios, setStudios] = useState([]);
@@ -13,6 +14,8 @@ export default function AdminStudioManager() {
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingStudio, setEditingStudio] = useState(null);
+  const [showAdvancedEditor, setShowAdvancedEditor] = useState(false);
+  const [advancedEditingStudio, setAdvancedEditingStudio] = useState(null);
   const [formLoading, setFormLoading] = useState(false);
   const [filters, setFilters] = useState({});
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, totalPages: 0 });
@@ -109,6 +112,11 @@ export default function AdminStudioManager() {
     setShowForm(true);
   };
 
+  const handleAdvancedEdit = (studio) => {
+    setAdvancedEditingStudio(studio);
+    setShowAdvancedEditor(true);
+  };
+
   const handleDeleteStudio = async (studioId) => {
     if (!confirm('Are you sure you want to delete this studio? This action cannot be undone.')) {
       return;
@@ -162,6 +170,17 @@ export default function AdminStudioManager() {
     setPagination(prev => ({ ...prev, page: newPage }));
   };
 
+  const handleAdvancedEditorClose = () => {
+    setShowAdvancedEditor(false);
+    setAdvancedEditingStudio(null);
+  };
+
+  const handleAdvancedEditorSave = () => {
+    setShowAdvancedEditor(false);
+    setAdvancedEditingStudio(null);
+    fetchStudios(); // Refresh the list
+  };
+
   if (showForm) {
     return (
       <AdminStudioForm
@@ -169,6 +188,16 @@ export default function AdminStudioManager() {
         onSubmit={handleFormSubmit}
         onCancel={() => setShowForm(false)}
         loading={formLoading}
+      />
+    );
+  }
+
+  if (showAdvancedEditor) {
+    return (
+      <AdvancedStudioEditor
+        studioId={advancedEditingStudio?.id}
+        onSave={handleAdvancedEditorSave}
+        onCancel={handleAdvancedEditorClose}
       />
     );
   }
@@ -329,19 +358,27 @@ export default function AdminStudioManager() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(studio.joined).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <button
-                          onClick={() => handleEditStudio(studio)}
-                          className="text-blue-600 hover:text-blue-900"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteStudio(studio.id)}
-                          className="text-red-600 hover:text-red-900"
-                        >
-                          Delete
-                        </button>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleEditStudio(studio)}
+                            className="text-blue-600 hover:text-blue-900"
+                          >
+                            Quick Edit
+                          </button>
+                          <button
+                            onClick={() => handleAdvancedEdit(studio)}
+                            className="text-purple-600 hover:text-purple-900 font-semibold"
+                          >
+                            Advanced Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteStudio(studio.id)}
+                            className="text-red-600 hover:text-red-900"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

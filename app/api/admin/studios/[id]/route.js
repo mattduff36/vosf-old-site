@@ -4,7 +4,7 @@ import { getConnection } from '../../../../lib/database.js';
 
 export const dynamic = 'force-dynamic';
 
-// GET - Get single studio by ID
+// GET - Get single studio by ID with full profile data
 export async function GET(request, { params }) {
   const cookieStore = cookies();
   const authenticated = cookieStore.get('authenticated');
@@ -17,22 +17,42 @@ export async function GET(request, { params }) {
     const { id } = params;
     const client = await getConnection();
     
-    const result = await client.execute({
+    // Get basic user data
+    const userResult = await client.execute({
       sql: `
         SELECT 
           id, username, display_name, email, status, joined, 
-          avatar_url
+          role_id, avatar_url
         FROM shows_users 
         WHERE id = ?
       `,
       args: [id]
     });
 
-    if (result.rows.length === 0) {
+    if (userResult.rows.length === 0) {
       return NextResponse.json({ error: 'Studio not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ studio: result.rows[0] });
+    // Get all metadata
+    const metaResult = await client.execute({
+      sql: 'SELECT meta_key, meta_value FROM shows_usermeta WHERE user_id = ?',
+      args: [id]
+    });
+
+    // Convert metadata to object
+    const meta = {};
+    if (metaResult.rows) {
+      metaResult.rows.forEach(row => {
+        meta[row.meta_key] = row.meta_value;
+      });
+    }
+
+    const profile = {
+      ...userResult.rows[0],
+      _meta: meta
+    };
+
+    return NextResponse.json({ profile });
 
   } catch (error) {
     console.error('Get studio error:', error);
@@ -40,7 +60,7 @@ export async function GET(request, { params }) {
   }
 }
 
-// PUT - Update studio
+// PUT - Update studio with comprehensive profile data
 export async function PUT(request, { params }) {
   const cookieStore = cookies();
   const authenticated = cookieStore.get('authenticated');
@@ -52,14 +72,8 @@ export async function PUT(request, { params }) {
   try {
     const { id } = params;
     const body = await request.json();
-    const { username, display_name, email, status, avatar_url } = body;
-
-    if (!username || !email) {
-      return NextResponse.json({ error: 'Username and email are required' }, { status: 400 });
-    }
-
     const client = await getConnection();
-    
+
     // Check if studio exists
     const existingStudio = await client.execute({
       sql: 'SELECT id FROM shows_users WHERE id = ?',
@@ -70,35 +84,54 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ error: 'Studio not found' }, { status: 404 });
     }
 
-    // Check if username or email is taken by another studio
-    const duplicateCheck = await client.execute({
-      sql: 'SELECT id FROM shows_users WHERE (username = ? OR email = ?) AND id != ?',
-      args: [username, email, id]
+    // Update basic user fields
+    const userFields = ['username', 'display_name', 'email', 'status', 'avatar_url'];
+    const userUpdates = [];
+    const userArgs = [];
+
+    userFields.forEach(field => {
+      if (body[field] !== undefined) {
+        userUpdates.push(`${field} = ?`);
+        userArgs.push(body[field]);
+      }
     });
 
-    if (duplicateCheck.rows.length > 0) {
-      return NextResponse.json({ error: 'Username or email already exists' }, { status: 409 });
+    if (userUpdates.length > 0) {
+      userArgs.push(id);
+      await client.execute({
+        sql: `UPDATE shows_users SET ${userUpdates.join(', ')} WHERE id = ?`,
+        args: userArgs
+      });
     }
 
-    // Update studio
-    await client.execute({
-      sql: `
-        UPDATE shows_users 
-        SET username = ?, display_name = ?, email = ?, status = ?, avatar_url = ?
-        WHERE id = ?
-      `,
-      args: [username, display_name || username, email, status, avatar_url, id]
-    });
+    // Update metadata fields
+    if (body.meta && typeof body.meta === 'object') {
+      for (const [key, value] of Object.entries(body.meta)) {
+        // Check if meta key already exists
+        const existingMeta = await client.execute({
+          sql: 'SELECT id FROM shows_usermeta WHERE user_id = ? AND meta_key = ?',
+          args: [id, key]
+        });
 
-    // Get updated studio
-    const updatedStudio = await client.execute({
-      sql: 'SELECT * FROM shows_users WHERE id = ?',
-      args: [id]
-    });
+        if (existingMeta.rows && existingMeta.rows.length > 0) {
+          // Update existing meta
+          await client.execute({
+            sql: 'UPDATE shows_usermeta SET meta_value = ? WHERE user_id = ? AND meta_key = ?',
+            args: [value || '', id, key]
+          });
+        } else {
+          // Insert new meta
+          await client.execute({
+            sql: 'INSERT INTO shows_usermeta (user_id, meta_key, meta_value) VALUES (?, ?, ?)',
+            args: [id, key, value || '']
+          });
+        }
+      }
+    }
 
     return NextResponse.json({ 
-      message: 'Studio updated successfully',
-      studio: updatedStudio.rows[0]
+      success: true,
+      message: 'Studio profile updated successfully'
     });
 
   } catch (error) {
