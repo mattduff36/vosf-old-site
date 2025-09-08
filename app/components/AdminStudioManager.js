@@ -210,12 +210,32 @@ export default function AdminStudioManager() {
           <h1 className="text-2xl font-bold text-gray-900">⚙️ Studio Management</h1>
           <p className="text-gray-600">Manage studio profiles, bulk operations, and user data</p>
         </div>
-        <button
-          onClick={handleCreateStudio}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          ➕ Add New Studio
-        </button>
+        <div className="flex items-center space-x-3">
+          <a
+            href="/dashboard/query"
+            className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+            title="Custom Queries"
+          >
+            <span className="mr-2">💻</span>
+            <span className="hidden sm:inline">SQL Query</span>
+          </a>
+          <a
+            href="/dashboard/browse"
+            className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+            title="Raw Data"
+          >
+            <span className="mr-2">📋</span>
+            <span className="hidden sm:inline">Browse Tables</span>
+          </a>
+          <a
+            href="/dashboard/schema"
+            className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+            title="Database Structure"
+          >
+            <span className="mr-2">🗂️</span>
+            <span className="hidden sm:inline">Schema</span>
+          </a>
+        </div>
       </div>
 
       {/* Statistics Cards */}
@@ -251,20 +271,33 @@ export default function AdminStudioManager() {
       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
+            {/* Left side - Select All checkbox */}
+            <div className="flex items-center">
+              {studios.length > 0 && (
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={selectedStudios.length === studios.length}
+                    onChange={(e) => handleSelectAll(e.target.checked)}
+                    className="rounded border-gray-300"
+                  />
+                  <span className="text-sm text-gray-600">Select All</span>
+                </label>
+              )}
+            </div>
+
+            {/* Center - Studios title */}
             <h2 className="text-lg font-semibold text-gray-900">
               Studios ({pagination.total || 0})
             </h2>
-            {studios.length > 0 && (
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={selectedStudios.length === studios.length}
-                  onChange={(e) => handleSelectAll(e.target.checked)}
-                  className="rounded border-gray-300"
-                />
-                <span className="text-sm text-gray-600">Select All</span>
-              </label>
-            )}
+
+            {/* Right side - Add New Studio button */}
+            <button
+              onClick={handleCreateStudio}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              ➕ Add New Studio
+            </button>
           </div>
         </div>
 

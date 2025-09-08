@@ -46,13 +46,7 @@ export default function SchemaViewer() {
     try {
       setLoading(true);
       setError('');
-      const response = await fetch('/api/database/schema', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ table: selectedTable }),
-      });
+      const response = await fetch(`/api/database/schema?table=${encodeURIComponent(selectedTable)}`);
 
       if (response.status === 401) {
         router.push('/');
@@ -193,21 +187,21 @@ export default function SchemaViewer() {
                     <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <span className="mr-2">{getTypeIcon(column.type)}</span>
+                          <span className="mr-2">{getTypeIcon(column.DATA_TYPE)}</span>
                           <div>
                             <div className="text-sm font-medium text-gray-900">
-                              {column.name}
+                              {column.COLUMN_NAME}
                             </div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTypeColor(column.type)}`}>
-                          {column.type}
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTypeColor(column.DATA_TYPE)}`}>
+                          {column.DATA_TYPE}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {column.notnull === 0 ? (
+                        {column.IS_NULLABLE === 'YES' ? (
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                             ✓ Yes
                           </span>
@@ -218,16 +212,16 @@ export default function SchemaViewer() {
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {column.dflt_value !== null ? (
+                        {column.COLUMN_DEFAULT !== null ? (
                           <code className="bg-gray-100 px-2 py-1 rounded text-xs">
-                            {column.dflt_value}
+                            {column.COLUMN_DEFAULT}
                           </code>
                         ) : (
                           <span className="text-gray-400 italic">None</span>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {column.pk === 1 ? (
+                        {column.COLUMN_KEY === 'PRI' ? (
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                             🔑 Yes
                           </span>

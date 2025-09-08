@@ -48,17 +48,8 @@ export default function BrowseTables() {
     try {
       setLoading(true);
       setError('');
-      const response = await fetch('/api/database/browse', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          table: selectedTable,
-          page,
-          limit
-        }),
-      });
+      const offset = (page - 1) * limit;
+      const response = await fetch(`/api/database/browse?table=${encodeURIComponent(selectedTable)}&limit=${limit}&offset=${offset}`);
 
       if (response.status === 401) {
         router.push('/');

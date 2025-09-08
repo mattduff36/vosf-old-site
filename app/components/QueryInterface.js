@@ -133,17 +133,17 @@ export default function QueryInterface() {
           <div className="p-4 border-b border-gray-200">
             <h3 className="text-lg font-medium text-gray-900">Query Results</h3>
             <p className="text-sm text-gray-500 mt-1">
-              {queryResults.results?.length || 0} rows returned
+              {queryResults.data?.length || 0} rows returned
               {queryResults.executionTime && ` in ${queryResults.executionTime}ms`}
             </p>
           </div>
           
-          {queryResults.results && queryResults.results.length > 0 ? (
+          {queryResults.data && queryResults.data.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    {Object.keys(queryResults.results[0]).map((column) => (
+                    {Object.keys(queryResults.data[0]).map((column) => (
                       <th
                         key={column}
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -154,7 +154,7 @@ export default function QueryInterface() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {queryResults.results.map((row, index) => (
+                  {queryResults.data.map((row, index) => (
                     <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                       {Object.values(row).map((value, cellIndex) => (
                         <td key={cellIndex} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
