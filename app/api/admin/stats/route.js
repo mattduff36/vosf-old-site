@@ -53,7 +53,7 @@ export async function GET() {
         SELECT COUNT(*) as count 
         FROM users 
         WHERE COALESCE(status,'') <> 'stub'
-        AND joined >= datetime('now', '-30 days')
+        AND created_at >= datetime('now', '-30 days')
       `),
       
       // Profile completeness (studios with key fields filled)
@@ -64,7 +64,7 @@ export async function GET() {
         WHERE COALESCE(u.status,'') <> 'stub'
         AND p.about IS NOT NULL AND p.about != ''
         AND p.phone IS NOT NULL AND p.phone != ''
-        AND p.email IS NOT NULL AND p.email != ''
+        AND u.email IS NOT NULL AND u.email != ''
       `),
       
       // Studios with rates information
