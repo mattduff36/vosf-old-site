@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { executeQuery } from '../../../lib/database';
+import { listContacts, getConnection } from '../../../lib/database';
 import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
@@ -17,81 +17,42 @@ export async function GET(request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit')) || 50;
+    const limit = parseInt(searchParams.get('limit')) || 20;
     const offset = parseInt(searchParams.get('offset')) || 0;
 
-    // Get network statistics
-    const [
-      totalConnections,
-      activeConnections,
-      pendingConnections,
-      topConnectedStudios,
-      recentConnections
-    ] = await Promise.all([
-      // Total connections
-      executeQuery('SELECT COUNT(*) as count FROM shows_contacts'),
-      
-      // Active connections (accepted = 1)
-      executeQuery('SELECT COUNT(*) as count FROM shows_contacts WHERE accepted = 1'),
-      
-      // Pending connections (accepted = 0)
-      executeQuery('SELECT COUNT(*) as count FROM shows_contacts WHERE accepted = 0'),
-      
-      // Top connected studios
-      executeQuery(`
-        SELECT 
-          u.username,
-          u.display_name,
-          u.email,
-          COUNT(c.id) as connection_count
-        FROM shows_users u
-        LEFT JOIN shows_contacts c ON (u.id = c.user1 OR u.id = c.user2)
-        WHERE c.accepted = 1
-        GROUP BY u.id, u.username, u.display_name, u.email
-        HAVING connection_count > 0
-        ORDER BY connection_count DESC
-        LIMIT 10
-      `),
-      
-      // Recent connections with studio details
-      executeQuery(`
-        SELECT 
-          c.id,
-          c.accepted,
-          c.user1,
-          c.user2,
-          u1.username as studio1_username,
-          u1.display_name as studio1_name,
-          u1.email as studio1_email,
-          u2.username as studio2_username,
-          u2.display_name as studio2_name,
-          u2.email as studio2_email
-        FROM shows_contacts c
-        JOIN shows_users u1 ON c.user1 = u1.id
-        JOIN shows_users u2 ON c.user2 = u2.id
-        ORDER BY c.id DESC
-        LIMIT ? OFFSET ?
-      `, [limit, offset])
+    // Get contacts using new schema
+    const contactsData = await listContacts({ limit, offset });
+    
+    // Get additional network statistics
+    const db = await getConnection();
+    const [totalConnections] = await Promise.all([
+      db.execute('SELECT COUNT(*) as c FROM contacts')
     ]);
 
-    // Get total count for pagination
-    const totalResult = await executeQuery('SELECT COUNT(*) as total FROM shows_contacts');
-    const total = totalResult[0]?.total || 0;
+    // Format connections for compatibility with existing frontend
+    const formattedConnections = contactsData.contacts.map(contact => ({
+      id: contact.id,
+      accepted: 1, // All contacts are considered connected in new schema
+      studio1_username: contact.name || 'Unknown',
+      studio1_name: contact.name || 'Unknown',
+      studio1_email: contact.email || '',
+      studio2_username: 'VOSF Network',
+      studio2_name: 'VOSF Network',
+      studio2_email: '',
+      message: contact.message || '',
+      phone: contact.phone || '',
+      created_at: contact.created_at
+    }));
 
     const networkData = {
       statistics: {
-        total: totalConnections[0]?.count || 0,
-        active: activeConnections[0]?.count || 0,
-        pending: pendingConnections[0]?.count || 0
+        total: Number(totalConnections.rows[0]?.c || 0),
+        active: Number(totalConnections.rows[0]?.c || 0), // All connections are active
+        pending: 0 // No pending concept in new schema
       },
-      topStudios: topConnectedStudios || [],
-      connections: recentConnections || [],
-      pagination: {
-        total,
-        limit,
-        offset,
-        hasMore: offset + limit < total
-      }
+      topStudios: [], // Could be implemented later if needed
+      connections: formattedConnections,
+      pagination: contactsData.pagination
     };
 
     return NextResponse.json(networkData);

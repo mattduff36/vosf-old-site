@@ -34,7 +34,7 @@
 
 ## Tasks
 
-- [ ] 1.0 Update Database Layer and Core Utilities
+- [x] 1.0 Update Database Layer and Core Utilities
   - [x] 1.1 Update database.js with new Turso schema utility functions (studiosCountSql, recentConnectionsSql, analyticsSql)
   - [x] 1.2 Add getDashboardStats() function using new table structure
   - [x] 1.3 Add getRecentConnections() function reading from contacts table
@@ -42,14 +42,14 @@
   - [x] 1.5 Add utility functions for venues (poi table) and FAQ (faq table with sort_order)
   - [x] 1.6 Update existing query functions to use new schema (users, profile, contacts, poi, faq)
 
-- [ ] 2.0 Migrate API Routes to New Schema
-  - [ ] 2.1 Update /api/vosf/dashboard/route.js to use new getDashboardStats() and getRecentConnections()
-  - [ ] 2.2 Update /api/vosf/analytics/route.js with new analytics calculations and user timeline queries
-  - [ ] 2.3 Update /api/vosf/studios/route.js to use listStudios() with proper filtering and stub exclusion
-  - [ ] 2.4 Update /api/vosf/studios/[id]/route.js for individual studio profiles using users+profile join
-  - [ ] 2.5 Update /api/vosf/network/route.js to read from contacts table with proper ordering
-  - [ ] 2.6 Update /api/vosf/venues/route.js to use poi table with lat/lon coordinate handling
-  - [ ] 2.7 Update /api/vosf/faq/route.js to use faq table with sort_order and proper ordering
+- [x] 2.0 Migrate API Routes to New Schema
+  - [x] 2.1 Update /api/vosf/dashboard/route.js to use new getDashboardStats() and getRecentConnections()
+  - [x] 2.2 Update /api/vosf/analytics/route.js with new analytics calculations and user timeline queries
+  - [x] 2.3 Update /api/vosf/studios/route.js to use listStudios() with proper filtering and stub exclusion
+  - [x] 2.4 Update /api/vosf/studios/[id]/route.js for individual studio profiles using users+profile join
+  - [x] 2.5 Update /api/vosf/network/route.js to read from contacts table with proper ordering
+  - [x] 2.6 Update /api/vosf/venues/route.js to use poi table with lat/lon coordinate handling
+  - [x] 2.7 Update /api/vosf/faq/route.js to use faq table with sort_order and proper ordering
 
 - [ ] 3.0 Add Comprehensive CRUD Operations
   - [ ] 3.1 Create /api/admin/contacts/route.js for managing connections/partnerships

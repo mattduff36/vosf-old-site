@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { executeQuery } from '../../../lib/database';
+import { listStudios, getConnection } from '../../../lib/database';
 import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
@@ -18,61 +18,30 @@ export async function GET(request) {
 
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || '';
-    const status = searchParams.get('status') || '';
+    const hasCoords = searchParams.get('hasCoords') === 'true';
     const limit = parseInt(searchParams.get('limit')) || 50;
     const offset = parseInt(searchParams.get('offset')) || 0;
 
-    // Build query with filters
-    let query = `
-      SELECT 
-        id,
-        username,
-        display_name,
-        email,
-        status,
-        joined
-      FROM shows_users
-      WHERE 1=1
-    `;
-    
-    const params = [];
+    // Use the new listStudios function with proper filtering
+    const allStudios = await listStudios({ 
+      q: search || undefined, 
+      hasCoords: hasCoords || undefined 
+    });
 
-    if (search) {
-      query += ` AND (username LIKE ? OR display_name LIKE ? OR email LIKE ?)`;
-      const searchPattern = `%${search}%`;
-      params.push(searchPattern, searchPattern, searchPattern);
-    }
+    // Apply pagination
+    const total = allStudios.length;
+    const studios = allStudios.slice(offset, offset + limit);
 
-    if (status !== '') {
-      query += ` AND status = ?`;
-      params.push(parseInt(status));
-    }
-
-    query += ` ORDER BY joined DESC LIMIT ? OFFSET ?`;
-    params.push(limit, offset);
-
-    const studios = await executeQuery(query, params);
-
-    // Get total count for pagination
-    let countQuery = 'SELECT COUNT(*) as total FROM shows_users WHERE 1=1';
-    const countParams = [];
-
-    if (search) {
-      countQuery += ` AND (username LIKE ? OR display_name LIKE ? OR email LIKE ?)`;
-      const searchPattern = `%${search}%`;
-      countParams.push(searchPattern, searchPattern, searchPattern);
-    }
-
-    if (status !== '') {
-      countQuery += ` AND status = ?`;
-      countParams.push(parseInt(status));
-    }
-
-    const totalResult = await executeQuery(countQuery, countParams);
-    const total = totalResult[0]?.total || 0;
+    // Add additional fields for compatibility
+    const enhancedStudios = studios.map(studio => ({
+      ...studio,
+      display_name: studio.name,
+      status: 'active', // All non-stub users are active in new schema
+      joined: null // Will be populated from users table if needed
+    }));
 
     return NextResponse.json({
-      studios: studios || [],
+      studios: enhancedStudios,
       pagination: {
         total,
         limit,

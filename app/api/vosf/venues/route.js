@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { executeQuery } from '../../../lib/database';
+import { listVenues, getConnection } from '../../../lib/database';
 import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
@@ -19,44 +19,35 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || '';
 
-    // Get venues with optional search
-    let query = `
-      SELECT 
-        id,
-        name,
-        desc,
-        lat,
-        lon
-      FROM poi_example
-      WHERE 1=1
-    `;
-    
-    const params = [];
-
-    if (search) {
-      query += ` AND (name LIKE ? OR desc LIKE ?)`;
-      const searchPattern = `%${search}%`;
-      params.push(searchPattern, searchPattern);
-    }
-
-    query += ` ORDER BY name`;
-
-    const venues = await executeQuery(query, params);
+    // Get venues using new schema
+    const venues = await listVenues({ search: search || undefined });
 
     // Get venue statistics
-    const [totalCount, avgLat, avgLon] = await Promise.all([
-      executeQuery('SELECT COUNT(*) as count FROM poi_example'),
-      executeQuery('SELECT AVG(CAST(lat AS REAL)) as avg_lat FROM poi_example WHERE lat IS NOT NULL AND lat != ""'),
-      executeQuery('SELECT AVG(CAST(lon AS REAL)) as avg_lon FROM poi_example WHERE lon IS NOT NULL AND lon != ""')
+    const db = await getConnection();
+    const [totalCount, avgCoords] = await Promise.all([
+      db.execute('SELECT COUNT(*) as c FROM poi'),
+      db.execute(`
+        SELECT 
+          AVG(CAST(lat AS REAL)) as avg_lat, 
+          AVG(CAST(lon AS REAL)) as avg_lon 
+        FROM poi 
+        WHERE lat IS NOT NULL AND lon IS NOT NULL
+      `)
     ]);
 
+    // Format venues for compatibility (desc -> description)
+    const formattedVenues = venues.map(venue => ({
+      ...venue,
+      desc: venue.description // Map description to desc for frontend compatibility
+    }));
+
     const venueData = {
-      venues: venues || [],
+      venues: formattedVenues,
       statistics: {
-        total: totalCount[0]?.count || 0,
+        total: Number(totalCount.rows[0]?.c || 0),
         center: {
-          lat: avgLat[0]?.avg_lat || 51.5074, // Default to London
-          lon: avgLon[0]?.avg_lon || -0.1278
+          lat: avgCoords.rows[0]?.avg_lat || 51.5074, // Default to London
+          lon: avgCoords.rows[0]?.avg_lon || -0.1278
         }
       }
     };

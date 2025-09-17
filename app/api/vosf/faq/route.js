@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { executeQuery } from '../../../lib/database';
+import { listFAQ, getConnection } from '../../../lib/database';
 import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
@@ -19,35 +19,17 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || '';
 
-    // Get FAQs with optional search
-    let query = `
-      SELECT 
-        id,
-        username,
-        phone
-      FROM faq_signuser
-      WHERE 1=1
-    `;
-    
-    const params = [];
-
-    if (search) {
-      query += ` AND (username LIKE ? OR phone LIKE ?)`;
-      const searchPattern = `%${search}%`;
-      params.push(searchPattern, searchPattern);
-    }
-
-    query += ` ORDER BY username`;
-
-    const faqs = await executeQuery(query, params);
+    // Get FAQs using new schema
+    const faqs = await listFAQ({ search: search || undefined });
 
     // Get FAQ statistics
-    const totalCount = await executeQuery('SELECT COUNT(*) as count FROM faq_signuser');
+    const db = await getConnection();
+    const totalCount = await db.execute('SELECT COUNT(*) as c FROM faq');
 
     const faqData = {
       faqs: faqs || [],
       statistics: {
-        total: totalCount[0]?.count || 0
+        total: Number(totalCount.rows[0]?.c || 0)
       }
     };
 

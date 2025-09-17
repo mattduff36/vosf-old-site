@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { executeQuery } from '../../../lib/database';
+import { getConnection, analyticsSql, studiosCountSql } from '../../../lib/database';
 import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
@@ -16,116 +16,101 @@ export async function GET() {
       );
     }
 
-    // Get comprehensive analytics data
+    // Get comprehensive analytics data using new schema
+    const db = await getConnection();
     const [
-      userStats,
-      connectionStats,
-      venueStats,
-      faqStats,
+      studiosCount,
+      connectionsCount,
+      venuesTotal,
+      venuesWithCoords,
+      faqTotal,
+      firstUser,
+      latestUser,
       topConnectedStudios,
-      usersByStatus,
-      connectionsByStatus,
       recentActivity
     ] = await Promise.all([
-      // User statistics
-      executeQuery(`
-        SELECT 
-          COUNT(*) as total_users,
-          COUNT(CASE WHEN status = 1 THEN 1 END) as active_users,
-          COUNT(CASE WHEN status = 0 THEN 1 END) as pending_users,
-          MIN(joined) as first_user_date,
-          MAX(joined) as latest_user_date
-        FROM shows_users
-      `),
+      // Studios count (users with profiles, excluding stubs)
+      db.execute(studiosCountSql),
       
       // Connection statistics
-      executeQuery(`
-        SELECT 
-          COUNT(*) as total_connections,
-          COUNT(CASE WHEN accepted = 1 THEN 1 END) as active_connections,
-          COUNT(CASE WHEN accepted = 0 THEN 1 END) as pending_connections
-        FROM shows_contacts
-      `),
+      db.execute(analyticsSql.connections),
       
       // Venue statistics
-      executeQuery(`
-        SELECT 
-          COUNT(*) as total_venues,
-          COUNT(CASE WHEN lat IS NOT NULL AND lat != '' THEN 1 END) as venues_with_coords
-        FROM poi_example
-      `),
+      db.execute(analyticsSql.venuesTotal),
+      db.execute(analyticsSql.venuesWithCoords),
       
       // FAQ statistics
-      executeQuery(`
-        SELECT 
-          COUNT(*) as total_faqs,
-          COUNT(CASE WHEN phone IS NOT NULL AND phone != '' THEN 1 END) as answered_faqs
-        FROM faq_signuser
-      `),
+      db.execute(analyticsSql.faqTotal),
       
-      // Top connected studios
-      executeQuery(`
+      // User timeline
+      db.execute(analyticsSql.firstUser),
+      db.execute(analyticsSql.latestUser),
+      
+      // Top connected studios (based on contacts table)
+      db.execute(`
         SELECT 
           u.username,
-          u.display_name,
-          u.status,
-          COUNT(c.id) as connection_count
-        FROM shows_users u
-        LEFT JOIN shows_contacts c ON (u.id = c.user1 OR u.id = c.user2)
-        WHERE c.accepted = 1
-        GROUP BY u.id, u.username, u.display_name, u.status
+          u.displayname,
+          COALESCE(TRIM(p.first_name||' '||p.last_name), u.displayname, u.username) as display_name,
+          COUNT(DISTINCT c.id) as connection_count
+        FROM users u
+        JOIN profile p ON p.user_id = u.id
+        LEFT JOIN contacts c ON (c.name LIKE '%'||u.username||'%' OR c.email = u.email)
+        WHERE COALESCE(u.status,'') <> 'stub'
+        GROUP BY u.id, u.username, u.displayname, p.first_name, p.last_name
         HAVING connection_count > 0
         ORDER BY connection_count DESC
         LIMIT 10
       `),
       
-      // Users by status distribution
-      executeQuery(`
-        SELECT 
-          status,
-          COUNT(*) as count
-        FROM shows_users
-        GROUP BY status
-        ORDER BY status
-      `),
-      
-      // Connections by status
-      executeQuery(`
-        SELECT 
-          accepted,
-          COUNT(*) as count
-        FROM shows_contacts
-        GROUP BY accepted
-        ORDER BY accepted
-      `),
-      
-      // Recent activity (latest users and connections)
-      executeQuery(`
+      // Recent activity (latest users)
+      db.execute(`
         SELECT 
           'user' as type,
-          username as name,
-          joined as date,
-          status
-        FROM shows_users
-        WHERE joined IS NOT NULL
-        ORDER BY joined DESC
+          COALESCE(TRIM(p.first_name||' '||p.last_name), u.displayname, u.username) as name,
+          u.created_at as date,
+          u.status
+        FROM users u
+        JOIN profile p ON p.user_id = u.id
+        WHERE u.created_at IS NOT NULL AND COALESCE(u.status,'') <> 'stub'
+        ORDER BY u.created_at DESC
         LIMIT 10
       `)
     ]);
 
     const analyticsData = {
       overview: {
-        users: userStats[0] || {},
-        connections: connectionStats[0] || {},
-        venues: venueStats[0] || {},
-        faqs: faqStats[0] || {}
+        users: {
+          total_users: Number(studiosCount.rows[0]?.c || 0),
+          active_users: Number(studiosCount.rows[0]?.c || 0), // All non-stub users are active
+          pending_users: 0, // No pending concept in new schema
+          first_user_date: firstUser.rows[0]?.d || null,
+          latest_user_date: latestUser.rows[0]?.d || null
+        },
+        connections: {
+          total_connections: Number(connectionsCount.rows[0]?.c || 0),
+          active_connections: Number(connectionsCount.rows[0]?.c || 0), // All connections are active
+          pending_connections: 0 // No pending concept in new schema
+        },
+        venues: {
+          total_venues: Number(venuesTotal.rows[0]?.c || 0),
+          venues_with_coords: Number(venuesWithCoords.rows[0]?.c || 0)
+        },
+        faqs: {
+          total_faqs: Number(faqTotal.rows[0]?.c || 0),
+          answered_faqs: Number(faqTotal.rows[0]?.c || 0) // All FAQs are considered answered
+        }
       },
-      topStudios: topConnectedStudios || [],
+      topStudios: topConnectedStudios.rows || [],
       distributions: {
-        usersByStatus: usersByStatus || [],
-        connectionsByStatus: connectionsByStatus || []
+        usersByStatus: [
+          { status: 'active', count: Number(studiosCount.rows[0]?.c || 0) }
+        ],
+        connectionsByStatus: [
+          { accepted: 1, count: Number(connectionsCount.rows[0]?.c || 0) }
+        ]
       },
-      recentActivity: recentActivity || []
+      recentActivity: recentActivity.rows || []
     };
 
     return NextResponse.json(analyticsData);

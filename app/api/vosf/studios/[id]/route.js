@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { getConnection } from '../../../../lib/database.js';
+import { getStudioById, getConnection } from '../../../../lib/database.js';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,161 +17,137 @@ export async function GET(request, { params }) {
     }
 
     const { id } = params;
-    const client = await getConnection();
 
-    // Get basic user data
-    const userResult = await client.execute({
-      sql: `
-        SELECT 
-          id, username, display_name, email, status, joined, 
-          role_id, avatar_url
-        FROM shows_users 
-        WHERE id = ?
-      `,
-      args: [id]
-    });
+    // Get studio profile using new schema
+    const studioData = await getStudioById(id);
 
-    if (!userResult.rows || userResult.rows.length === 0) {
+    if (!studioData) {
       return NextResponse.json(
         { error: 'Studio not found' },
         { status: 404 }
       );
     }
 
-    const user = userResult.rows[0];
-
-    // Get extended profile data from usermeta
-    const metaResult = await client.execute({
-      sql: `
-        SELECT meta_key, meta_value 
-        FROM shows_usermeta 
-        WHERE user_id = ?
-      `,
-      args: [id]
-    });
-
-    // Get studio gallery images
-    const galleryResult = await client.execute({
-      sql: `
-        SELECT image_type, image_filename, cloudinary_url, is_primary, display_order
-        FROM studio_gallery 
-        WHERE user_id = ?
-        ORDER BY is_primary DESC, display_order ASC
-      `,
-      args: [id]
-    });
-
-    // Convert usermeta to object
-    const meta = {};
-    if (metaResult.rows) {
-      metaResult.rows.forEach(row => {
-        meta[row.meta_key] = row.meta_value;
-      });
-    }
-
-    // Process gallery images
-    const gallery = {
-      avatar: null,
-      images: []
-    };
+    // Get additional data that might exist in legacy tables
+    const client = await getConnection();
     
-    if (galleryResult.rows) {
-      galleryResult.rows.forEach(row => {
-        if (row.image_type === 'avatar' && row.is_primary) {
-          gallery.avatar = {
-            filename: row.image_filename,
-            url: row.cloudinary_url,
-            order: row.display_order
-          };
-        } else if (row.image_type === 'gallery') {
-          gallery.images.push({
-            filename: row.image_filename,
-            url: row.cloudinary_url,
-            order: row.display_order
-          });
-        }
+    // Check for studio gallery images (if table exists)
+    let gallery = { avatar: null, images: [] };
+    try {
+      const galleryResult = await client.execute({
+        sql: `
+          SELECT image_type, image_filename, cloudinary_url, is_primary, display_order
+          FROM studio_gallery 
+          WHERE user_id = ?
+          ORDER BY is_primary DESC, display_order ASC
+        `,
+        args: [id]
       });
+
+      if (galleryResult.rows) {
+        galleryResult.rows.forEach(row => {
+          if (row.image_type === 'avatar' && row.is_primary) {
+            gallery.avatar = {
+              filename: row.image_filename,
+              url: row.cloudinary_url,
+              order: row.display_order
+            };
+          } else if (row.image_type === 'gallery') {
+            gallery.images.push({
+              filename: row.image_filename,
+              url: row.cloudinary_url,
+              order: row.display_order
+            });
+          }
+        });
+      }
+    } catch (error) {
+      // Studio gallery table might not exist, continue without it
+      console.warn('Studio gallery table not found:', error.message);
     }
 
-    // Build comprehensive profile
+    // Build comprehensive profile using new schema data
     const profile = {
-      ...user,
-      // Basic profile info
-      first_name: meta.first_name || '',
-      last_name: meta.last_name || '',
-      about: meta.about || '',
-      shortabout: meta.shortabout || '',
-      category: meta.category || '',
-      location: meta.location || '',
-      phone: meta.phone || '',
-      url: meta.url || '',
+      // Basic user info
+      id: studioData.id,
+      username: studioData.username,
+      display_name: studioData.displayname,
+      email: studioData.email,
+      status: studioData.status,
+      joined: studioData.created_at,
       
-      // Social media
+      // Profile data from new schema
+      first_name: studioData.first_name || '',
+      last_name: studioData.last_name || '',
+      about: studioData.about || '',
+      location: studioData.location || '',
+      address: studioData.address || '',
+      phone: studioData.phone || '',
+      url: studioData.url || '',
+      latitude: studioData.latitude,
+      longitude: studioData.longitude,
+      
+      // Social media (from profile table)
       social: {
-        twitter: meta.twitter || '',
-        facebook: meta.facebook || '',
-        youtube: meta.youtubepage || '',
-        linkedin: meta.linkedin || '',
-        instagram: meta.instagram || '',
-        soundcloud: meta.soundcloud || '',
-        vimeo: meta.vimeopage || ''
+        instagram: studioData.instagram || '',
+        youtube: studioData.youtubepage || '',
+        twitter: '',
+        facebook: '',
+        linkedin: '',
+        soundcloud: '',
+        vimeo: ''
       },
       
-      // Media links
+      // Legacy compatibility fields
+      shortabout: '',
+      category: '',
       media: {
-        youtube: meta.youtube || '',
-        youtube2: meta.youtube2 || '',
-        vimeo: meta.vimeo || '',
-        vimeo2: meta.vimeo2 || '',
-        soundcloudlink: meta.soundcloudlink || '',
-        soundcloudlink2: meta.soundcloudlink2 || '',
-        soundcloudlink3: meta.soundcloudlink3 || '',
-        soundcloudlink4: meta.soundcloudlink4 || ''
+        youtube: studioData.youtubepage || '',
+        youtube2: '',
+        vimeo: '',
+        vimeo2: '',
+        soundcloudlink: '',
+        soundcloudlink2: '',
+        soundcloudlink3: '',
+        soundcloudlink4: ''
       },
       
-      // Rates
       rates: {
-        rate1: meta.rates1 || '',
-        rate2: meta.rates2 || '',
-        rate3: meta.rates3 || '',
-        showrates: meta.showrates === '1'
+        rate1: '',
+        rate2: '',
+        rate3: '',
+        showrates: false
       },
       
-      // Connections
       connections: {
-        connection1: meta.connection1 === '1',
-        connection2: meta.connection2 === '1',
-        connection3: meta.connection3 === '1',
-        connection4: meta.connection4 === '1',
-        connection5: meta.connection5 === '1',
-        connection6: meta.connection6 === '1',
-        connection7: meta.connection7 === '1',
-        connection8: meta.connection8 === '1'
+        connection1: false,
+        connection2: false,
+        connection3: false,
+        connection4: false,
+        connection5: false,
+        connection6: false,
+        connection7: false,
+        connection8: false
       },
       
-      // Display preferences
       display: {
-        twittershow: meta.twittershow === '1',
-        facebookshow: meta.facebookshow === '1',
-        youtubepageshow: meta.youtubepageshow === '1',
-        linkedinshow: meta.linkedinshow === '1',
-        instagramshow: meta.instagramshow === '1',
-        soundcloudshow: meta.soundcloudshow === '1',
-        vimeopageshow: meta.vimeopageshow === '1'
+        twittershow: false,
+        facebookshow: false,
+        youtubepageshow: !!studioData.youtubepage,
+        linkedinshow: false,
+        instagramshow: !!studioData.instagram,
+        soundcloudshow: false,
+        vimeopageshow: false
       },
       
-      // Additional metadata
-      gender: meta.gender || '',
-      birthday: meta.birthday || '',
-      locale: meta.locale || 'en',
-      last_login: meta.last_login || null,
-      last_login_ip: meta.last_login_ip || null,
+      gender: '',
+      birthday: '',
+      locale: 'en',
+      last_login: null,
+      last_login_ip: null,
       
       // Gallery images
-      gallery: gallery,
-      
-      // Raw meta for debugging
-      _meta: meta
+      gallery: gallery
     };
 
     return NextResponse.json({ profile });
