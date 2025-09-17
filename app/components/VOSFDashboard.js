@@ -116,27 +116,27 @@ export default function VOSFDashboard() {
           </Link>
         </div>
 
-        {/* Recent Activity */}
+        {/* Quick Management */}
         <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg border border-purple-200 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-purple-900">📈 Recent Activity</h3>
+            <h3 className="text-lg font-bold text-purple-900">⚡ Quick Access</h3>
             <div className="text-purple-600">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
           </div>
           <div className="text-3xl font-bold text-purple-700 mb-1">
-            {dashboardData.connections.recent?.length || 0}
+            Admin
           </div>
           <p className="text-purple-600 text-sm mb-3">
-            Recent connections
+            Studio management tools
           </p>
           <Link 
             href="/dashboard/admin"
             className="inline-flex items-center text-purple-800 hover:text-purple-900 font-medium text-sm"
           >
-            View Activity →
+            Manage Studios →
           </Link>
         </div>
 
@@ -165,48 +165,6 @@ export default function VOSFDashboard() {
         </div>
       </div>
 
-      {/* Recent Activity */}
-      {dashboardData.connections.recent.length > 0 && (
-        <div className="bg-white border border-gray-200 rounded-lg">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-bold text-gray-900">🔗 Recent Studio Connections</h2>
-            <p className="text-gray-600 mt-1">Latest partnerships in the VOSF network</p>
-          </div>
-          <div className="divide-y divide-gray-200">
-            {dashboardData.connections.recent.map((connection, index) => (
-              <div key={connection.id || index} className="p-4 hover:bg-gray-50">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex-shrink-0">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <span className="text-green-600 font-medium text-sm">
-                          {(connection.studio1_name || connection.name || 'U').charAt(0).toUpperCase()}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="font-medium text-gray-900">{connection.studio1_name || connection.name}</span>
-                      <span className="text-gray-400">↔</span>
-                      <span className="font-medium text-gray-900">{connection.studio2_name || 'VOSF Network'}</span>
-                    </div>
-                  </div>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    ✓ Connected
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="p-4 bg-gray-50 text-center">
-            <Link 
-              href="/dashboard/network"
-              className="text-blue-600 hover:text-blue-700 font-medium text-sm"
-            >
-              View All Connections →
-            </Link>
-          </div>
-        </div>
-      )}
 
       {/* Quick Actions */}
       <div className="bg-gray-50 rounded-lg p-6">
