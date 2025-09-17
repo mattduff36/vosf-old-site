@@ -1,0 +1,5 @@
+"id","name","permissions"
+"1","Administrator","dashboard,add_users,list_users,edit_users,delete_users,message_users,manage_roles,manage_fields,manage_settings,moderate,"
+"2","User",""
+"4","Editor","dashboard,add_users,list_users,edit_users"
+"7","Paid",""

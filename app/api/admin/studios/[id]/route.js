@@ -109,15 +109,53 @@ export async function PUT(request, { params }) {
       });
     }
 
-    // Update profile fields
-    const profileFields = ['first_name', 'last_name', 'location', 'address', 'phone', 'url', 'instagram', 'youtubepage', 'about', 'latitude', 'longitude'];
+    // Update profile fields - comprehensive list
+    const profileFields = [
+      'first_name', 'last_name', 'location', 'address', 'phone', 'url', 'instagram', 
+      'youtubepage', 'about', 'latitude', 'longitude', 'shortabout', 'category',
+      'facebook', 'twitter', 'linkedin', 'soundcloud', 'vimeo', 'pinterest', 'tiktok',
+      'gender', 'birthday', 'rates1', 'rates2', 'rates3', 'homestudio', 'homestudio2',
+      'homestudio3', 'homestudio4', 'homestudio5', 'homestudio6', 'avatar_image',
+      'avatar_type', 'youtube2', 'vimeo2', 'soundcloudlink2', 'soundcloudlink3',
+      'soundcloudlink4', 'featureddate', 'lastupdated', 'locale', 'last_login', 'last_login_ip'
+    ];
+    
+    const booleanFields = [
+      'showrates', 'showphone', 'showemail', 'showaddress', 'showmap', 'showdirections',
+      'showshort', 'facebookshow', 'twittershow', 'instagramshow', 'linkedinshow',
+      'youtubepageshow', 'soundcloudshow', 'vimeopageshow', 'pinterestshow',
+      'verified', 'featured', 'crb', 'von'
+    ];
+    
+    const connectionFields = [];
+    for (let i = 1; i <= 15; i++) {
+      connectionFields.push(`connection${i}`);
+    }
+
     const profileUpdates = [];
     const profileArgs = [];
 
+    // Handle regular text fields
     profileFields.forEach(field => {
       if (body[field] !== undefined) {
         profileUpdates.push(`${field} = ?`);
-        profileArgs.push(body[field]);
+        profileArgs.push(body[field] || '');
+      }
+    });
+
+    // Handle boolean fields
+    booleanFields.forEach(field => {
+      if (body[field] !== undefined) {
+        profileUpdates.push(`${field} = ?`);
+        profileArgs.push(body[field] ? 1 : 0);
+      }
+    });
+
+    // Handle connection fields
+    connectionFields.forEach(field => {
+      if (body[field] !== undefined) {
+        profileUpdates.push(`${field} = ?`);
+        profileArgs.push(body[field] ? 1 : 0);
       }
     });
 

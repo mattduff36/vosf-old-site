@@ -617,3 +617,111 @@ export async function listContacts({ limit = 20, offset = 0 } = {}) {
     throw new Error('Failed to retrieve contacts list');
   }
 }
+
+// Extend profile table with comprehensive fields
+export async function extendProfileTable() {
+  try {
+    const db = await getConnection();
+    
+    const additionalFields = [
+      // Social Media
+      'ADD COLUMN facebook TEXT DEFAULT ""',
+      'ADD COLUMN twitter TEXT DEFAULT ""', 
+      'ADD COLUMN linkedin TEXT DEFAULT ""',
+      'ADD COLUMN soundcloud TEXT DEFAULT ""',
+      'ADD COLUMN vimeo TEXT DEFAULT ""',
+      'ADD COLUMN pinterest TEXT DEFAULT ""',
+      'ADD COLUMN tiktok TEXT DEFAULT ""',
+      
+      // Professional Details
+      'ADD COLUMN category TEXT DEFAULT ""',
+      'ADD COLUMN shortabout TEXT DEFAULT ""',
+      'ADD COLUMN gender TEXT DEFAULT ""',
+      'ADD COLUMN birthday TEXT DEFAULT ""',
+      
+      // Rates and Services
+      'ADD COLUMN rates1 TEXT DEFAULT ""',
+      'ADD COLUMN rates2 TEXT DEFAULT ""',
+      'ADD COLUMN rates3 TEXT DEFAULT ""',
+      'ADD COLUMN showrates BOOLEAN DEFAULT 0',
+      
+      // Studio Information
+      'ADD COLUMN homestudio TEXT DEFAULT ""',
+      'ADD COLUMN homestudio2 TEXT DEFAULT ""',
+      'ADD COLUMN homestudio3 TEXT DEFAULT ""',
+      'ADD COLUMN homestudio4 TEXT DEFAULT ""',
+      'ADD COLUMN homestudio5 TEXT DEFAULT ""',
+      'ADD COLUMN homestudio6 TEXT DEFAULT ""',
+      
+      // Connection Services (1-15)
+      'ADD COLUMN connection1 BOOLEAN DEFAULT 0',
+      'ADD COLUMN connection2 BOOLEAN DEFAULT 0',
+      'ADD COLUMN connection3 BOOLEAN DEFAULT 0',
+      'ADD COLUMN connection4 BOOLEAN DEFAULT 0',
+      'ADD COLUMN connection5 BOOLEAN DEFAULT 0',
+      'ADD COLUMN connection6 BOOLEAN DEFAULT 0',
+      'ADD COLUMN connection7 BOOLEAN DEFAULT 0',
+      'ADD COLUMN connection8 BOOLEAN DEFAULT 0',
+      'ADD COLUMN connection9 BOOLEAN DEFAULT 0',
+      'ADD COLUMN connection10 BOOLEAN DEFAULT 0',
+      'ADD COLUMN connection11 BOOLEAN DEFAULT 0',
+      'ADD COLUMN connection12 BOOLEAN DEFAULT 0',
+      'ADD COLUMN connection13 BOOLEAN DEFAULT 0',
+      'ADD COLUMN connection14 BOOLEAN DEFAULT 0',
+      'ADD COLUMN connection15 BOOLEAN DEFAULT 0',
+      
+      // Display Settings
+      'ADD COLUMN showphone BOOLEAN DEFAULT 1',
+      'ADD COLUMN showemail BOOLEAN DEFAULT 1',
+      'ADD COLUMN showaddress BOOLEAN DEFAULT 1',
+      'ADD COLUMN showmap BOOLEAN DEFAULT 1',
+      'ADD COLUMN showdirections BOOLEAN DEFAULT 1',
+      'ADD COLUMN showshort BOOLEAN DEFAULT 1',
+      'ADD COLUMN facebookshow BOOLEAN DEFAULT 0',
+      'ADD COLUMN twittershow BOOLEAN DEFAULT 0',
+      'ADD COLUMN instagramshow BOOLEAN DEFAULT 0',
+      'ADD COLUMN linkedinshow BOOLEAN DEFAULT 0',
+      'ADD COLUMN youtubepageshow BOOLEAN DEFAULT 0',
+      'ADD COLUMN soundcloudshow BOOLEAN DEFAULT 0',
+      'ADD COLUMN vimeopageshow BOOLEAN DEFAULT 0',
+      'ADD COLUMN pinterestshow BOOLEAN DEFAULT 0',
+      
+      // Media and Content
+      'ADD COLUMN avatar_image TEXT DEFAULT ""',
+      'ADD COLUMN avatar_type TEXT DEFAULT ""',
+      'ADD COLUMN youtube2 TEXT DEFAULT ""',
+      'ADD COLUMN vimeo2 TEXT DEFAULT ""',
+      'ADD COLUMN soundcloudlink2 TEXT DEFAULT ""',
+      'ADD COLUMN soundcloudlink3 TEXT DEFAULT ""',
+      'ADD COLUMN soundcloudlink4 TEXT DEFAULT ""',
+      
+      // Professional Status
+      'ADD COLUMN verified BOOLEAN DEFAULT 0',
+      'ADD COLUMN featured BOOLEAN DEFAULT 0',
+      'ADD COLUMN featureddate TEXT DEFAULT ""',
+      'ADD COLUMN crb BOOLEAN DEFAULT 0',
+      'ADD COLUMN von BOOLEAN DEFAULT 0',
+      
+      // System Fields
+      'ADD COLUMN lastupdated TEXT DEFAULT ""',
+      'ADD COLUMN locale TEXT DEFAULT "en"',
+      'ADD COLUMN last_login TEXT DEFAULT ""',
+      'ADD COLUMN last_login_ip TEXT DEFAULT ""'
+    ];
+
+    for (const field of additionalFields) {
+      try {
+        await db.execute(`ALTER TABLE profile ${field}`);
+      } catch (error) {
+        if (!error.message.includes('duplicate column name')) {
+          console.warn(`Warning adding field: ${error.message}`);
+        }
+      }
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Failed to extend profile table:', error);
+    throw new Error('Failed to extend profile table');
+  }
+}

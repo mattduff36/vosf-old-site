@@ -14,31 +14,13 @@ const navigationItems = [
     name: 'Studios',
     href: '/dashboard/studios',
     icon: '🎭',
-    description: 'Studio Directory'
-  },
-  {
-    name: 'Network',
-    href: '/dashboard/network',
-    icon: '🤝',
-    description: 'Studio Connections'
-  },
-  {
-    name: 'Venues',
-    href: '/dashboard/venues',
-    icon: '📍',
-    description: 'Recording Locations'
+    description: 'Studio Directory & Management'
   },
   {
     name: 'FAQ',
     href: '/dashboard/faq',
     icon: '❓',
     description: 'Knowledge Base'
-  },
-  {
-    name: 'Analytics',
-    href: '/dashboard/analytics',
-    icon: '📊',
-    description: 'Data Insights'
   },
   {
     name: 'Admin',
@@ -49,7 +31,8 @@ const navigationItems = [
       { name: 'Studios', href: '/dashboard/admin', description: 'Manage Studios' },
       { name: 'Contacts', href: '/dashboard/admin/contacts', description: 'Manage Contacts' },
       { name: 'Venues', href: '/dashboard/admin/venues', description: 'Manage Venues' },
-      { name: 'FAQ', href: '/dashboard/admin/faq', description: 'Manage FAQ' }
+      { name: 'FAQ', href: '/dashboard/admin/faq', description: 'Manage FAQ' },
+      { name: 'Migration', href: '/dashboard/admin/migrate', description: 'Migrate Profile Data' }
     ]
   }
 ];
