@@ -51,30 +51,30 @@ export default function AdminStatsCards() {
     {
       title: 'Total Studios',
       value: stats.totalStudios || 0,
-      icon: '🏢',
+      icon: '🎭',
       color: 'blue',
-      description: 'Registered studios'
+      description: 'Studio profiles in database'
     },
     {
-      title: 'Active Studios',
-      value: stats.activeStudios || 0,
+      title: 'Complete Profiles',
+      value: stats.profileCompleteness || 0,
       icon: '✅',
       color: 'green',
-      description: 'Currently active'
+      description: `${stats.completenessPercentage || 0}% with key info filled`
     },
     {
       title: 'With Avatars',
       value: stats.studiosWithAvatars || 0,
       icon: '🖼️',
       color: 'purple',
-      description: 'Have profile images'
+      description: `${stats.avatarPercentage || 0}% have profile images`
     },
     {
-      title: 'Recent Joins',
-      value: stats.recentJoins || 0,
-      icon: '📈',
+      title: 'With Rates',
+      value: stats.studiosWithRates || 0,
+      icon: '💰',
       color: 'orange',
-      description: 'Last 30 days'
+      description: `${stats.ratesPercentage || 0}% have pricing info`
     }
   ];
 

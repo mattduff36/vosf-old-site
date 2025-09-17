@@ -18,68 +18,88 @@ export async function GET() {
 
     const client = await getConnection();
 
-    // Get comprehensive statistics
+    // Get comprehensive statistics using new schema
     const [
       totalStudios,
-      activeStudios,
+      studiosWithProfiles,
       studiosWithAvatars,
       recentJoins,
-      statusBreakdown,
-      joinTrends
+      profileCompleteness,
+      studiosWithRates
     ] = await Promise.all([
-      // Total studios
-      client.execute('SELECT COUNT(*) as count FROM shows_users'),
+      // Total studios (users table)
+      client.execute(`SELECT COUNT(*) as count FROM users WHERE COALESCE(status,'') <> 'stub'`),
       
-      // Active studios
-      client.execute('SELECT COUNT(*) as count FROM shows_users WHERE status = 1'),
+      // Studios with profile data
+      client.execute(`
+        SELECT COUNT(*) as count 
+        FROM users u 
+        JOIN profile p ON u.id = p.user_id 
+        WHERE COALESCE(u.status,'') <> 'stub'
+        AND (p.about IS NOT NULL AND p.about != '')
+      `),
       
       // Studios with avatars
-      client.execute('SELECT COUNT(*) as count FROM shows_users WHERE avatar_url IS NOT NULL AND avatar_url != ""'),
+      client.execute(`
+        SELECT COUNT(*) as count 
+        FROM users u 
+        JOIN profile p ON u.id = p.user_id 
+        WHERE COALESCE(u.status,'') <> 'stub'
+        AND (p.avatar_image IS NOT NULL AND p.avatar_image != '')
+      `),
       
       // Recent joins (last 30 days)
       client.execute(`
         SELECT COUNT(*) as count 
-        FROM shows_users 
-        WHERE joined >= datetime('now', '-30 days')
+        FROM users 
+        WHERE COALESCE(status,'') <> 'stub'
+        AND joined >= datetime('now', '-30 days')
       `),
       
-      // Status breakdown
+      // Profile completeness (studios with key fields filled)
       client.execute(`
-        SELECT 
-          status,
-          COUNT(*) as count
-        FROM shows_users 
-        GROUP BY status
+        SELECT COUNT(*) as count 
+        FROM users u 
+        JOIN profile p ON u.id = p.user_id 
+        WHERE COALESCE(u.status,'') <> 'stub'
+        AND p.about IS NOT NULL AND p.about != ''
+        AND p.phone IS NOT NULL AND p.phone != ''
+        AND p.email IS NOT NULL AND p.email != ''
       `),
       
-      // Join trends (last 12 months)
+      // Studios with rates information
       client.execute(`
-        SELECT 
-          strftime('%Y-%m', joined) as month,
-          COUNT(*) as count
-        FROM shows_users 
-        WHERE joined >= datetime('now', '-12 months')
-        GROUP BY strftime('%Y-%m', joined)
-        ORDER BY month DESC
+        SELECT COUNT(*) as count 
+        FROM users u 
+        JOIN profile p ON u.id = p.user_id 
+        WHERE COALESCE(u.status,'') <> 'stub'
+        AND (p.rates1 IS NOT NULL AND p.rates1 != '' 
+             OR p.rates2 IS NOT NULL AND p.rates2 != ''
+             OR p.rates3 IS NOT NULL AND p.rates3 != '')
       `)
     ]);
 
     const stats = {
       totalStudios: totalStudios.rows[0]?.count || 0,
-      activeStudios: activeStudios.rows[0]?.count || 0,
+      studiosWithProfiles: studiosWithProfiles.rows[0]?.count || 0,
       studiosWithAvatars: studiosWithAvatars.rows[0]?.count || 0,
       recentJoins: recentJoins.rows[0]?.count || 0,
-      statusBreakdown: statusBreakdown.rows || [],
-      joinTrends: joinTrends.rows || []
+      profileCompleteness: profileCompleteness.rows[0]?.count || 0,
+      studiosWithRates: studiosWithRates.rows[0]?.count || 0
     };
 
-    // Calculate additional metrics
-    stats.inactiveStudios = stats.totalStudios - stats.activeStudios;
+    // Calculate additional metrics for admin dashboard
+    stats.profilePercentage = stats.totalStudios > 0 
+      ? Math.round((stats.studiosWithProfiles / stats.totalStudios) * 100) 
+      : 0;
     stats.avatarPercentage = stats.totalStudios > 0 
       ? Math.round((stats.studiosWithAvatars / stats.totalStudios) * 100) 
       : 0;
-    stats.activePercentage = stats.totalStudios > 0 
-      ? Math.round((stats.activeStudios / stats.totalStudios) * 100) 
+    stats.completenessPercentage = stats.totalStudios > 0 
+      ? Math.round((stats.profileCompleteness / stats.totalStudios) * 100) 
+      : 0;
+    stats.ratesPercentage = stats.totalStudios > 0 
+      ? Math.round((stats.studiosWithRates / stats.totalStudios) * 100) 
       : 0;
 
     return NextResponse.json(stats);
