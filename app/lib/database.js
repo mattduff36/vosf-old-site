@@ -416,3 +416,204 @@ export async function getColumnAnalysis(tableName, columnName) {
     throw new Error('Column analysis failed: ' + error.message);
   }
 }
+
+// ============================================================================
+// NEW TURSO SCHEMA UTILITY FUNCTIONS
+// ============================================================================
+
+// Reusable SQL queries for the new schema
+export const studiosCountSql = `
+  SELECT COUNT(*) as c
+  FROM users u
+  JOIN profile p ON p.user_id = u.id
+  WHERE COALESCE(u.status,'') <> 'stub'
+`;
+
+export const recentConnectionsSql = `
+  SELECT id, name, email, phone, message, created_at
+  FROM contacts
+  ORDER BY datetime(created_at) DESC
+  LIMIT 5
+`;
+
+export const analyticsSql = {
+  connections: `SELECT COUNT(*) as c FROM contacts`,
+  venuesTotal: `SELECT COUNT(*) as c FROM poi`,
+  venuesWithCoords: `SELECT COUNT(*) as c FROM poi WHERE lat IS NOT NULL AND lon IS NOT NULL`,
+  faqTotal: `SELECT COUNT(*) as c FROM faq`,
+  faqAnswered: `SELECT COUNT(*) as c FROM faq`, // all considered answered
+  firstUser: `SELECT MIN(created_at) as d FROM users WHERE COALESCE(status,'') <> 'stub'`,
+  latestUser: `SELECT MAX(created_at) as d FROM users WHERE COALESCE(status,'') <> 'stub'`,
+};
+
+// Dashboard statistics using new schema
+export async function getDashboardStats() {
+  try {
+    const db = await getConnection();
+    const [studios, conns, venues, faqs] = await Promise.all([
+      db.execute(studiosCountSql),
+      db.execute(`SELECT COUNT(*) as c FROM contacts`),
+      db.execute(`SELECT COUNT(*) as c FROM poi`),
+      db.execute(`SELECT COUNT(*) as c FROM faq`),
+    ]);
+    
+    return {
+      studios: Number(studios.rows[0].c),
+      connections: Number(conns.rows[0].c),
+      venues: Number(venues.rows[0].c),
+      faqs: Number(faqs.rows[0].c),
+    };
+  } catch (error) {
+    console.error('Failed to get dashboard stats:', error);
+    throw new Error('Failed to retrieve dashboard statistics');
+  }
+}
+
+// Recent connections using new schema
+export async function getRecentConnections() {
+  try {
+    const db = await getConnection();
+    const result = await db.execute(recentConnectionsSql);
+    return result.rows.map(x => ({
+      id: x.id,
+      name: x.name ?? "",
+      message: x.message ?? "",
+      created_at: x.created_at ?? "",
+      status: "Connected",
+    }));
+  } catch (error) {
+    console.error('Failed to get recent connections:', error);
+    throw new Error('Failed to retrieve recent connections');
+  }
+}
+
+// List studios with new schema (users + profile join, excluding stubs)
+export async function listStudios({ q, hasCoords } = {}) {
+  try {
+    const db = await getConnection();
+    const where = [
+      `COALESCE(u.status,'') <> 'stub'`,
+      q ? `(
+        LOWER(COALESCE(p.first_name,'')||' '||COALESCE(p.last_name,'')) LIKE ? OR
+        LOWER(COALESCE(u.displayname,'')) LIKE ? OR
+        LOWER(COALESCE(u.username,'')) LIKE ?
+      )` : null,
+      hasCoords ? `p.latitude IS NOT NULL AND p.longitude IS NOT NULL` : null,
+    ].filter(Boolean).join(" AND ");
+
+    const args = q ? Array(3).fill(`%${q.toLowerCase()}%`) : [];
+
+    const sql = `
+      SELECT u.id,
+             COALESCE(TRIM(p.first_name||' '||p.last_name), u.displayname, u.username) as name,
+             p.location, p.latitude, p.longitude, p.url, p.instagram, p.youtubepage
+      FROM users u
+      JOIN profile p ON p.user_id = u.id
+      WHERE ${where}
+      ORDER BY name ASC
+    `;
+    
+    const result = await db.execute({ sql, args });
+    return result.rows;
+  } catch (error) {
+    console.error('Failed to list studios:', error);
+    throw new Error('Failed to retrieve studios list');
+  }
+}
+
+// Get studio by ID with profile data
+export async function getStudioById(id) {
+  try {
+    const db = await getConnection();
+    const sql = `
+      SELECT u.id, u.username, u.displayname, u.email, u.status, u.created_at,
+             p.first_name, p.last_name, p.location, p.address, p.latitude, p.longitude,
+             p.phone, p.url, p.instagram, p.youtubepage, p.about
+      FROM users u
+      JOIN profile p ON p.user_id = u.id
+      WHERE u.id = ? AND COALESCE(u.status,'') <> 'stub'
+    `;
+    
+    const result = await db.execute({ sql, args: [id] });
+    return result.rows[0] || null;
+  } catch (error) {
+    console.error('Failed to get studio by ID:', error);
+    throw new Error('Failed to retrieve studio details');
+  }
+}
+
+// List venues from poi table
+export async function listVenues({ search } = {}) {
+  try {
+    const db = await getConnection();
+    let sql = `SELECT id, name, description, lat, lon FROM poi`;
+    const args = [];
+    
+    if (search) {
+      sql += ` WHERE LOWER(name) LIKE ? OR LOWER(description) LIKE ?`;
+      args.push(`%${search.toLowerCase()}%`, `%${search.toLowerCase()}%`);
+    }
+    
+    sql += ` ORDER BY name ASC`;
+    
+    const result = await db.execute({ sql, args });
+    return result.rows;
+  } catch (error) {
+    console.error('Failed to list venues:', error);
+    throw new Error('Failed to retrieve venues list');
+  }
+}
+
+// List FAQ entries with sort_order
+export async function listFAQ({ search } = {}) {
+  try {
+    const db = await getConnection();
+    let sql = `SELECT id, question, answer, sort_order FROM faq`;
+    const args = [];
+    
+    if (search) {
+      sql += ` WHERE LOWER(question) LIKE ? OR LOWER(answer) LIKE ?`;
+      args.push(`%${search.toLowerCase()}%`, `%${search.toLowerCase()}%`);
+    }
+    
+    sql += ` ORDER BY sort_order ASC, id ASC`;
+    
+    const result = await db.execute({ sql, args });
+    return result.rows;
+  } catch (error) {
+    console.error('Failed to list FAQ:', error);
+    throw new Error('Failed to retrieve FAQ list');
+  }
+}
+
+// List contacts/connections
+export async function listContacts({ limit = 20, offset = 0 } = {}) {
+  try {
+    const db = await getConnection();
+    const sql = `
+      SELECT id, name, email, phone, message, created_at
+      FROM contacts
+      ORDER BY datetime(created_at) DESC
+      LIMIT ? OFFSET ?
+    `;
+    
+    const result = await db.execute({ sql, args: [limit, offset] });
+    
+    // Get total count
+    const countResult = await db.execute(`SELECT COUNT(*) as total FROM contacts`);
+    const total = countResult.rows[0].total;
+    
+    return {
+      contacts: result.rows,
+      pagination: {
+        total,
+        limit,
+        offset,
+        hasMore: offset + limit < total
+      }
+    };
+  } catch (error) {
+    console.error('Failed to list contacts:', error);
+    throw new Error('Failed to retrieve contacts list');
+  }
+}

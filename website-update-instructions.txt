@@ -1,0 +1,171 @@
+You are updating the VOSF site to read from the new Turso database (libSQL). Replace any old MySQL code and match the current UI (Dashboard, Studios, Network, Venues, FAQ, Analytics).
+
+Context
+- DB moved from MariaDB (multiple cl59_* schemas) to one Turso DB.
+- Access via @libsql/client using env:
+  TURSO_DATABASE_URL=libsql://…
+  TURSO_AUTH_TOKEN=…
+- Tables now in use (final counts shown):
+  users (753)
+  profile (725)
+  faq (26)
+  poi (6)
+  messages (30529)
+  contacts (403)
+  comments (33)
+  options (172)
+  roles (4)
+  commentvotes (0)
+- All foreign keys clean. Some “stub” users exist (users.status='stub') to keep profiles linked; exclude stubs from public lists.
+
+Mapping from old site to new data
+- “Studios” → users u
+    join profile p on p.user_id=u.id
+    exclude u.status='stub'
+    show name from coalesce(p.first_name||' '||p.last_name, u.displayname, u.username)
+    fields: url, phone, instagram, youtubepage, location, address, latitude, longitude, about
+- “Connections” → contacts (each row is a partnership/contact record)
+- “Venues” → poi (id, name, description, lat, lon)
+- “Knowledge Base / FAQ” → faq (id, question, answer, sort_order)
+
+Acceptance criteria per page
+1) Dashboard
+   - Studio Network: total = count(*) of studios (definition below)
+   - Connections: total = count(*) from contacts
+   - Venues: total = count(*) from poi
+   - Knowledge Base: total = count(*) from faq
+   - Recent Studio Connections: last 5 from contacts ordered by created_at desc; show left/right names by joining to users/profile if sender/receiver ids exist (fallback to contact.name/email if not present).
+
+2) Analytics
+   - Users Total = studios count
+   - Active = same as total for now (no pending concept in new DB)
+   - Connections: total/active = count(*) from contacts
+   - Venues: total = count(*), with coords = count(*) where lat is not null and lon is not null
+   - Knowledge: total/answered = count(*) from faq
+   - Timeline widgets: first user = min(users.created_at where status!='stub'), latest user = max(users.created_at where status!='stub')
+
+3) Studios list/detail
+   - List studios = users join profile, status!='stub'
+   - Basic filters: name, location, hasCoords (latitude & longitude not null)
+   - Detail page pulls profile by user_id plus any messages/comments for that user
+
+4) Network
+   - List = contacts ordered by created_at desc
+   - Show “Connected” badge always (no pending state in current data)
+
+5) Venues
+   - List = poi with lat/lon; map pins use those coordinates
+
+6) FAQ
+   - List = faq ordered by sort_order asc, id asc as tie-breaker
+
+Reusable DB client (create once)
+------------------------------------------------
+import { createClient } from "@libsql/client"
+
+export const db = createClient({
+  url: process.env.TURSO_DATABASE_URL!,
+  authToken: process.env.TURSO_AUTH_TOKEN!,
+})
+
+Utility SQL (server side)
+------------------------------------------------
+// studios = users with a profile, excluding stubs
+export const studiosCountSql = `
+  select count(*) as c
+  from users u
+  join profile p on p.user_id = u.id
+  where coalesce(u.status,'') <> 'stub'
+`
+
+export const recentConnectionsSql = `
+  select id, name, email, phone, message, created_at
+  from contacts
+  order by datetime(created_at) desc
+  limit 5
+`
+
+export const analyticsSql = {
+  connections: `select count(*) as c from contacts`,
+  venuesTotal: `select count(*) as c from poi`,
+  venuesWithCoords: `select count(*) as c from poi where lat is not null and lon is not null`,
+  faqTotal: `select count(*) as c from faq`,
+  faqAnswered: `select count(*) as c from faq`, -- all considered answered
+  firstUser: `select min(created_at) as d from users where coalesce(status,'') <> 'stub'`,
+  latestUser:`select max(created_at) as d from users where coalesce(status,'') <> 'stub'`,
+}
+
+Example data loaders (Next.js/Node)
+------------------------------------------------
+import { db } from "@/lib/db"
+
+export async function getDashboardStats() {
+  const [studios, conns, venues, faqs] = await Promise.all([
+    db.execute(studiosCountSql),
+    db.execute(`select count(*) c from contacts`),
+    db.execute(`select count(*) c from poi`),
+    db.execute(`select count(*) c from faq`),
+  ])
+  return {
+    studios: Number(studios.rows[0].c),
+    connections: Number(conns.rows[0].c),
+    venues: Number(venues.rows[0].c),
+    faqs: Number(faqs.rows[0].c),
+  }
+}
+
+export async function getRecentConnections() {
+  const r = await db.execute(recentConnectionsSql)
+  return r.rows.map(x => ({
+    id: x.id,
+    name: x.name ?? "",
+    message: x.message ?? "",
+    created_at: x.created_at ?? "",
+    status: "Connected",
+  }))
+}
+
+export async function listStudios({ q, hasCoords }={}) {
+  const where = [
+    `coalesce(u.status,'') <> 'stub'`,
+    q ? `(
+      lower(coalesce(p.first_name,'')||' '||coalesce(p.last_name,'')) like ? or
+      lower(coalesce(u.displayname,'')) like ? or
+      lower(coalesce(u.username,'')) like ?
+    )` : null,
+    hasCoords ? `p.latitude is not null and p.longitude is not null` : null,
+  ].filter(Boolean).join(" and ")
+
+  const args = q ? Array(3).fill(`%${q.toLowerCase()}%`) : []
+
+  const sql = `
+    select u.id,
+           coalesce(trim(p.first_name||' '||p.last_name), u.displayname, u.username) as name,
+           p.location, p.latitude, p.longitude, p.url, p.instagram, p.youtubepage
+    from users u
+    join profile p on p.user_id = u.id
+    where ${where}
+    order by name asc
+  `
+  const r = await db.execute({ sql, args })
+  return r.rows
+}
+
+Checklist for you to implement
+- Add @libsql/client and the db client above. Read envs TURSO_DATABASE_URL and TURSO_AUTH_TOKEN.
+- Replace old MySQL client and queries with the SQL above.
+- Wire Dashboard tiles to getDashboardStats() and getRecentConnections().
+- Wire Analytics to analyticsSql and studiosCountSql.
+- Update Studios list/detail to use listStudios() and a studio-by-id query (users join profile).
+- Update Network page to read from contacts (recent first).
+- Update Venues page to read from poi and plot pins from lat/lon.
+- Update FAQ page to read from faq ordered by sort_order.
+- Exclude users where status='stub' from any public-facing list.
+- Keep the UI text the same; only the data source changes.
+
+Deliverables
+- Modified data layer (db client + queries).
+- Updated pages/components for Dashboard, Analytics, Studios, Network, Venues, FAQ.
+- A short README note explaining the new env vars and that data now comes from Turso.
+
+Use this prompt to refactor the repository accordingly and keep types strict (TypeScript). Do not introduce unrelated packages. Keep functions server-side where possible.
