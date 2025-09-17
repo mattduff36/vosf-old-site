@@ -1,167 +1,162 @@
-# VOSF Database Explorer
+# VOSF Database Management Portal
 
-A Next.js application for exploring and managing Voice Over Studio Finder (VOSF) databases. This application provides a web interface to browse, query, and analyze multiple databases containing voice over professionals, studios, and community data.
+A comprehensive Next.js application for managing the Voice Over Studio Finder (VOSF) database with full CRUD operations for studios, contacts, venues, and FAQ entries.
 
 ## 🚀 Features
 
-- **Multi-Database Support**: Browse 4 different databases (Shows, FAQ, Maps, Community)
-- **Interactive Dashboard**: Real-time database overview and statistics
-- **Advanced Query Interface**: Execute custom SQL queries with syntax highlighting
-- **Table Explorer**: Browse table schemas, relationships, and data
-- **Search Functionality**: Search across tables and data
-- **Column Analysis**: Detailed analysis of column data distribution
-- **Responsive Design**: Modern, mobile-friendly interface built with Tailwind CSS
+- **Studio Management**: Complete profile management with users and profile data
+- **Contacts Management**: Handle partnerships and connections
+- **Venues Management**: Manage recording locations with coordinate support
+- **FAQ Management**: Organize knowledge base with sort ordering
+- **Analytics Dashboard**: Comprehensive insights and statistics
+- **Admin Interface**: Full CRUD operations for all data types
+- **Modern UI**: Responsive design with Tailwind CSS
 
-## 🛠 Tech Stack
+## 📋 Prerequisites
 
-- **Frontend**: Next.js 14, React 18, Tailwind CSS
-- **Database**: Turso (LibSQL) - Serverless SQLite
-- **Authentication**: Custom JWT-based auth
-- **Deployment**: Vercel-ready
-
-## 📊 Database Structure
-
-The application manages 4 databases with 19+ tables:
-
-### Shows Database (`shows_*`)
-- User management and authentication
-- Comments and community features
-- Roles and permissions
-- Configuration options
-
-### Community Database (`community_*`)
-- User interactions and messaging
-- Comment voting system
-- User metadata and sessions
-
-### FAQ Database (`faq_*`)
-- User signup and management system
-
-### Maps Database (`maps_*`)
-- Geographic points of interest
-- Location-based data
-
-## 🚀 Quick Start
-
-### Prerequisites
 - Node.js 18+ 
-- Turso database account
+- npm or yarn
+- Turso Database account
 
-### Environment Variables
+## 🛠️ Installation
 
-Create a `.env.local` file with:
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd vosf-old-site
+   ```
 
-```env
-# Turso Database Configuration
-TURSO_DATABASE_URL="your-turso-database-url"
-TURSO_AUTH_TOKEN="your-turso-auth-token"
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-# Authentication
-AUTH_USERNAME="admin"
-AUTH_PASSWORD="your-secure-password"
-JWT_SECRET="your-jwt-secret-key"
-```
+3. **Environment Setup**
+   
+   Copy the example environment file:
+   ```bash
+   cp env.example .env.local
+   ```
 
-### Installation
+   Update `.env.local` with your configuration:
+   ```env
+   # Turso Database Configuration (Required)
+   TURSO_DATABASE_URL=libsql://your-database-url.turso.io
+   TURSO_AUTH_TOKEN=your-turso-auth-token
 
-```bash
-# Install dependencies
-npm install
+   # Authentication (Required)
+   AUTH_USERNAME=admin
+   AUTH_PASSWORD=your-secure-password
+   ```
 
-# Run development server
-npm run dev
+## 🗄️ Database Schema
 
-# Build for production
-npm run build
+The application uses a Turso (libSQL) database with the following main tables:
 
-# Start production server
-npm start
-```
+### Core Tables
+- **users**: User accounts (id, username, displayname, email, status, created_at)
+- **profile**: Extended profile data (user_id, first_name, last_name, location, phone, url, instagram, youtubepage, about, latitude, longitude)
+- **contacts**: Partnerships and connections (id, name, email, phone, message, created_at)
+- **poi**: Points of interest/venues (id, name, description, lat, lon)
+- **faq**: Frequently asked questions (id, question, answer, sort_order)
 
-## 🔐 Authentication
+### Key Features
+- Users with `status='stub'` are excluded from public listings
+- Foreign key relationships between users and profiles
+- Coordinate validation for venues
+- Sort ordering for FAQ entries
 
-Login credentials are configured via environment variables:
-- **Username**: Set via `AUTH_USERNAME` environment variable (default: `admin`)
-- **Password**: Set via `AUTH_PASSWORD` environment variable
-- **Security**: Uses JWT tokens with configurable `JWT_SECRET`
+## 🚀 Development
 
-## 📁 Project Structure
+1. **Start the development server**
+   ```bash
+   npm run dev
+   ```
 
-```
-├── app/
-│   ├── api/                 # API routes
-│   │   ├── auth/           # Authentication endpoints
-│   │   └── database/       # Database API endpoints
-│   ├── components/         # React components
-│   ├── dashboard/          # Dashboard pages
-│   ├── lib/               # Utility libraries
-│   │   ├── auth.js        # Authentication logic
-│   │   └── database.js    # Database connection & queries
-│   └── globals.css        # Global styles
-├── middleware.js          # Next.js middleware for auth
-└── migrate-to-turso.js   # Database migration script
-```
+2. **Access the application**
+   - Main application: http://localhost:3000
+   - Login with your configured credentials
 
-## 🌐 Deployment
+## 📱 Usage
 
-### Vercel Deployment
+### Public Features
+- **Dashboard**: Overview statistics and recent activity
+- **Studios**: Browse studio directory with search and filtering
+- **Network**: View studio connections and partnerships
+- **Venues**: Explore recording locations with map integration
+- **FAQ**: Browse knowledge base entries
+- **Analytics**: Detailed insights and metrics
 
-1. Push to GitHub
-2. Connect repository to Vercel
-3. Add environment variables in Vercel dashboard
-4. Deploy!
-
-### Environment Variables for Production
-
-Set these in your Vercel dashboard:
-
-- `TURSO_DATABASE_URL`: Your Turso database URL
-- `TURSO_AUTH_TOKEN`: Your Turso authentication token
-- `AUTH_USERNAME`: Login username (e.g., `admin`)
-- `AUTH_PASSWORD`: Login password (secure password)
-- `JWT_SECRET`: Secret key for JWT tokens
+### Admin Features
+- **Studio Management**: Full CRUD operations for user profiles
+- **Contact Management**: Manage partnerships and connections
+- **Venue Management**: Add/edit recording locations with coordinates
+- **FAQ Management**: Organize knowledge base with drag-and-drop ordering
+- **Advanced Filtering**: Search, sort, and filter all data types
+- **Bulk Operations**: Efficient management of multiple records
 
 ## 🔧 API Endpoints
 
-### Authentication
-- `POST /api/auth/login` - User login
-- `POST /api/auth/logout` - User logout
+### Public APIs
+- `GET /api/vosf/dashboard` - Dashboard statistics
+- `GET /api/vosf/analytics` - Analytics data
+- `GET /api/vosf/studios` - Studios listing
+- `GET /api/vosf/studios/[id]` - Individual studio
+- `GET /api/vosf/network` - Network connections
+- `GET /api/vosf/venues` - Venues listing
+- `GET /api/vosf/faq` - FAQ entries
 
-### Database Operations
-- `GET /api/database/databases` - List all databases
-- `GET /api/database/overview` - Database overview and statistics
-- `GET /api/database/tables` - List all tables
-- `GET /api/database/browse` - Browse table data
-- `GET /api/database/schema` - Get table schema
-- `POST /api/database/query` - Execute custom queries
-- `GET /api/database/search` - Search across tables
-- `GET /api/database/column-analysis` - Analyze column data
+### Admin APIs
+- `GET|POST /api/admin/studios` - Studios management
+- `GET|PUT|DELETE /api/admin/studios/[id]` - Individual studio management
+- `GET|POST /api/admin/contacts` - Contacts management
+- `GET|PUT|DELETE /api/admin/contacts/[id]` - Individual contact management
+- `GET|POST /api/admin/venues` - Venues management
+- `GET|PUT|DELETE /api/admin/venues/[id]` - Individual venue management
+- `GET|POST /api/admin/faq` - FAQ management
+- `GET|PUT|DELETE /api/admin/faq/[id]` - Individual FAQ management
 
-## 🎯 Usage
+## 🔐 Authentication
 
-1. **Login**: Access the application and login with admin credentials
-2. **Dashboard**: View database overview and statistics
-3. **Browse Tables**: Explore table structures and data
-4. **Run Queries**: Execute custom SQL queries
-5. **Search**: Find specific data across tables
-6. **Analyze**: Get insights into column data distribution
+The application uses simple cookie-based authentication:
+- Login endpoint: `POST /api/auth/login`
+- Logout endpoint: `POST /api/auth/logout`
+- Protected routes require authentication cookie
 
-## 🔒 Security Features
+## 🏗️ Architecture
 
-- JWT-based authentication with configurable credentials
-- Environment variable-based authentication (no hardcoded passwords)
-- SQL injection protection
-- Query validation (SELECT-only)
-- Secure HTTP-only cookies
-- Protected API routes with token verification
-- Configurable JWT secret for token signing
+- **Frontend**: Next.js 14 with React Server Components
+- **Styling**: Tailwind CSS with responsive design
+- **Database**: Turso (libSQL) with @libsql/client
+- **Authentication**: Cookie-based session management
+- **API**: RESTful APIs with comprehensive error handling
 
-## 📈 Performance
+## 📊 Data Migration
 
-- Turso serverless database for global low-latency
-- Next.js optimizations and caching
-- Efficient query execution
-- Responsive design for all devices
+The application has been migrated from the old MySQL schema to the new Turso schema:
+
+### Old Schema → New Schema
+- `shows_users` + `shows_usermeta` → `users` + `profile`
+- `shows_contacts` → `contacts`
+- `poi_example` → `poi`
+- `faq_signuser` → `faq`
+
+All existing functionality has been preserved while improving data structure and relationships.
+
+## 🚀 Deployment
+
+1. **Build the application**
+   ```bash
+   npm run build
+   ```
+
+2. **Start production server**
+   ```bash
+   npm start
+   ```
+
+3. **Environment Variables**
+   Ensure all required environment variables are set in your production environment.
 
 ## 🤝 Contributing
 
@@ -171,17 +166,14 @@ Set these in your Vercel dashboard:
 4. Test thoroughly
 5. Submit a pull request
 
-## 📄 License
+## 📝 License
 
-This project is licensed under the MIT License.
+This project is proprietary software for Voice Over Studio Finder (VOSF).
 
 ## 🆘 Support
 
-For issues and questions:
-1. Check the documentation
-2. Review existing issues
-3. Create a new issue with detailed information
+For support or questions, please contact the development team.
 
 ---
 
-**Built with ❤️ for the Voice Over Studio Finder community**
+**Note**: This application provides comprehensive database management capabilities for the VOSF platform. All data operations include proper validation, error handling, and security measures.

@@ -44,7 +44,13 @@ const navigationItems = [
     name: 'Admin',
     href: '/dashboard/admin',
     icon: '⚙️',
-    description: 'Manage Studios'
+    description: 'Administration',
+    submenu: [
+      { name: 'Studios', href: '/dashboard/admin', description: 'Manage Studios' },
+      { name: 'Contacts', href: '/dashboard/admin/contacts', description: 'Manage Contacts' },
+      { name: 'Venues', href: '/dashboard/admin/venues', description: 'Manage Venues' },
+      { name: 'FAQ', href: '/dashboard/admin/faq', description: 'Manage FAQ' }
+    ]
   }
 ];
 
@@ -65,19 +71,52 @@ export default function VOSFNavigation() {
           {/* Left-aligned Navigation */}
           <div className="hidden lg:flex lg:space-x-1 lg:items-center">
             {navigationItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`${
-                  isActive(item.href)
-                    ? 'border-blue-500 text-blue-600 bg-blue-50'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                } inline-flex items-center px-3 py-2 border-b-2 text-sm font-medium transition-colors duration-200`}
-                title={item.description}
-              >
-                <span className="mr-2">{item.icon}</span>
-                <span>{item.name}</span>
-              </Link>
+              item.submenu ? (
+                <div key={item.name} className="relative group">
+                  <button
+                    className={`${
+                      isActive(item.href)
+                        ? 'border-blue-500 text-blue-600 bg-blue-50'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    } inline-flex items-center px-3 py-2 border-b-2 text-sm font-medium transition-colors duration-200`}
+                    title={item.description}
+                  >
+                    <span className="mr-2">{item.icon}</span>
+                    <span>{item.name}</span>
+                    <span className="ml-1">▼</span>
+                  </button>
+                  <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    {item.submenu.map((subItem) => (
+                      <Link
+                        key={subItem.name}
+                        href={subItem.href}
+                        className={`${
+                          pathname === subItem.href
+                            ? 'bg-blue-50 text-blue-600'
+                            : 'text-gray-700 hover:bg-gray-50'
+                        } block px-4 py-2 text-sm transition-colors duration-200`}
+                        title={subItem.description}
+                      >
+                        {subItem.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`${
+                    isActive(item.href)
+                      ? 'border-blue-500 text-blue-600 bg-blue-50'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  } inline-flex items-center px-3 py-2 border-b-2 text-sm font-medium transition-colors duration-200`}
+                  title={item.description}
+                >
+                  <span className="mr-2">{item.icon}</span>
+                  <span>{item.name}</span>
+                </Link>
+              )
             ))}
           </div>
 
