@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import AdminStudioForm from './AdminStudioForm';
 import AdminBulkOperations from './AdminBulkOperations';
 import AdminAdvancedFilters from './AdminAdvancedFilters';
 import AdminStatsCards from './AdminStatsCards';
@@ -12,8 +11,6 @@ export default function AdminStudioManager() {
   const [studios, setStudios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showForm, setShowForm] = useState(false);
-  const [editingStudio, setEditingStudio] = useState(null);
   const [showAdvancedEditor, setShowAdvancedEditor] = useState(false);
   const [advancedEditingStudio, setAdvancedEditingStudio] = useState(null);
   const [formLoading, setFormLoading] = useState(false);
@@ -102,15 +99,6 @@ export default function AdminStudioManager() {
     setSelectedStudios([]);
   };
 
-  const handleCreateStudio = () => {
-    setEditingStudio(null);
-    setShowForm(true);
-  };
-
-  const handleEditStudio = (studio) => {
-    setEditingStudio(studio);
-    setShowForm(true);
-  };
 
   const handleAdvancedEdit = (studio) => {
     setAdvancedEditingStudio(studio);
@@ -136,35 +124,6 @@ export default function AdminStudioManager() {
     }
   };
 
-  const handleFormSubmit = async (formData) => {
-    try {
-      setFormLoading(true);
-      const url = editingStudio 
-        ? `/api/admin/studios/${editingStudio.id}`
-        : '/api/admin/studios';
-      
-      const method = editingStudio ? 'PUT' : 'POST';
-
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-
-      if (!response.ok) throw new Error('Failed to save studio');
-
-      const result = await response.json();
-      alert(`Studio ${editingStudio ? 'updated' : 'created'} successfully`);
-      
-      setShowForm(false);
-      setEditingStudio(null);
-      fetchStudios();
-    } catch (error) {
-      alert(`Error: ${error.message}`);
-    } finally {
-      setFormLoading(false);
-    }
-  };
 
   const handlePageChange = (newPage) => {
     setPagination(prev => ({ ...prev, page: newPage }));
@@ -181,16 +140,6 @@ export default function AdminStudioManager() {
     fetchStudios(); // Refresh the list
   };
 
-  if (showForm) {
-    return (
-      <AdminStudioForm
-        studio={editingStudio}
-        onSubmit={handleFormSubmit}
-        onCancel={() => setShowForm(false)}
-        loading={formLoading}
-      />
-    );
-  }
 
   if (showAdvancedEditor) {
     return (
@@ -291,13 +240,6 @@ export default function AdminStudioManager() {
               Studios ({pagination.total || 0})
             </h2>
 
-            {/* Right side - Add New Studio button */}
-            <button
-              onClick={handleCreateStudio}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              ➕ Add New Studio
-            </button>
           </div>
         </div>
 
@@ -309,12 +251,6 @@ export default function AdminStudioManager() {
         ) : studios.length === 0 ? (
           <div className="p-8 text-center">
             <p className="text-gray-500">No studios found matching your criteria.</p>
-            <button
-              onClick={handleCreateStudio}
-              className="mt-4 text-blue-600 hover:text-blue-800 underline"
-            >
-              Create the first studio
-            </button>
           </div>
         ) : (
           <>
@@ -394,20 +330,14 @@ export default function AdminStudioManager() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex space-x-2">
                           <button
-                            onClick={() => handleEditStudio(studio)}
-                            className="text-blue-600 hover:text-blue-900"
-                          >
-                            Quick Edit
-                          </button>
-                          <button
                             onClick={() => handleAdvancedEdit(studio)}
-                            className="text-purple-600 hover:text-purple-900 font-semibold"
+                            className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                           >
-                            Advanced Edit
+                            Edit
                           </button>
                           <button
                             onClick={() => handleDeleteStudio(studio.id)}
-                            className="text-red-600 hover:text-red-900"
+                            className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                           >
                             Delete
                           </button>
