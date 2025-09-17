@@ -66,7 +66,7 @@ export default function VOSFDashboard() {
       </div>
 
       {/* Main Statistics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         {/* Total Studios */}
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg border border-blue-200 hover:shadow-md transition-shadow">
@@ -116,29 +116,6 @@ export default function VOSFDashboard() {
           </Link>
         </div>
 
-        {/* Quick Management */}
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg border border-purple-200 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-purple-900">⚡ Quick Access</h3>
-            <div className="text-purple-600">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-          </div>
-          <div className="text-3xl font-bold text-purple-700 mb-1">
-            Admin
-          </div>
-          <p className="text-purple-600 text-sm mb-3">
-            Studio management tools
-          </p>
-          <Link 
-            href="/dashboard/admin"
-            className="inline-flex items-center text-purple-800 hover:text-purple-900 font-medium text-sm"
-          >
-            Manage Studios →
-          </Link>
-        </div>
 
         {/* FAQ Knowledge Base */}
         <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-lg border border-orange-200 hover:shadow-md transition-shadow">
