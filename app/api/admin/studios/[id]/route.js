@@ -46,7 +46,99 @@ export async function GET(request, { params }) {
       return NextResponse.json({ error: 'Studio not found' }, { status: 404 });
     }
 
-    const profile = studioResult.rows[0];
+    const studioData = studioResult.rows[0];
+    
+    // Structure the data to match what the frontend expects
+    const profile = {
+      // Basic user fields (not in _meta)
+      id: studioData.id,
+      username: studioData.username,
+      display_name: studioData.display_name,
+      email: studioData.email,
+      status: studioData.status,
+      joined: studioData.joined,
+      
+      // All profile fields go in _meta for frontend compatibility
+      _meta: {
+        first_name: studioData.first_name,
+        last_name: studioData.last_name,
+        location: studioData.location,
+        address: studioData.address,
+        phone: studioData.phone,
+        url: studioData.url,
+        instagram: studioData.instagram,
+        youtubepage: studioData.youtubepage,
+        about: studioData.about,
+        latitude: studioData.latitude,
+        longitude: studioData.longitude,
+        shortabout: studioData.shortabout,
+        category: studioData.category,
+        facebook: studioData.facebook,
+        twitter: studioData.twitter,
+        linkedin: studioData.linkedin,
+        soundcloud: studioData.soundcloud,
+        vimeo: studioData.vimeo,
+        pinterest: studioData.pinterest,
+        tiktok: studioData.tiktok,
+        gender: studioData.gender,
+        birthday: studioData.birthday,
+        rates1: studioData.rates1,
+        rates2: studioData.rates2,
+        rates3: studioData.rates3,
+        showrates: studioData.showrates ? '1' : '0',
+        homestudio: studioData.homestudio,
+        homestudio2: studioData.homestudio2,
+        homestudio3: studioData.homestudio3,
+        homestudio4: studioData.homestudio4,
+        homestudio5: studioData.homestudio5,
+        homestudio6: studioData.homestudio6,
+        avatar_image: studioData.avatar_image,
+        avatar_type: studioData.avatar_type,
+        youtube2: studioData.youtube2,
+        vimeo2: studioData.vimeo2,
+        soundcloudlink2: studioData.soundcloudlink2,
+        soundcloudlink3: studioData.soundcloudlink3,
+        soundcloudlink4: studioData.soundcloudlink4,
+        verified: studioData.verified ? '1' : '0',
+        featured: studioData.featured ? '1' : '0',
+        featureddate: studioData.featureddate,
+        crb: studioData.crb ? '1' : '0',
+        von: studioData.von ? '1' : '0',
+        lastupdated: studioData.lastupdated,
+        locale: studioData.locale,
+        last_login: studioData.last_login,
+        last_login_ip: studioData.last_login_ip,
+        showphone: studioData.showphone ? '1' : '0',
+        showemail: studioData.showemail ? '1' : '0',
+        showaddress: studioData.showaddress ? '1' : '0',
+        showmap: studioData.showmap ? '1' : '0',
+        showdirections: studioData.showdirections ? '1' : '0',
+        showshort: studioData.showshort ? '1' : '0',
+        facebookshow: studioData.facebookshow ? '1' : '0',
+        twittershow: studioData.twittershow ? '1' : '0',
+        instagramshow: studioData.instagramshow ? '1' : '0',
+        linkedinshow: studioData.linkedinshow ? '1' : '0',
+        youtubepageshow: studioData.youtubepageshow ? '1' : '0',
+        soundcloudshow: studioData.soundcloudshow ? '1' : '0',
+        vimeopageshow: studioData.vimeopageshow ? '1' : '0',
+        pinterestshow: studioData.pinterestshow ? '1' : '0',
+        connection1: studioData.connection1 ? '1' : '0',
+        connection2: studioData.connection2 ? '1' : '0',
+        connection3: studioData.connection3 ? '1' : '0',
+        connection4: studioData.connection4 ? '1' : '0',
+        connection5: studioData.connection5 ? '1' : '0',
+        connection6: studioData.connection6 ? '1' : '0',
+        connection7: studioData.connection7 ? '1' : '0',
+        connection8: studioData.connection8 ? '1' : '0',
+        connection9: studioData.connection9 ? '1' : '0',
+        connection10: studioData.connection10 ? '1' : '0',
+        connection11: studioData.connection11 ? '1' : '0',
+        connection12: studioData.connection12 ? '1' : '0',
+        connection13: studioData.connection13 ? '1' : '0',
+        connection14: studioData.connection14 ? '1' : '0',
+        connection15: studioData.connection15 ? '1' : '0'
+      }
+    };
 
     return NextResponse.json({ profile });
 
@@ -131,27 +223,31 @@ export async function PUT(request, { params }) {
     const profileUpdates = [];
     const profileArgs = [];
 
-    // Handle regular text fields
+    // Handle regular text fields from meta
     profileFields.forEach(field => {
-      if (body[field] !== undefined) {
+      if (body.meta && body.meta[field] !== undefined) {
         profileUpdates.push(`${field} = ?`);
-        profileArgs.push(body[field] || '');
+        profileArgs.push(body.meta[field] || '');
       }
     });
 
-    // Handle boolean fields
+    // Handle boolean fields from meta
     booleanFields.forEach(field => {
-      if (body[field] !== undefined) {
+      if (body.meta && body.meta[field] !== undefined) {
         profileUpdates.push(`${field} = ?`);
-        profileArgs.push(body[field] ? 1 : 0);
+        // Convert '1'/'0' strings to actual booleans for database
+        const value = body.meta[field] === '1' || body.meta[field] === true;
+        profileArgs.push(value ? 1 : 0);
       }
     });
 
-    // Handle connection fields
+    // Handle connection fields from meta
     connectionFields.forEach(field => {
-      if (body[field] !== undefined) {
+      if (body.meta && body.meta[field] !== undefined) {
         profileUpdates.push(`${field} = ?`);
-        profileArgs.push(body[field] ? 1 : 0);
+        // Convert '1'/'0' strings to actual booleans for database
+        const value = body.meta[field] === '1' || body.meta[field] === true;
+        profileArgs.push(value ? 1 : 0);
       }
     });
 
