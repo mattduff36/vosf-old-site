@@ -17,22 +17,10 @@ const navigationItems = [
     description: 'Manage Studios'
   },
   {
-    name: 'Venues',
-    href: '/dashboard/admin/venues',
-    icon: '📍',
-    description: 'Manage Venues'
-  },
-  {
     name: 'FAQ',
     href: '/dashboard/admin/faq',
     icon: '❓',
     description: 'Manage FAQ'
-  },
-  {
-    name: 'Migration',
-    href: '/dashboard/admin/migrate',
-    icon: '🔄',
-    description: 'Migrate Profile Data'
   }
 ];
 
