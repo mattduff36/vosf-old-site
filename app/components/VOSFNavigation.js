@@ -17,12 +17,6 @@ const navigationItems = [
     description: 'Manage Studios'
   },
   {
-    name: 'Contacts',
-    href: '/dashboard/admin/contacts',
-    icon: '🤝',
-    description: 'Manage Contacts'
-  },
-  {
     name: 'Venues',
     href: '/dashboard/admin/venues',
     icon: '📍',
