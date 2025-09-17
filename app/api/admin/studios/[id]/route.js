@@ -17,40 +17,36 @@ export async function GET(request, { params }) {
     const { id } = params;
     const client = await getConnection();
     
-    // Get basic user data
-    const userResult = await client.execute({
+    // Get comprehensive user and profile data from new schema
+    const studioResult = await client.execute({
       sql: `
         SELECT 
-          id, username, display_name, email, status, joined, 
-          role_id, avatar_url
-        FROM shows_users 
-        WHERE id = ?
+          u.id, u.username, u.displayname as display_name, u.email, u.status, u.created_at as joined,
+          p.first_name, p.last_name, p.location, p.address, p.phone, p.url, p.instagram, p.youtubepage, p.about,
+          p.latitude, p.longitude, p.shortabout, p.category, p.facebook, p.twitter, p.linkedin, 
+          p.soundcloud, p.vimeo, p.pinterest, p.tiktok, p.gender, p.birthday,
+          p.rates1, p.rates2, p.rates3, p.showrates, p.homestudio, p.homestudio2, p.homestudio3,
+          p.homestudio4, p.homestudio5, p.homestudio6, p.avatar_image, p.avatar_type,
+          p.youtube2, p.vimeo2, p.soundcloudlink2, p.soundcloudlink3, p.soundcloudlink4,
+          p.verified, p.featured, p.featureddate, p.crb, p.von, p.lastupdated, p.locale,
+          p.last_login, p.last_login_ip, p.showphone, p.showemail, p.showaddress, p.showmap,
+          p.showdirections, p.showshort, p.facebookshow, p.twittershow, p.instagramshow,
+          p.linkedinshow, p.youtubepageshow, p.soundcloudshow, p.vimeopageshow, p.pinterestshow,
+          p.connection1, p.connection2, p.connection3, p.connection4, p.connection5,
+          p.connection6, p.connection7, p.connection8, p.connection9, p.connection10,
+          p.connection11, p.connection12, p.connection13, p.connection14, p.connection15
+        FROM users u
+        JOIN profile p ON p.user_id = u.id
+        WHERE u.id = ? AND COALESCE(u.status,'') <> 'stub'
       `,
       args: [id]
     });
 
-    if (userResult.rows.length === 0) {
+    if (studioResult.rows.length === 0) {
       return NextResponse.json({ error: 'Studio not found' }, { status: 404 });
     }
 
-    // Get all metadata
-    const metaResult = await client.execute({
-      sql: 'SELECT meta_key, meta_value FROM shows_usermeta WHERE user_id = ?',
-      args: [id]
-    });
-
-    // Convert metadata to object
-    const meta = {};
-    if (metaResult.rows) {
-      metaResult.rows.forEach(row => {
-        meta[row.meta_key] = row.meta_value;
-      });
-    }
-
-    const profile = {
-      ...userResult.rows[0],
-      _meta: meta
-    };
+    const profile = studioResult.rows[0];
 
     return NextResponse.json({ profile });
 

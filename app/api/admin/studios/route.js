@@ -29,7 +29,8 @@ export async function GET(request) {
     let query = `
       SELECT 
         u.id, u.username, u.displayname as display_name, u.email, u.status, u.created_at as joined,
-        p.first_name, p.last_name, p.location, p.phone, p.url, p.instagram, p.youtubepage
+        p.first_name, p.last_name, p.location, p.phone, p.url, p.instagram, p.youtubepage, p.about,
+        p.address, p.shortabout, p.category, p.verified, p.featured, p.avatar_image
       FROM users u
       JOIN profile p ON p.user_id = u.id
     `;
@@ -38,8 +39,8 @@ export async function GET(request) {
     const conditions = ['COALESCE(u.status,\'\') <> \'stub\''];
 
     if (search) {
-      conditions.push('(u.username LIKE ? OR u.displayname LIKE ? OR u.email LIKE ? OR p.first_name LIKE ? OR p.last_name LIKE ?)');
-      params.push(`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`);
+      conditions.push('(u.username LIKE ? OR u.displayname LIKE ? OR u.email LIKE ? OR p.first_name LIKE ? OR p.last_name LIKE ? OR p.about LIKE ? OR p.location LIKE ? OR p.category LIKE ?)');
+      params.push(`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`);
     }
 
     if (status !== '' && status !== 'all') {
@@ -60,11 +61,10 @@ export async function GET(request) {
     }
 
     if (hasAvatar) {
-      // For now, we'll check if they have profile data as a proxy for having an avatar
       if (hasAvatar === '1') {
-        conditions.push('(p.first_name IS NOT NULL AND p.first_name != "")');
+        conditions.push('(p.avatar_image IS NOT NULL AND p.avatar_image != "")');
       } else if (hasAvatar === '0') {
-        conditions.push('(p.first_name IS NULL OR p.first_name = "")');
+        conditions.push('(p.avatar_image IS NULL OR p.avatar_image = "")');
       }
     }
 
