@@ -76,7 +76,7 @@ export async function PUT(request, { params }) {
 
     // Check if studio exists
     const existingStudio = await client.execute({
-      sql: 'SELECT id FROM shows_users WHERE id = ?',
+      sql: 'SELECT id FROM users WHERE id = ? AND COALESCE(status,\'\') <> \'stub\'',
       args: [id]
     });
 
@@ -85,48 +85,48 @@ export async function PUT(request, { params }) {
     }
 
     // Update basic user fields
-    const userFields = ['username', 'display_name', 'email', 'status', 'avatar_url'];
+    const userFields = ['username', 'displayname', 'email', 'status'];
     const userUpdates = [];
     const userArgs = [];
 
     userFields.forEach(field => {
-      if (body[field] !== undefined) {
+      let bodyField = field;
+      if (field === 'displayname' && body['display_name'] !== undefined) {
+        bodyField = 'display_name';
+      }
+      
+      if (body[bodyField] !== undefined) {
         userUpdates.push(`${field} = ?`);
-        userArgs.push(body[field]);
+        userArgs.push(body[bodyField]);
       }
     });
 
     if (userUpdates.length > 0) {
       userArgs.push(id);
       await client.execute({
-        sql: `UPDATE shows_users SET ${userUpdates.join(', ')} WHERE id = ?`,
+        sql: `UPDATE users SET ${userUpdates.join(', ')} WHERE id = ?`,
         args: userArgs
       });
     }
 
-    // Update metadata fields
-    if (body.meta && typeof body.meta === 'object') {
-      for (const [key, value] of Object.entries(body.meta)) {
-        // Check if meta key already exists
-        const existingMeta = await client.execute({
-          sql: 'SELECT id FROM shows_usermeta WHERE user_id = ? AND meta_key = ?',
-          args: [id, key]
-        });
+    // Update profile fields
+    const profileFields = ['first_name', 'last_name', 'location', 'address', 'phone', 'url', 'instagram', 'youtubepage', 'about', 'latitude', 'longitude'];
+    const profileUpdates = [];
+    const profileArgs = [];
 
-        if (existingMeta.rows && existingMeta.rows.length > 0) {
-          // Update existing meta
-          await client.execute({
-            sql: 'UPDATE shows_usermeta SET meta_value = ? WHERE user_id = ? AND meta_key = ?',
-            args: [value || '', id, key]
-          });
-        } else {
-          // Insert new meta
-          await client.execute({
-            sql: 'INSERT INTO shows_usermeta (user_id, meta_key, meta_value) VALUES (?, ?, ?)',
-            args: [id, key, value || '']
-          });
-        }
+    profileFields.forEach(field => {
+      if (body[field] !== undefined) {
+        profileUpdates.push(`${field} = ?`);
+        profileArgs.push(body[field]);
       }
+    });
+
+    if (profileUpdates.length > 0) {
+      profileArgs.push(id);
+      await client.execute({
+        sql: `UPDATE profile SET ${profileUpdates.join(', ')} WHERE user_id = ?`,
+        args: profileArgs
+      });
     }
 
     return NextResponse.json({ 
@@ -155,7 +155,7 @@ export async function DELETE(request, { params }) {
     
     // Check if studio exists
     const existingStudio = await client.execute({
-      sql: 'SELECT id, username FROM shows_users WHERE id = ?',
+      sql: 'SELECT id, username FROM users WHERE id = ? AND COALESCE(status,\'\') <> \'stub\'',
       args: [id]
     });
 
@@ -165,9 +165,26 @@ export async function DELETE(request, { params }) {
 
     const username = existingStudio.rows[0].username;
 
-    // Delete studio (this will cascade to related records if foreign keys are set up)
+    // Delete profile first (due to foreign key constraint)
     await client.execute({
-      sql: 'DELETE FROM shows_users WHERE id = ?',
+      sql: 'DELETE FROM profile WHERE user_id = ?',
+      args: [id]
+    });
+
+    // Delete studio gallery images if table exists
+    try {
+      await client.execute({
+        sql: 'DELETE FROM studio_gallery WHERE user_id = ?',
+        args: [id]
+      });
+    } catch (error) {
+      // Table might not exist, continue
+      console.warn('Studio gallery table not found:', error.message);
+    }
+
+    // Delete the user
+    await client.execute({
+      sql: 'DELETE FROM users WHERE id = ?',
       args: [id]
     });
 

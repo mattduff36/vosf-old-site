@@ -28,39 +28,43 @@ export async function GET(request) {
 
     let query = `
       SELECT 
-        id, username, display_name, email, status, joined, 
-        avatar_url
-      FROM shows_users
+        u.id, u.username, u.displayname as display_name, u.email, u.status, u.created_at as joined,
+        p.first_name, p.last_name, p.location, p.phone, p.url, p.instagram, p.youtubepage
+      FROM users u
+      JOIN profile p ON p.user_id = u.id
     `;
     
     const params = [];
-    const conditions = [];
+    const conditions = ['COALESCE(u.status,\'\') <> \'stub\''];
 
     if (search) {
-      conditions.push('(username LIKE ? OR display_name LIKE ? OR email LIKE ?)');
-      params.push(`%${search}%`, `%${search}%`, `%${search}%`);
+      conditions.push('(u.username LIKE ? OR u.displayname LIKE ? OR u.email LIKE ? OR p.first_name LIKE ? OR p.last_name LIKE ?)');
+      params.push(`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`);
     }
 
     if (status !== '' && status !== 'all') {
-      conditions.push('status = ?');
-      params.push(parseInt(status, 10));
+      if (status === 'active') {
+        conditions.push('COALESCE(u.status,\'\') <> \'stub\'');
+      }
+      // In new schema, all non-stub users are considered active
     }
 
     if (joinedAfter) {
-      conditions.push('joined >= ?');
+      conditions.push('u.created_at >= ?');
       params.push(joinedAfter);
     }
 
     if (joinedBefore) {
-      conditions.push('joined <= ?');
+      conditions.push('u.created_at <= ?');
       params.push(joinedBefore + ' 23:59:59');
     }
 
     if (hasAvatar) {
+      // For now, we'll check if they have profile data as a proxy for having an avatar
       if (hasAvatar === '1') {
-        conditions.push('avatar_url IS NOT NULL AND avatar_url != ""');
+        conditions.push('(p.first_name IS NOT NULL AND p.first_name != "")');
       } else if (hasAvatar === '0') {
-        conditions.push('(avatar_url IS NULL OR avatar_url = "")');
+        conditions.push('(p.first_name IS NULL OR p.first_name = "")');
       }
     }
 
@@ -69,8 +73,17 @@ export async function GET(request) {
     }
 
     // Validate sortBy to prevent SQL injection
-    const validSortColumns = ['joined', 'username', 'display_name', 'email', 'status'];
-    const validSortBy = validSortColumns.includes(sortBy) ? sortBy : 'joined';
+    const validSortColumns = ['created_at', 'username', 'displayname', 'email', 'status', 'first_name', 'last_name'];
+    let validSortBy = validSortColumns.includes(sortBy) ? sortBy : 'created_at';
+    
+    // Map old column names to new ones
+    if (sortBy === 'joined') validSortBy = 'u.created_at';
+    else if (sortBy === 'display_name') validSortBy = 'u.displayname';
+    else if (sortBy === 'username') validSortBy = 'u.username';
+    else if (sortBy === 'email') validSortBy = 'u.email';
+    else if (sortBy === 'status') validSortBy = 'u.status';
+    else validSortBy = 'u.' + validSortBy;
+    
     const validSortOrder = ['asc', 'desc'].includes(sortOrder.toLowerCase()) ? sortOrder.toUpperCase() : 'DESC';
 
     query += ` ORDER BY ${validSortBy} ${validSortOrder} LIMIT ? OFFSET ?`;
@@ -80,7 +93,7 @@ export async function GET(request) {
     const result = await client.execute({ sql: query, args: params });
 
     // Get total count
-    let countQuery = 'SELECT COUNT(*) as count FROM shows_users';
+    let countQuery = 'SELECT COUNT(*) as count FROM users u JOIN profile p ON p.user_id = u.id';
     const countParams = [];
     
     if (conditions.length > 0) {
@@ -122,17 +135,35 @@ export async function POST(request) {
 
   try {
     const body = await request.json();
-    const { username, display_name, email, status = 1, avatar_url = null } = body;
+    const { 
+      username, 
+      displayname, 
+      email, 
+      first_name = '', 
+      last_name = '', 
+      location = '', 
+      phone = '', 
+      url = '', 
+      instagram = '', 
+      youtubepage = '',
+      about = ''
+    } = body;
 
     if (!username || !email) {
       return NextResponse.json({ error: 'Username and email are required' }, { status: 400 });
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ error: 'Invalid email format' }, { status: 400 });
     }
 
     const client = await getConnection();
     
     // Check if username or email already exists
     const existingUser = await client.execute({
-      sql: 'SELECT id FROM shows_users WHERE username = ? OR email = ?',
+      sql: 'SELECT id FROM users WHERE username = ? OR email = ?',
       args: [username, email]
     });
 
@@ -140,19 +171,36 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Username or email already exists' }, { status: 409 });
     }
 
-    // Insert new studio
-    const result = await client.execute({
+    // Insert new user
+    const userResult = await client.execute({
       sql: `
-        INSERT INTO shows_users (username, display_name, email, status, joined, avatar_url)
-        VALUES (?, ?, ?, ?, datetime('now'), ?)
+        INSERT INTO users (username, displayname, email, status, created_at)
+        VALUES (?, ?, ?, 'active', datetime('now'))
       `,
-      args: [username, display_name || username, email, status, avatar_url]
+      args: [username, displayname || username, email]
     });
 
-    // Get the created studio
+    const userId = userResult.lastInsertRowid;
+
+    // Insert profile
+    await client.execute({
+      sql: `
+        INSERT INTO profile (user_id, first_name, last_name, location, phone, url, instagram, youtubepage, about)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `,
+      args: [userId, first_name, last_name, location, phone, url, instagram, youtubepage, about]
+    });
+
+    // Get the created studio with profile
     const newStudio = await client.execute({
-      sql: 'SELECT * FROM shows_users WHERE id = ?',
-      args: [result.lastInsertRowid]
+      sql: `
+        SELECT u.id, u.username, u.displayname as display_name, u.email, u.status, u.created_at as joined,
+               p.first_name, p.last_name, p.location, p.phone, p.url, p.instagram, p.youtubepage, p.about
+        FROM users u
+        JOIN profile p ON p.user_id = u.id
+        WHERE u.id = ?
+      `,
+      args: [userId]
     });
 
     return NextResponse.json({ 
