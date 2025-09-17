@@ -181,14 +181,14 @@ export default function VOSFDashboard() {
                     <div className="flex-shrink-0">
                       <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                         <span className="text-green-600 font-medium text-sm">
-                          {connection.studio1.charAt(0).toUpperCase()}
+                          {(connection.studio1_name || connection.name || 'U').charAt(0).toUpperCase()}
                         </span>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <span className="font-medium text-gray-900">{connection.studio1}</span>
+                      <span className="font-medium text-gray-900">{connection.studio1_name || connection.name}</span>
                       <span className="text-gray-400">↔</span>
-                      <span className="font-medium text-gray-900">{connection.studio2}</span>
+                      <span className="font-medium text-gray-900">{connection.studio2_name || 'VOSF Network'}</span>
                     </div>
                   </div>
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
