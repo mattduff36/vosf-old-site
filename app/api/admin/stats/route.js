@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { getDashboardStats } from '../../../lib/database.js';
+import { getAdminStats } from '../../../lib/database.js';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +16,7 @@ export async function GET() {
       );
     }
 
-    const stats = await getDashboardStats();
+    const stats = await getAdminStats();
 
     return NextResponse.json(stats);
   } catch (error) {

@@ -59,6 +59,81 @@ export async function getDashboardStats() {
   }
 }
 
+export async function getAdminStats() {
+  try {
+    const prisma = await getConnection();
+    
+    const [
+      totalStudios,
+      studiosWithProfiles,
+      studiosWithAvatars,
+      studiosWithRates,
+      allStudios
+    ] = await Promise.all([
+      // Total studios count
+      prisma.studio.count(),
+      
+      // Studios with complete profiles (have first_name and about)
+      prisma.studio.count({
+        where: {
+          owner: {
+            profile: {
+              AND: [
+                { firstName: { not: null } },
+                { about: { not: null } }
+              ]
+            }
+          }
+        }
+      }),
+      
+      // Studios with avatars
+      prisma.studio.count({
+        where: {
+          owner: {
+            avatarUrl: { not: null }
+          }
+        }
+      }),
+      
+      // Studios with rates (any rate tier filled)
+      prisma.studio.count({
+        where: {
+          owner: {
+            profile: {
+              OR: [
+                { rateTier1: { not: null } },
+                { rateTier2: { not: null } },
+                { rateTier3: { not: null } }
+              ]
+            }
+          }
+        }
+      }),
+      
+      // Get all studios for percentage calculations
+      prisma.studio.count()
+    ]);
+    
+    const completenessPercentage = totalStudios > 0 ? Math.round((studiosWithProfiles / totalStudios) * 100) : 0;
+    const avatarPercentage = totalStudios > 0 ? Math.round((studiosWithAvatars / totalStudios) * 100) : 0;
+    const ratesPercentage = totalStudios > 0 ? Math.round((studiosWithRates / totalStudios) * 100) : 0;
+    
+    return {
+      totalStudios,
+      profileCompleteness: studiosWithProfiles,
+      studiosWithAvatars,
+      studiosWithRates,
+      completenessPercentage,
+      avatarPercentage,
+      ratesPercentage
+    };
+  } catch (error) {
+    console.error('Failed to get admin stats:', error);
+    throw new Error('Failed to retrieve admin statistics');
+  }
+}
+
 // Get recent connections (messages) for dashboard
 export async function getRecentConnections() {
   try {

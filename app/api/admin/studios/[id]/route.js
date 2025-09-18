@@ -120,104 +120,85 @@ export async function PUT(request, { params }) {
   try {
     const { id } = params;
     const body = await request.json();
-    const client = await getConnection();
+    const prisma = await getConnection();
 
     // Check if studio exists
-    const existingStudio = await client.execute({
-      sql: 'SELECT id FROM users WHERE id = ? AND COALESCE(status,\'\') <> \'stub\'',
-      args: [id]
+    const existingStudio = await prisma.studio.findUnique({
+      where: { id: id },
+      include: {
+        owner: {
+          include: {
+            profile: true
+          }
+        }
+      }
     });
 
-    if (existingStudio.rows.length === 0) {
+    if (!existingStudio) {
       return NextResponse.json({ error: 'Studio not found' }, { status: 404 });
     }
 
-    // Update basic user fields
-    const userFields = ['username', 'displayname', 'email', 'status'];
-    const userUpdates = [];
-    const userArgs = [];
+    // Prepare user updates
+    const userUpdateData = {};
+    if (body.username !== undefined) userUpdateData.username = body.username;
+    if (body.display_name !== undefined) userUpdateData.displayName = body.display_name;
+    if (body.email !== undefined) userUpdateData.email = body.email;
 
-    userFields.forEach(field => {
-      let bodyField = field;
-      if (field === 'displayname' && body['display_name'] !== undefined) {
-        bodyField = 'display_name';
+    // Prepare studio updates
+    const studioUpdateData = {};
+    if (body._meta?.address !== undefined) studioUpdateData.address = body._meta.address;
+    if (body._meta?.phone !== undefined) studioUpdateData.phone = body._meta.phone;
+    if (body._meta?.url !== undefined) studioUpdateData.websiteUrl = body._meta.url;
+    if (body._meta?.latitude !== undefined) studioUpdateData.latitude = parseFloat(body._meta.latitude) || null;
+    if (body._meta?.longitude !== undefined) studioUpdateData.longitude = parseFloat(body._meta.longitude) || null;
+    if (body._meta?.verified !== undefined) studioUpdateData.isVerified = body._meta.verified === '1' || body._meta.verified === true;
+
+    // Prepare profile updates
+    const profileUpdateData = {};
+    if (body._meta?.first_name !== undefined) profileUpdateData.firstName = body._meta.first_name;
+    if (body._meta?.last_name !== undefined) profileUpdateData.lastName = body._meta.last_name;
+    if (body._meta?.location !== undefined) profileUpdateData.location = body._meta.location;
+    if (body._meta?.about !== undefined) profileUpdateData.about = body._meta.about;
+    if (body._meta?.shortabout !== undefined) profileUpdateData.shortAbout = body._meta.shortabout;
+    if (body._meta?.facebook !== undefined) profileUpdateData.facebookUrl = body._meta.facebook;
+    if (body._meta?.twitter !== undefined) profileUpdateData.twitterUrl = body._meta.twitter;
+    if (body._meta?.linkedin !== undefined) profileUpdateData.linkedinUrl = body._meta.linkedin;
+    if (body._meta?.instagram !== undefined) profileUpdateData.instagramUrl = body._meta.instagram;
+    if (body._meta?.youtubepage !== undefined) profileUpdateData.youtubeUrl = body._meta.youtubepage;
+    if (body._meta?.soundcloud !== undefined) profileUpdateData.soundcloudUrl = body._meta.soundcloud;
+    if (body._meta?.vimeo !== undefined) profileUpdateData.vimeoUrl = body._meta.vimeo;
+    if (body._meta?.featured !== undefined) profileUpdateData.isFeatured = body._meta.featured === '1' || body._meta.featured === true;
+
+    // Perform updates using Prisma transactions
+    await prisma.$transaction(async (tx) => {
+      // Update user if there are user changes
+      if (Object.keys(userUpdateData).length > 0) {
+        await tx.user.update({
+          where: { id: existingStudio.ownerId },
+          data: userUpdateData
+        });
       }
-      
-      if (body[bodyField] !== undefined) {
-        userUpdates.push(`${field} = ?`);
-        userArgs.push(body[bodyField]);
+
+      // Update studio if there are studio changes
+      if (Object.keys(studioUpdateData).length > 0) {
+        await tx.studio.update({
+          where: { id: id },
+          data: studioUpdateData
+        });
       }
-    });
 
-    if (userUpdates.length > 0) {
-      userArgs.push(id);
-      await client.execute({
-        sql: `UPDATE users SET ${userUpdates.join(', ')} WHERE id = ?`,
-        args: userArgs
-      });
-    }
-
-    // Update profile fields - comprehensive list
-    const profileFields = [
-      'first_name', 'last_name', 'location', 'address', 'phone', 'url', 'instagram', 
-      'youtubepage', 'about', 'latitude', 'longitude', 'shortabout', 'category',
-      'facebook', 'twitter', 'linkedin', 'soundcloud', 'vimeo', 'pinterest', 'tiktok',
-      'gender', 'birthday', 'rates1', 'rates2', 'rates3', 'homestudio', 'homestudio2',
-      'homestudio3', 'homestudio4', 'homestudio5', 'homestudio6', 'avatar_image',
-      'avatar_type', 'youtube2', 'vimeo2', 'soundcloudlink2', 'soundcloudlink3',
-      'soundcloudlink4', 'featureddate', 'lastupdated', 'locale', 'last_login', 'last_login_ip'
-    ];
-    
-    const booleanFields = [
-      'showrates', 'showphone', 'showemail', 'showaddress', 'showmap', 'showdirections',
-      'showshort', 'facebookshow', 'twittershow', 'instagramshow', 'linkedinshow',
-      'youtubepageshow', 'soundcloudshow', 'vimeopageshow', 'pinterestshow',
-      'verified', 'featured', 'crb', 'von'
-    ];
-    
-    const connectionFields = [];
-    for (let i = 1; i <= 15; i++) {
-      connectionFields.push(`connection${i}`);
-    }
-
-    const profileUpdates = [];
-    const profileArgs = [];
-
-    // Handle regular text fields from meta
-    profileFields.forEach(field => {
-      if (body.meta && body.meta[field] !== undefined) {
-        profileUpdates.push(`${field} = ?`);
-        profileArgs.push(body.meta[field] || '');
-      }
-    });
-
-    // Handle boolean fields from meta
-    booleanFields.forEach(field => {
-      if (body.meta && body.meta[field] !== undefined) {
-        profileUpdates.push(`${field} = ?`);
-        // Convert '1'/'0' strings to actual booleans for database
-        const value = body.meta[field] === '1' || body.meta[field] === true;
-        profileArgs.push(value ? 1 : 0);
+      // Update profile if there are profile changes
+      if (Object.keys(profileUpdateData).length > 0) {
+        await tx.userProfile.upsert({
+          where: { userId: existingStudio.ownerId },
+          update: profileUpdateData,
+          create: {
+            userId: existingStudio.ownerId,
+            ...profileUpdateData
+          }
+        });
       }
     });
-
-    // Handle connection fields from meta
-    connectionFields.forEach(field => {
-      if (body.meta && body.meta[field] !== undefined) {
-        profileUpdates.push(`${field} = ?`);
-        // Convert '1'/'0' strings to actual booleans for database
-        const value = body.meta[field] === '1' || body.meta[field] === true;
-        profileArgs.push(value ? 1 : 0);
-      }
-    });
-
-    if (profileUpdates.length > 0) {
-      profileArgs.push(id);
-      await client.execute({
-        sql: `UPDATE profile SET ${profileUpdates.join(', ')} WHERE user_id = ?`,
-        args: profileArgs
-      });
-    }
 
     return NextResponse.json({ 
       success: true,
@@ -241,41 +222,25 @@ export async function DELETE(request, { params }) {
 
   try {
     const { id } = params;
-    const client = await getConnection();
+    const prisma = await getConnection();
     
     // Check if studio exists
-    const existingStudio = await client.execute({
-      sql: 'SELECT id, username FROM users WHERE id = ? AND COALESCE(status,\'\') <> \'stub\'',
-      args: [id]
+    const existingStudio = await prisma.studio.findUnique({
+      where: { id: id },
+      include: {
+        owner: true
+      }
     });
 
-    if (existingStudio.rows.length === 0) {
+    if (!existingStudio) {
       return NextResponse.json({ error: 'Studio not found' }, { status: 404 });
     }
 
-    const username = existingStudio.rows[0].username;
+    const username = existingStudio.owner.username;
 
-    // Delete profile first (due to foreign key constraint)
-    await client.execute({
-      sql: 'DELETE FROM profile WHERE user_id = ?',
-      args: [id]
-    });
-
-    // Delete studio gallery images if table exists
-    try {
-      await client.execute({
-        sql: 'DELETE FROM studio_gallery WHERE user_id = ?',
-        args: [id]
-      });
-    } catch (error) {
-      // Table might not exist, continue
-      console.warn('Studio gallery table not found:', error.message);
-    }
-
-    // Delete the user
-    await client.execute({
-      sql: 'DELETE FROM users WHERE id = ?',
-      args: [id]
+    // Delete studio using Prisma (cascading deletes will handle related records)
+    await prisma.studio.delete({
+      where: { id: id }
     });
 
     return NextResponse.json({ 
