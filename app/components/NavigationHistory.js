@@ -7,8 +7,9 @@ const NavigationHistoryContext = createContext();
 export function NavigationHistoryProvider({ children }) {
   const [history, setHistory] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
+  
 
-  const pushToHistory = useCallback((path, title) => {
+  const pushToHistory = useCallback((path, title, isModal = false) => {
     setHistory(prev => {
       // Remove any forward history when pushing new path
       const newHistory = prev.slice(0, currentIndex + 1);
@@ -18,7 +19,7 @@ export function NavigationHistoryProvider({ children }) {
         return newHistory;
       }
       
-      const newEntry = { path, title, timestamp: Date.now() };
+      const newEntry = { path, title, timestamp: Date.now(), isModal };
       const updatedHistory = [...newHistory, newEntry];
       
       // Limit history to 50 entries

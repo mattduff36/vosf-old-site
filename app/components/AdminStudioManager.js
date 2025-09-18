@@ -5,6 +5,7 @@ import AdminBulkOperations from './AdminBulkOperations';
 import AdminAdvancedFilters from './AdminAdvancedFilters';
 import AdminStatsCards from './AdminStatsCards';
 import StudioProfileCard from './StudioProfileCard';
+import { useNavigationHistory } from './NavigationHistory';
 import AdvancedStudioEditor from './AdvancedStudioEditor';
 
 export default function AdminStudioManager() {
@@ -17,6 +18,7 @@ export default function AdminStudioManager() {
   const [filters, setFilters] = useState({});
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, totalPages: 0 });
   const [selectedStudios, setSelectedStudios] = useState([]);
+  
 
   const fetchStudios = useCallback(async () => {
     try {

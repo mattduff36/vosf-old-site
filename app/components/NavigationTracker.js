@@ -39,6 +39,7 @@ export default function NavigationTracker() {
       }
     }
 
+    
     // Push to navigation history
     pushToHistory(pathname, title);
   }, [pathname, pushToHistory]);

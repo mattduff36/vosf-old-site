@@ -7,6 +7,7 @@ export default function AdvancedStudioEditor({ studioId, onSave, onCancel }) {
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
   const [images, setImages] = useState([]);
+  
 
   useEffect(() => {
     if (studioId) {
@@ -53,6 +54,7 @@ export default function AdvancedStudioEditor({ studioId, onSave, onCancel }) {
       [key]: value
     }));
   };
+
 
   const handleSave = async () => {
     setSaving(true);
@@ -922,10 +924,19 @@ export default function AdvancedStudioEditor({ studioId, onSave, onCancel }) {
 
   return (
     <div className="bg-white rounded-lg shadow-lg">
-      <div className="border-b border-gray-200 px-6 py-4">
+      <div className="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
         <h2 className="text-xl font-semibold text-gray-900">
           Advanced Studio Editor: {profile.display_name || profile.username}
         </h2>
+        <button
+          onClick={onCancel}
+          className="inline-flex items-center justify-center w-8 h-8 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+          title="Close"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
 
       {/* Tab Navigation */}
@@ -963,12 +974,12 @@ export default function AdvancedStudioEditor({ studioId, onSave, onCancel }) {
 
       {/* Action Buttons */}
       <div className="border-t border-gray-200 px-6 py-4 flex justify-end space-x-3">
-        <button
-          onClick={onCancel}
-          className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
-          Cancel
-        </button>
+            <button
+              onClick={onCancel}
+              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              Close
+            </button>
         <button
           onClick={handleSave}
           disabled={saving}
