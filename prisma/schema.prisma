@@ -1,0 +1,434 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                                                         String                  @id @default(cuid())
+  email                                                      String                  @unique
+  username                                                   String                  @unique
+  displayName                                                String                  @map("display_name")
+  avatarUrl                                                  String?                 @map("avatar_url")
+  role                                                       Role                    @default(USER)
+  emailVerified                                              Boolean                 @default(false) @map("email_verified")
+  password                                                   String?
+  createdAt                                                  DateTime                @default(now()) @map("created_at")
+  updatedAt                                                  DateTime                @updatedAt @map("updated_at")
+  accounts                                                   accounts[]
+  content_reports_content_reports_reported_user_idTousers    content_reports[]       @relation("content_reports_reported_user_idTousers")
+  content_reports_content_reports_reporter_idTousers         content_reports[]       @relation("content_reports_reporter_idTousers")
+  content_reports_content_reports_reviewed_by_idTousers      content_reports[]       @relation("content_reports_reviewed_by_idTousers")
+  messages_messages_receiver_idTousers                       messages[]              @relation("messages_receiver_idTousers")
+  messages_messages_sender_idTousers                         messages[]              @relation("messages_sender_idTousers")
+  notifications                                              notifications[]
+  pending_subscriptions                                      pending_subscriptions[]
+  refunds                                                    refunds[]
+  review_responses                                           review_responses[]
+  reviews_reviews_owner_idTousers                            reviews[]               @relation("reviews_owner_idTousers")
+  reviews_reviews_reviewer_idTousers                         reviews[]               @relation("reviews_reviewer_idTousers")
+  saved_searches                                             saved_searches[]
+  sessions                                                   sessions[]
+  studios                                                    Studio[]
+  subscriptions                                              subscriptions[]
+  user_connections_user_connections_connected_user_idTousers user_connections[]      @relation("user_connections_connected_user_idTousers")
+  user_connections_user_connections_user_idTousers           user_connections[]      @relation("user_connections_user_idTousers")
+  user_metadata                                              user_metadata[]
+  profile                                                    UserProfile?
+
+  @@map("users")
+}
+
+model UserProfile {
+  id                    String   @id @default(cuid())
+  userId                String   @unique @map("user_id")
+  firstName             String?  @map("first_name")
+  lastName              String?  @map("last_name")
+  phone                 String?
+  about                 String?
+  shortAbout            String?  @map("short_about")
+  location              String?
+  rateTier1             String?  @map("rate_tier_1")
+  rateTier2             String?  @map("rate_tier_2")
+  rateTier3             String?  @map("rate_tier_3")
+  showRates             Boolean  @default(false) @map("show_rates")
+  facebookUrl           String?  @map("facebook_url")
+  twitterUrl            String?  @map("twitter_url")
+  linkedinUrl           String?  @map("linkedin_url")
+  instagramUrl          String?  @map("instagram_url")
+  youtubeUrl            String?  @map("youtube_url")
+  vimeoUrl              String?  @map("vimeo_url")
+  soundcloudUrl         String?  @map("soundcloud_url")
+  isCrbChecked          Boolean  @default(false) @map("is_crb_checked")
+  isFeatured            Boolean  @default(false) @map("is_featured")
+  isSpotlight           Boolean  @default(false) @map("is_spotlight")
+  verificationLevel     String   @default("none") @map("verification_level")
+  homeStudioDescription String?  @map("home_studio_description")
+  equipmentList         String?  @map("equipment_list")
+  servicesOffered       String?  @map("services_offered")
+  showEmail             Boolean  @default(false) @map("show_email")
+  showPhone             Boolean  @default(false) @map("show_phone")
+  showAddress           Boolean  @default(false) @map("show_address")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([isFeatured])
+  @@index([isSpotlight])
+  @@index([verificationLevel])
+  @@map("user_profiles")
+}
+
+model Studio {
+  id                    String                  @id @default(cuid())
+  ownerId               String                  @map("owner_id")
+  name                  String
+  description           String?
+  studioType            StudioType              @map("studio_type")
+  address               String?
+  latitude              Decimal?                @db.Decimal(10, 8)
+  longitude             Decimal?                @db.Decimal(11, 8)
+  websiteUrl            String?                 @map("website_url")
+  phone                 String?
+  isPremium             Boolean                 @default(false) @map("is_premium")
+  isVerified            Boolean                 @default(false) @map("is_verified")
+  status                StudioStatus            @default(ACTIVE)
+  createdAt             DateTime                @default(now()) @map("created_at")
+  updatedAt             DateTime                @updatedAt @map("updated_at")
+  pending_subscriptions pending_subscriptions[]
+  reviews               reviews[]
+  studio_images         studio_images[]
+  studio_services       studio_services[]
+  owner                 User                    @relation(fields: [ownerId], references: [id])
+
+  @@map("studios")
+}
+
+model accounts {
+  id                  String  @id
+  user_id             String
+  type                String
+  provider            String
+  provider_account_id String
+  refresh_token       String?
+  access_token        String?
+  expires_at          Int?
+  token_type          String?
+  scope               String?
+  id_token            String?
+  session_state       String?
+  users               User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([provider, provider_account_id])
+}
+
+model content_reports {
+  id                                            String       @id
+  reporter_id                                   String
+  content_type                                  ContentType
+  content_id                                    String
+  reported_user_id                              String?
+  reason                                        ReportReason
+  custom_reason                                 String?
+  status                                        ReportStatus @default(PENDING)
+  reviewed_by_id                                String?
+  reviewed_at                                   DateTime?
+  resolution                                    String?
+  created_at                                    DateTime     @default(now())
+  updated_at                                    DateTime
+  users_content_reports_reported_user_idTousers User?        @relation("content_reports_reported_user_idTousers", fields: [reported_user_id], references: [id])
+  users_content_reports_reporter_idTousers      User         @relation("content_reports_reporter_idTousers", fields: [reporter_id], references: [id])
+  users_content_reports_reviewed_by_idTousers   User?        @relation("content_reports_reviewed_by_idTousers", fields: [reviewed_by_id], references: [id])
+}
+
+model messages {
+  id                                String   @id
+  sender_id                         String
+  receiver_id                       String
+  subject                           String?
+  content                           String
+  is_read                           Boolean  @default(false)
+  created_at                        DateTime @default(now())
+  users_messages_receiver_idTousers User     @relation("messages_receiver_idTousers", fields: [receiver_id], references: [id])
+  users_messages_sender_idTousers   User     @relation("messages_sender_idTousers", fields: [sender_id], references: [id])
+}
+
+model notifications {
+  id         String           @id
+  user_id    String
+  type       NotificationType
+  title      String
+  message    String
+  data       Json?
+  read       Boolean          @default(false)
+  read_at    DateTime?
+  action_url String?
+  created_at DateTime         @default(now())
+  updated_at DateTime
+  users      User             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model pending_subscriptions {
+  id                     String        @id
+  user_id                String
+  studio_id              String
+  paypal_subscription_id String?       @unique
+  stripe_session_id      String?       @unique
+  status                 String        @default("PENDING_APPROVAL")
+  payment_method         PaymentMethod
+  created_at             DateTime      @default(now())
+  updated_at             DateTime
+  studios                Studio        @relation(fields: [studio_id], references: [id], onDelete: Cascade)
+  users                  User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model refunds {
+  id                       String       @id
+  stripe_refund_id         String       @unique
+  stripe_payment_intent_id String
+  amount                   Int
+  currency                 String
+  reason                   String?
+  status                   RefundStatus
+  processed_by             String
+  created_at               DateTime     @default(now())
+  updated_at               DateTime
+  users                    User         @relation(fields: [processed_by], references: [id])
+}
+
+model review_responses {
+  id         String   @id
+  review_id  String   @unique
+  author_id  String
+  content    String
+  created_at DateTime @default(now())
+  updated_at DateTime
+  users      User     @relation(fields: [author_id], references: [id], onDelete: Cascade)
+  reviews    reviews  @relation(fields: [review_id], references: [id], onDelete: Cascade)
+}
+
+model reviews {
+  id                               String            @id
+  studio_id                        String
+  reviewer_id                      String
+  owner_id                         String
+  rating                           Int               @db.SmallInt
+  content                          String?
+  is_anonymous                     Boolean           @default(false)
+  status                           ReviewStatus      @default(PENDING)
+  created_at                       DateTime          @default(now())
+  updated_at                       DateTime
+  review_responses                 review_responses?
+  users_reviews_owner_idTousers    User              @relation("reviews_owner_idTousers", fields: [owner_id], references: [id])
+  users_reviews_reviewer_idTousers User              @relation("reviews_reviewer_idTousers", fields: [reviewer_id], references: [id])
+  studios                          Studio            @relation(fields: [studio_id], references: [id], onDelete: Cascade)
+}
+
+model saved_searches {
+  id         String   @id
+  user_id    String
+  name       String
+  filters    String
+  created_at DateTime @default(now())
+  updated_at DateTime
+  users      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model sessions {
+  id            String   @id
+  session_token String   @unique
+  user_id       String
+  expires       DateTime
+  users         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model studio_images {
+  id         String  @id
+  studio_id  String
+  image_url  String
+  alt_text   String?
+  sort_order Int     @default(0)
+  studios    Studio  @relation(fields: [studio_id], references: [id], onDelete: Cascade)
+}
+
+model studio_services {
+  id        String      @id
+  studio_id String
+  service   ServiceType
+  studios   Studio      @relation(fields: [studio_id], references: [id], onDelete: Cascade)
+
+  @@unique([studio_id, service])
+}
+
+model subscriptions {
+  id                     String             @id
+  user_id                String
+  stripe_subscription_id String?            @unique
+  stripe_customer_id     String?
+  paypal_subscription_id String?            @unique
+  payment_method         PaymentMethod      @default(STRIPE)
+  status                 SubscriptionStatus
+  current_period_start   DateTime?
+  current_period_end     DateTime?
+  cancelled_at           DateTime?
+  created_at             DateTime           @default(now())
+  updated_at             DateTime
+  users                  User               @relation(fields: [user_id], references: [id])
+}
+
+model user_connections {
+  id                                              String   @id
+  user_id                                         String
+  connected_user_id                               String
+  accepted                                        Boolean  @default(false)
+  created_at                                      DateTime @default(now())
+  users_user_connections_connected_user_idTousers User     @relation("user_connections_connected_user_idTousers", fields: [connected_user_id], references: [id])
+  users_user_connections_user_idTousers           User     @relation("user_connections_user_idTousers", fields: [user_id], references: [id])
+
+  @@unique([user_id, connected_user_id])
+}
+
+model user_metadata {
+  id         String   @id
+  user_id    String
+  key        String
+  value      String?
+  created_at DateTime @default(now())
+  updated_at DateTime
+  users      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, key])
+  @@index([key])
+  @@index([user_id])
+  @@map("user_metadata")
+}
+
+model Faq {
+  id         String @id @default(cuid())
+  question   String
+  answer     String
+  sort_order Int?   @map("sort_order")
+
+  @@map("faq")
+}
+
+model Contact {
+  id       String @id @default(cuid())
+  user1    String
+  user2    String
+  accepted Int    @default(0)
+
+  @@map("contacts")
+}
+
+model Poi {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  latitude    Decimal? @db.Decimal(10, 8)
+  longitude   Decimal? @db.Decimal(11, 8)
+  address     String?
+  category    String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("poi")
+}
+
+enum StudioType {
+  RECORDING
+  PODCAST
+  HOME
+  PRODUCTION
+  MOBILE
+}
+
+enum StudioStatus {
+  DRAFT
+  ACTIVE
+  INACTIVE
+  PENDING
+}
+
+enum ContentType {
+  REVIEW
+  MESSAGE
+  STUDIO
+  USER
+}
+
+enum NotificationType {
+  MESSAGE_RECEIVED
+  REVIEW_RECEIVED
+  REVIEW_RESPONSE
+  CONNECTION_REQUEST
+  CONNECTION_ACCEPTED
+  STUDIO_VERIFIED
+  PAYMENT_SUCCESS
+  PAYMENT_FAILED
+  SUBSCRIPTION_EXPIRING
+}
+
+enum PaymentMethod {
+  STRIPE
+  PAYPAL
+}
+
+enum RefundStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+}
+
+enum ReportReason {
+  SPAM
+  HARASSMENT
+  HATE_SPEECH
+  INAPPROPRIATE
+  FAKE_INFO
+  COPYRIGHT
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  DISMISSED
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum Role {
+  USER
+  STUDIO_OWNER
+  ADMIN
+}
+
+enum ServiceType {
+  ISDN
+  SOURCE_CONNECT
+  SOURCE_CONNECT_NOW
+  CLEANFEED
+  SESSION_LINK_PRO
+  ZOOM
+  SKYPE
+  TEAMS
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  PAST_DUE
+  UNPAID
+  INCOMPLETE
+  SUSPENDED
+}

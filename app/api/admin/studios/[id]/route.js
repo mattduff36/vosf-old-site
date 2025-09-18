@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { getConnection } from '../../../../lib/database.js';
+import { getStudioById, updateStudio, deleteStudio, getConnection } from '../../../../lib/database.js';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,38 +15,54 @@ export async function GET(request, { params }) {
 
   try {
     const { id } = params;
-    const client = await getConnection();
+    const prisma = await getConnection();
     
-    // Get comprehensive user and profile data from new schema
-    const studioResult = await client.execute({
-      sql: `
-        SELECT 
-          u.id, u.username, u.displayname as display_name, u.email, u.status, u.created_at as joined,
-          p.first_name, p.last_name, p.location, p.address, p.phone, p.url, p.instagram, p.youtubepage, p.about,
-          p.latitude, p.longitude, p.shortabout, p.category, p.facebook, p.twitter, p.linkedin, 
-          p.soundcloud, p.vimeo, p.pinterest, p.tiktok, p.gender, p.birthday,
-          p.rates1, p.rates2, p.rates3, p.showrates, p.homestudio, p.homestudio2, p.homestudio3,
-          p.homestudio4, p.homestudio5, p.homestudio6, p.avatar_image, p.avatar_type,
-          p.youtube2, p.vimeo2, p.soundcloudlink2, p.soundcloudlink3, p.soundcloudlink4,
-          p.verified, p.featured, p.featureddate, p.crb, p.von, p.lastupdated, p.locale,
-          p.last_login, p.last_login_ip, p.showphone, p.showemail, p.showaddress, p.showmap,
-          p.showdirections, p.showshort, p.facebookshow, p.twittershow, p.instagramshow,
-          p.linkedinshow, p.youtubepageshow, p.soundcloudshow, p.vimeopageshow, p.pinterestshow,
-          p.connection1, p.connection2, p.connection3, p.connection4, p.connection5,
-          p.connection6, p.connection7, p.connection8, p.connection9, p.connection10,
-          p.connection11, p.connection12, p.connection13, p.connection14, p.connection15
-        FROM users u
-        JOIN profile p ON p.user_id = u.id
-        WHERE u.id = ? AND COALESCE(u.status,'') <> 'stub'
-      `,
-      args: [id]
+    // Get studio with owner and profile data using Prisma
+    const studio = await prisma.studio.findUnique({
+      where: { id: id },
+      include: {
+        owner: {
+          include: {
+            profile: true
+          }
+        }
+      }
     });
 
-    if (studioResult.rows.length === 0) {
+    if (!studio) {
       return NextResponse.json({ error: 'Studio not found' }, { status: 404 });
     }
 
-    const studioData = studioResult.rows[0];
+    // Transform to match expected format for the frontend
+    const studioData = {
+      id: studio.id,
+      username: studio.owner?.username,
+      display_name: studio.owner?.displayName,
+      email: studio.owner?.email,
+      status: studio.status?.toLowerCase(),
+      joined: studio.createdAt,
+      first_name: studio.owner?.profile?.firstName,
+      last_name: studio.owner?.profile?.lastName,
+      location: studio.owner?.profile?.location,
+      address: studio.address,
+      phone: studio.phone,
+      url: studio.websiteUrl,
+      instagram: studio.owner?.profile?.instagramUrl,
+      youtubepage: studio.owner?.profile?.youtubeUrl,
+      about: studio.owner?.profile?.about,
+      latitude: studio.latitude ? parseFloat(studio.latitude.toString()) : null,
+      longitude: studio.longitude ? parseFloat(studio.longitude.toString()) : null,
+      shortabout: studio.owner?.profile?.shortAbout,
+      category: '', // Not in new schema
+      facebook: studio.owner?.profile?.facebookUrl,
+      twitter: studio.owner?.profile?.twitterUrl,
+      linkedin: studio.owner?.profile?.linkedinUrl,
+      soundcloud: studio.owner?.profile?.soundcloudUrl,
+      vimeo: studio.owner?.profile?.vimeoUrl,
+      verified: studio.isVerified,
+      featured: studio.owner?.profile?.isFeatured,
+      avatar_image: studio.owner?.avatarUrl
+    };
     
     // Structure the data to match what the frontend expects
     const profile = {
@@ -78,65 +94,9 @@ export async function GET(request, { params }) {
         linkedin: studioData.linkedin,
         soundcloud: studioData.soundcloud,
         vimeo: studioData.vimeo,
-        pinterest: studioData.pinterest,
-        tiktok: studioData.tiktok,
-        gender: studioData.gender,
-        birthday: studioData.birthday,
-        rates1: studioData.rates1,
-        rates2: studioData.rates2,
-        rates3: studioData.rates3,
-        showrates: studioData.showrates ? '1' : '0',
-        homestudio: studioData.homestudio,
-        homestudio2: studioData.homestudio2,
-        homestudio3: studioData.homestudio3,
-        homestudio4: studioData.homestudio4,
-        homestudio5: studioData.homestudio5,
-        homestudio6: studioData.homestudio6,
-        avatar_image: studioData.avatar_image,
-        avatar_type: studioData.avatar_type,
-        youtube2: studioData.youtube2,
-        vimeo2: studioData.vimeo2,
-        soundcloudlink2: studioData.soundcloudlink2,
-        soundcloudlink3: studioData.soundcloudlink3,
-        soundcloudlink4: studioData.soundcloudlink4,
         verified: studioData.verified ? '1' : '0',
         featured: studioData.featured ? '1' : '0',
-        featureddate: studioData.featureddate,
-        crb: studioData.crb ? '1' : '0',
-        von: studioData.von ? '1' : '0',
-        lastupdated: studioData.lastupdated,
-        locale: studioData.locale,
-        last_login: studioData.last_login,
-        last_login_ip: studioData.last_login_ip,
-        showphone: studioData.showphone ? '1' : '0',
-        showemail: studioData.showemail ? '1' : '0',
-        showaddress: studioData.showaddress ? '1' : '0',
-        showmap: studioData.showmap ? '1' : '0',
-        showdirections: studioData.showdirections ? '1' : '0',
-        showshort: studioData.showshort ? '1' : '0',
-        facebookshow: studioData.facebookshow ? '1' : '0',
-        twittershow: studioData.twittershow ? '1' : '0',
-        instagramshow: studioData.instagramshow ? '1' : '0',
-        linkedinshow: studioData.linkedinshow ? '1' : '0',
-        youtubepageshow: studioData.youtubepageshow ? '1' : '0',
-        soundcloudshow: studioData.soundcloudshow ? '1' : '0',
-        vimeopageshow: studioData.vimeopageshow ? '1' : '0',
-        pinterestshow: studioData.pinterestshow ? '1' : '0',
-        connection1: studioData.connection1 ? '1' : '0',
-        connection2: studioData.connection2 ? '1' : '0',
-        connection3: studioData.connection3 ? '1' : '0',
-        connection4: studioData.connection4 ? '1' : '0',
-        connection5: studioData.connection5 ? '1' : '0',
-        connection6: studioData.connection6 ? '1' : '0',
-        connection7: studioData.connection7 ? '1' : '0',
-        connection8: studioData.connection8 ? '1' : '0',
-        connection9: studioData.connection9 ? '1' : '0',
-        connection10: studioData.connection10 ? '1' : '0',
-        connection11: studioData.connection11 ? '1' : '0',
-        connection12: studioData.connection12 ? '1' : '0',
-        connection13: studioData.connection13 ? '1' : '0',
-        connection14: studioData.connection14 ? '1' : '0',
-        connection15: studioData.connection15 ? '1' : '0'
+        avatar_image: studioData.avatar_image
       }
     };
 

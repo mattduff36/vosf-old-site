@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { getConnection } from '../../../lib/database.js';
+import { listStudiosAdmin, createStudio } from '../../../lib/database.js';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,99 +24,17 @@ export async function GET(request) {
     const hasAvatar = searchParams.get('hasAvatar') || '';
     const sortBy = searchParams.get('sortBy') || 'joined';
     const sortOrder = searchParams.get('sortOrder') || 'desc';
-    const offset = (page - 1) * limit;
 
-    let query = `
-      SELECT 
-        u.id, u.username, u.displayname as display_name, u.email, u.status, u.created_at as joined,
-        p.first_name, p.last_name, p.location, p.phone, p.url, p.instagram, p.youtubepage, p.about,
-        p.address, p.shortabout, p.category, p.verified, p.featured, p.avatar_image
-      FROM users u
-      JOIN profile p ON p.user_id = u.id
-    `;
-    
-    const params = [];
-    const conditions = ['COALESCE(u.status,\'\') <> \'stub\''];
-
-    if (search) {
-      conditions.push('(u.username LIKE ? OR u.displayname LIKE ? OR u.email LIKE ? OR p.first_name LIKE ? OR p.last_name LIKE ? OR p.about LIKE ? OR p.location LIKE ? OR p.category LIKE ?)');
-      params.push(`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`);
-    }
-
-    if (status !== '' && status !== 'all') {
-      if (status === 'active') {
-        conditions.push('COALESCE(u.status,\'\') <> \'stub\'');
-      }
-      // In new schema, all non-stub users are considered active
-    }
-
-    if (joinedAfter) {
-      conditions.push('u.created_at >= ?');
-      params.push(joinedAfter);
-    }
-
-    if (joinedBefore) {
-      conditions.push('u.created_at <= ?');
-      params.push(joinedBefore + ' 23:59:59');
-    }
-
-    if (hasAvatar) {
-      if (hasAvatar === '1') {
-        conditions.push('(p.avatar_image IS NOT NULL AND p.avatar_image != "")');
-      } else if (hasAvatar === '0') {
-        conditions.push('(p.avatar_image IS NULL OR p.avatar_image = "")');
-      }
-    }
-
-    if (conditions.length > 0) {
-      query += ' WHERE ' + conditions.join(' AND ');
-    }
-
-    // Validate sortBy to prevent SQL injection
-    const validSortColumns = ['created_at', 'username', 'displayname', 'email', 'status', 'first_name', 'last_name'];
-    let validSortBy = validSortColumns.includes(sortBy) ? sortBy : 'created_at';
-    
-    // Map old column names to new ones
-    if (sortBy === 'joined') validSortBy = 'u.created_at';
-    else if (sortBy === 'display_name') validSortBy = 'u.displayname';
-    else if (sortBy === 'username') validSortBy = 'u.username';
-    else if (sortBy === 'email') validSortBy = 'u.email';
-    else if (sortBy === 'status') validSortBy = 'u.status';
-    else validSortBy = 'u.' + validSortBy;
-    
-    const validSortOrder = ['asc', 'desc'].includes(sortOrder.toLowerCase()) ? sortOrder.toUpperCase() : 'DESC';
-
-    query += ` ORDER BY ${validSortBy} ${validSortOrder} LIMIT ? OFFSET ?`;
-    params.push(limit, offset);
-
-    const client = await getConnection();
-    const result = await client.execute({ sql: query, args: params });
-
-    // Get total count
-    let countQuery = 'SELECT COUNT(*) as count FROM users u JOIN profile p ON p.user_id = u.id';
-    const countParams = [];
-    
-    if (conditions.length > 0) {
-      countQuery += ' WHERE ' + conditions.join(' AND ');
-      // Remove limit and offset params for count
-      for (let i = 0; i < params.length - 2; i++) {
-        countParams.push(params[i]);
-      }
-    }
-
-    const countResult = await client.execute({ sql: countQuery, args: countParams });
-    const totalCount = countResult.rows[0].count;
-
-    return NextResponse.json({
-      studios: result.rows,
-      pagination: {
-        page,
-        limit,
-        total: totalCount,
-        totalPages: Math.ceil(totalCount / limit),
-        hasMore: offset + limit < totalCount
-      }
+    const result = await listStudiosAdmin({
+      page,
+      limit,
+      search,
+      status,
+      sortBy,
+      sortOrder
     });
+
+    return NextResponse.json(result);
 
   } catch (error) {
     console.error('Admin studios API error:', error);
@@ -159,53 +77,23 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Invalid email format' }, { status: 400 });
     }
 
-    const client = await getConnection();
-    
-    // Check if username or email already exists
-    const existingUser = await client.execute({
-      sql: 'SELECT id FROM users WHERE username = ? OR email = ?',
-      args: [username, email]
-    });
-
-    if (existingUser.rows.length > 0) {
-      return NextResponse.json({ error: 'Username or email already exists' }, { status: 409 });
-    }
-
-    // Insert new user
-    const userResult = await client.execute({
-      sql: `
-        INSERT INTO users (username, displayname, email, status, created_at)
-        VALUES (?, ?, ?, 'active', datetime('now'))
-      `,
-      args: [username, displayname || username, email]
-    });
-
-    const userId = userResult.lastInsertRowid;
-
-    // Insert profile
-    await client.execute({
-      sql: `
-        INSERT INTO profile (user_id, first_name, last_name, location, phone, url, instagram, youtubepage, about)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `,
-      args: [userId, first_name, last_name, location, phone, url, instagram, youtubepage, about]
-    });
-
-    // Get the created studio with profile
-    const newStudio = await client.execute({
-      sql: `
-        SELECT u.id, u.username, u.displayname as display_name, u.email, u.status, u.created_at as joined,
-               p.first_name, p.last_name, p.location, p.phone, p.url, p.instagram, p.youtubepage, p.about
-        FROM users u
-        JOIN profile p ON p.user_id = u.id
-        WHERE u.id = ?
-      `,
-      args: [userId]
+    const studio = await createStudio({
+      username,
+      displayname,
+      email,
+      first_name,
+      last_name,
+      location,
+      phone,
+      url,
+      instagram,
+      youtubepage,
+      about
     });
 
     return NextResponse.json({ 
       message: 'Studio created successfully',
-      studio: newStudio.rows[0]
+      studio: studio
     }, { status: 201 });
 
   } catch (error) {

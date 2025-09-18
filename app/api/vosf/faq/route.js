@@ -22,14 +22,14 @@ export async function GET(request) {
     // Get FAQs using new schema
     const faqs = await listFAQ({ search: search || undefined });
 
-    // Get FAQ statistics
-    const db = await getConnection();
-    const totalCount = await db.execute('SELECT COUNT(*) as c FROM faq');
+    // Get FAQ statistics using Prisma
+    const prisma = await getConnection();
+    const totalCount = await prisma.faq.count();
 
     const faqData = {
       faqs: faqs || [],
       statistics: {
-        total: Number(totalCount.rows[0]?.c || 0)
+        total: totalCount
       }
     };
 

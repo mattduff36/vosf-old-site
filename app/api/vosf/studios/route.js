@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { listStudios, getConnection } from '../../../lib/database';
+import { listStudios } from '../../../lib/database';
 import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
@@ -23,25 +23,17 @@ export async function GET(request) {
     const offset = parseInt(searchParams.get('offset')) || 0;
 
     // Use the new listStudios function with proper filtering
-    const allStudios = await listStudios({ 
+    const studios = await listStudios({ 
       q: search || undefined, 
-      hasCoords: hasCoords || undefined 
+      hasCoords: hasCoords || undefined,
+      limit,
+      offset
     });
 
-    // Apply pagination
-    const total = allStudios.length;
-    const studios = allStudios.slice(offset, offset + limit);
-
-    // Add additional fields for compatibility
-    const enhancedStudios = studios.map(studio => ({
-      ...studio,
-      display_name: studio.name,
-      status: 'active', // All non-stub users are active in new schema
-      joined: null // Will be populated from users table if needed
-    }));
+    const total = studios.length;
 
     return NextResponse.json({
-      studios: enhancedStudios,
+      studios: studios,
       pagination: {
         total,
         limit,
