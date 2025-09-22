@@ -4,6 +4,29 @@ import { getStudioById, updateStudio, deleteStudio, getConnection } from '../../
 
 export const dynamic = 'force-dynamic';
 
+// Helper function to decode HTML entities
+function decodeHtmlEntities(str) {
+  if (!str) return str;
+  
+  const htmlEntities = {
+    '&pound;': '£',
+    '&euro;': '€',
+    '&dollar;': '$',
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#39;': "'",
+    '&nbsp;': ' '
+  };
+  
+  return str.replace(/&[a-zA-Z0-9#]+;/g, (entity) => {
+    return htmlEntities[entity] || entity;
+  });
+}
+
+// No need for display name logic - just use username
+
 // GET - Get single studio by ID with full profile data
 export async function GET(request, { params }) {
   const cookieStore = cookies();
@@ -37,22 +60,22 @@ export async function GET(request, { params }) {
     const studioData = {
       id: studio.id,
       username: studio.owner?.username,
-      display_name: studio.owner?.displayName,
+      display_name: studio.owner?.username, // Use username for both fields
       email: studio.owner?.email,
       status: studio.status?.toLowerCase(),
       joined: studio.createdAt,
-      first_name: studio.owner?.profile?.firstName,
-      last_name: studio.owner?.profile?.lastName,
+      first_name: decodeHtmlEntities(studio.owner?.profile?.firstName),
+      last_name: decodeHtmlEntities(studio.owner?.profile?.lastName),
       location: studio.owner?.profile?.location,
       address: studio.address,
       phone: studio.phone,
       url: studio.websiteUrl,
       instagram: studio.owner?.profile?.instagramUrl,
       youtubepage: studio.owner?.profile?.youtubeUrl,
-      about: studio.owner?.profile?.about,
+      about: decodeHtmlEntities(studio.owner?.profile?.about),
       latitude: studio.latitude ? parseFloat(studio.latitude.toString()) : null,
       longitude: studio.longitude ? parseFloat(studio.longitude.toString()) : null,
-      shortabout: studio.owner?.profile?.shortAbout,
+      shortabout: decodeHtmlEntities(studio.owner?.profile?.shortAbout),
       category: '', // Not in new schema
       facebook: studio.owner?.profile?.facebookUrl,
       twitter: studio.owner?.profile?.twitterUrl,
@@ -61,7 +84,12 @@ export async function GET(request, { params }) {
       vimeo: studio.owner?.profile?.vimeoUrl,
       verified: studio.isVerified,
       featured: studio.owner?.profile?.isFeatured,
-      avatar_image: studio.owner?.avatarUrl
+      avatar_image: studio.owner?.avatarUrl,
+      // Rate data from profile (decode HTML entities)
+      rates1: decodeHtmlEntities(studio.owner?.profile?.rateTier1),
+      rates2: decodeHtmlEntities(studio.owner?.profile?.rateTier2),
+      rates3: decodeHtmlEntities(studio.owner?.profile?.rateTier3),
+      showrates: studio.owner?.profile?.showRates
     };
     
     // Structure the data to match what the frontend expects
@@ -96,7 +124,12 @@ export async function GET(request, { params }) {
         vimeo: studioData.vimeo,
         verified: studioData.verified ? '1' : '0',
         featured: studioData.featured ? '1' : '0',
-        avatar_image: studioData.avatar_image
+        avatar_image: studioData.avatar_image,
+        // Rate data
+        rates1: studioData.rates1,
+        rates2: studioData.rates2,
+        rates3: studioData.rates3,
+        showrates: studioData.showrates ? '1' : '0'
       }
     };
 
@@ -141,7 +174,6 @@ export async function PUT(request, { params }) {
     // Prepare user updates
     const userUpdateData = {};
     if (body.username !== undefined) userUpdateData.username = body.username;
-    if (body.display_name !== undefined) userUpdateData.displayName = body.display_name;
     if (body.email !== undefined) userUpdateData.email = body.email;
 
     // Prepare studio updates
@@ -168,6 +200,11 @@ export async function PUT(request, { params }) {
     if (body._meta?.soundcloud !== undefined) profileUpdateData.soundcloudUrl = body._meta.soundcloud;
     if (body._meta?.vimeo !== undefined) profileUpdateData.vimeoUrl = body._meta.vimeo;
     if (body._meta?.featured !== undefined) profileUpdateData.isFeatured = body._meta.featured === '1' || body._meta.featured === true;
+    // Rate updates
+    if (body._meta?.rates1 !== undefined) profileUpdateData.rateTier1 = body._meta.rates1;
+    if (body._meta?.rates2 !== undefined) profileUpdateData.rateTier2 = body._meta.rates2;
+    if (body._meta?.rates3 !== undefined) profileUpdateData.rateTier3 = body._meta.rates3;
+    if (body._meta?.showrates !== undefined) profileUpdateData.showRates = body._meta.showrates === '1' || body._meta.showrates === true;
 
     // Perform updates using Prisma transactions
     await prisma.$transaction(async (tx) => {

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Migrate Complete About Descriptions</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .controls { margin: 20px 0; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; margin: 5px; }
+        button:hover { background: #0056b3; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .result { margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .progress { margin: 10px 0; }
+        .progress-bar { width: 100%; height: 20px; background: #e9ecef; border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #28a745; transition: width 0.3s ease; }
+        .results-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .results-table th, .results-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .results-table th { background: #f8f9fa; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Migrate Complete About Descriptions</h1>
+        <p>This tool will migrate complete about descriptions from the old data to all user profiles.</p>
+        
+        <div class="controls">
+            <label for="batchSize">Batch Size:</label>
+            <input type="number" id="batchSize" value="50" min="1" max="100">
+            
+            <button onclick="startMigration()" id="startBtn">Start Migration</button>
+            <button onclick="stopMigration()" id="stopBtn" disabled>Stop Migration</button>
+            <button onclick="clearResults()">Clear Results</button>
+        </div>
+        
+        <div class="progress" id="progressDiv" style="display: none;">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div id="progressText">0%</div>
+        </div>
+        
+        <div id="result" class="result" style="display: none;"></div>
+        
+        <div id="resultsTable" style="display: none;">
+            <h3>Recent Updates:</h3>
+            <table class="results-table" id="resultsTableContent">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>About Length</th>
+                        <th>Preview</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let isRunning = false;
+        let currentStart = 0;
+        let totalBatches = 0;
+        let currentBatch = 0;
+        
+        async function startMigration() {
+            if (isRunning) return;
+            
+            isRunning = true;
+            currentStart = 0;
+            currentBatch = 0;
+            
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
+            document.getElementById('progressDiv').style.display = 'block';
+            document.getElementById('resultsTable').style.display = 'block';
+            
+            await runMigration();
+        }
+        
+        async function stopMigration() {
+            isRunning = false;
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            showResult('Migration stopped by user', 'info');
+        }
+        
+        async function runMigration() {
+            if (!isRunning) return;
+            
+            const batchSize = parseInt(document.getElementById('batchSize').value);
+            
+            try {
+                const response = await fetch('/api/admin/migrate-complete-about', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        batchSize: batchSize,
+                        startFrom: currentStart
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentBatch = data.batch;
+                    totalBatches = data.totalBatches;
+                    currentStart = data.nextStart || currentStart + batchSize;
+                    
+                    // Update progress
+                    const progress = (currentBatch / totalBatches) * 100;
+                    document.getElementById('progressFill').style.width = progress + '%';
+                    document.getElementById('progressText').textContent = Math.round(progress) + '%';
+                    
+                    // Show results
+                    showResult(`Batch ${currentBatch}/${totalBatches}: ${data.updated} updated, ${data.errors} errors`, 'success');
+                    
+                    // Update results table
+                    updateResultsTable(data.results);
+                    
+                    // Continue if there are more batches
+                    if (data.hasMore && isRunning) {
+                        setTimeout(() => runMigration(), 1000); // 1 second delay between batches
+                    } else {
+                        // Migration complete
+                        isRunning = false;
+                        document.getElementById('startBtn').disabled = false;
+                        document.getElementById('stopBtn').disabled = true;
+                        showResult(`Migration complete! Total: ${data.updated} updated, ${data.errors} errors`, 'success');
+                    }
+                } else {
+                    showResult(`Error: ${data.error}`, 'error');
+                    isRunning = false;
+                    document.getElementById('startBtn').disabled = false;
+                    document.getElementById('stopBtn').disabled = true;
+                }
+            } catch (error) {
+                showResult(`Failed to migrate: ${error.message}`, 'error');
+                isRunning = false;
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+            }
+        }
+        
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.className = `result ${type}`;
+            resultDiv.innerHTML = `<h3>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'} ${message}</h3>`;
+        }
+        
+        function updateResultsTable(results) {
+            const tbody = document.getElementById('resultsTableBody');
+            tbody.innerHTML = '';
+            
+            results.forEach(result => {
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = result.username;
+                row.insertCell(1).textContent = result.email;
+                row.insertCell(2).textContent = result.aboutLength + ' chars';
+                row.insertCell(3).textContent = result.aboutPreview;
+            });
+        }
+        
+        function clearResults() {
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('resultsTable').style.display = 'none';
+            document.getElementById('progressDiv').style.display = 'none';
+            document.getElementById('resultsTableBody').innerHTML = '';
+        }
+    </script>
+</body>
+</html>

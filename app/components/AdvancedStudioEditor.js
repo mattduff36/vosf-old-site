@@ -1,6 +1,27 @@
 'use client';
 import { useState, useEffect } from 'react';
 
+// Helper function to decode HTML entities on the frontend
+function decodeHtmlEntities(str) {
+  if (!str) return str;
+  
+  const htmlEntities = {
+    '&pound;': '£',
+    '&euro;': '€',
+    '&dollar;': '$',
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#39;': "'",
+    '&nbsp;': ' '
+  };
+  
+  return str.replace(/&[a-zA-Z0-9#]+;/g, (entity) => {
+    return htmlEntities[entity] || entity;
+  });
+}
+
 export default function AdvancedStudioEditor({ studioId, onSave, onCancel }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -151,16 +172,9 @@ export default function AdvancedStudioEditor({ studioId, onSave, onCancel }) {
             value={profile.username || ''}
             onChange={(e) => handleBasicChange('username', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="e.g. VoiceoverGuy, Shake, S2Blue"
           />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Display Name</label>
-          <input
-            type="text"
-            value={profile.display_name || ''}
-            onChange={(e) => handleBasicChange('display_name', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          <p className="text-xs text-gray-500 mt-1">This is used in URLs and should be unique</p>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
@@ -195,8 +209,8 @@ export default function AdvancedStudioEditor({ studioId, onSave, onCancel }) {
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Full About</label>
         <textarea
-          value={profile._meta?.about || ''}
-          onChange={(e) => handleMetaChange('about', e.target.value)}
+            value={decodeHtmlEntities(profile._meta?.about) || ''}
+            onChange={(e) => handleMetaChange('about', e.target.value)}
           rows={6}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
@@ -577,25 +591,82 @@ export default function AdvancedStudioEditor({ studioId, onSave, onCancel }) {
     </div>
   );
 
-  const renderConnectionsTab = () => (
+  const renderConnectionsTab = () => {
+    const connectionMethods = [
+      { id: 1, name: 'Source Connect' },
+      { id: 2, name: 'Source Connect Now' },
+      { id: 3, name: 'Phone Patch' },
+      { id: 4, name: 'Session Link Pro' },
+      { id: 5, name: 'Zoom or Teams' },
+      { id: 6, name: 'Cleanfeed' },
+      { id: 7, name: 'Riverside' },
+      { id: 8, name: 'Google Hangouts' },
+      { id: 9, name: 'ISDN' },
+      { id: 10, name: 'Skype' },
+      { id: 11, name: 'Audio TX' },
+      { id: 12, name: 'ipDTL' }
+    ];
+
+    return (
     <div className="space-y-6">
       <div className="bg-blue-50 p-4 rounded-lg">
         <h4 className="font-medium text-blue-900 mb-3">Connection Methods</h4>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(num => (
-            <label key={num} className="flex items-center">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {connectionMethods.map(method => (
+            <label key={method.id} className="flex items-center">
               <input
                 type="checkbox"
-                checked={profile._meta?.[`connection${num}`] === '1'}
-                onChange={(e) => handleMetaChange(`connection${num}`, e.target.checked ? '1' : '0')}
+                checked={profile._meta?.[`connection${method.id}`] === '1'}
+                onChange={(e) => handleMetaChange(`connection${method.id}`, e.target.checked ? '1' : '0')}
                 className="mr-2"
               />
-              <span className="text-sm">Connection {num}</span>
+              <span className="text-sm">{method.name}</span>
             </label>
           ))}
         </div>
       </div>
 
+      <div className="bg-green-50 p-4 rounded-lg">
+        <h4 className="font-medium text-green-900 mb-3">Custom Connection Methods</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Custom Connection 1</label>
+            <input
+              type="text"
+              value={profile._meta?.custom_connection1 || ''}
+              onChange={(e) => handleMetaChange('custom_connection1', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter custom connection method"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Custom Connection 2</label>
+            <input
+              type="text"
+              value={profile._meta?.custom_connection2 || ''}
+              onChange={(e) => handleMetaChange('custom_connection2', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter custom connection method"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Custom Connection 3</label>
+            <input
+              type="text"
+              value={profile._meta?.custom_connection3 || ''}
+              onChange={(e) => handleMetaChange('custom_connection3', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter custom connection method"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    );
+  };
+
+  const renderHomeStudioTab = () => (
+    <div className="space-y-6">
       <div className="bg-green-50 p-4 rounded-lg">
         <h4 className="font-medium text-green-900 mb-3">Home Studio Settings</h4>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -697,30 +768,33 @@ export default function AdvancedStudioEditor({ studioId, onSave, onCancel }) {
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Rate 1</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">15 Minutes Rate</label>
           <input
             type="text"
-            value={profile._meta?.rates1 || ''}
+            value={decodeHtmlEntities(profile._meta?.rates1) || ''}
             onChange={(e) => handleMetaChange('rates1', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="e.g. £80, $80, €80"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Rate 2</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">30 Minutes Rate</label>
           <input
             type="text"
-            value={profile._meta?.rates2 || ''}
+            value={decodeHtmlEntities(profile._meta?.rates2) || ''}
             onChange={(e) => handleMetaChange('rates2', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="e.g. £100, $100, €100"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Rate 3</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">60 Minutes Rate</label>
           <input
             type="text"
-            value={profile._meta?.rates3 || ''}
+            value={decodeHtmlEntities(profile._meta?.rates3) || ''}
             onChange={(e) => handleMetaChange('rates3', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="e.g. £125, $125, €125"
           />
         </div>
       </div>

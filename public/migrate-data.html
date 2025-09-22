@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Migration Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .button {
+            background-color: #007cba;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .button:hover {
+            background-color: #005a87;
+        }
+        .button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 Data Migration Tool</h1>
+    <p>This tool will update the Prisma database with correct usernames, rates, connections, and other data from the old CSV files.</p>
+    
+    <button id="migrateBtn" class="button" onclick="runMigration()">
+        Start Migration
+    </button>
+    
+    <div id="results" class="results" style="display: none;"></div>
+
+    <script>
+        async function runMigration() {
+            const btn = document.getElementById('migrateBtn');
+            const results = document.getElementById('results');
+            
+            btn.disabled = true;
+            btn.textContent = 'Running Migration...';
+            results.style.display = 'block';
+            results.className = 'results';
+            results.textContent = 'Starting migration...\n';
+            
+            try {
+                const response = await fetch('/api/admin/migrate-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ action: 'migrate' })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    results.className = 'results success';
+                    results.textContent = `✅ ${data.message}\n\nResults:\n`;
+                    
+                    data.results.forEach(result => {
+                        results.textContent += `\n${result.username} (${result.email}): ${result.status}`;
+                        if (result.rates && result.rates.length > 0) {
+                            results.textContent += ` - Rates: ${result.rates.join(', ')}`;
+                        }
+                        if (result.website) {
+                            results.textContent += ` - Website: ${result.website}`;
+                        }
+                        if (result.error) {
+                            results.textContent += ` - Error: ${result.error}`;
+                        }
+                    });
+                } else {
+                    results.className = 'results error';
+                    results.textContent = `❌ Migration failed: ${data.error}`;
+                }
+            } catch (error) {
+                results.className = 'results error';
+                results.textContent = `❌ Network error: ${error.message}`;
+            }
+            
+            btn.disabled = false;
+            btn.textContent = 'Start Migration';
+        }
+    </script>
+</body>
+</html>
