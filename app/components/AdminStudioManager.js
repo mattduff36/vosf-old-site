@@ -308,7 +308,7 @@ export default function AdminStudioManager() {
                           )}
                           <div>
                             <div className="text-sm font-medium text-gray-900">
-                              {studio.display_name || studio.username}
+                              {studio.display_name || ''}
                             </div>
                             <div className="text-sm text-gray-500">@{studio.username}</div>
                           </div>

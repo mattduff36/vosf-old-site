@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truncate Studio Names - VOSF Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen py-8">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h1 class="text-2xl font-bold text-gray-900 mb-6">🔧 Truncate Studio Names to 45 Characters</h1>
+            
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <h2 class="text-lg font-semibold text-blue-900 mb-2">📋 What This Tool Does</h2>
+                <ul class="text-blue-800 space-y-1">
+                    <li>• Finds all studio names (firstName field) longer than 45 characters</li>
+                    <li>• Truncates them to exactly 45 characters</li>
+                    <li>• Updates the database to match the new 45-character limit in the Advanced Studio Editor</li>
+                    <li>• Processes profiles in batches to avoid timeouts</li>
+                </ul>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div>
+                    <label for="batchSize" class="block text-sm font-medium text-gray-700 mb-2">Batch Size</label>
+                    <input type="number" id="batchSize" value="50" min="1" max="200" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label for="startFrom" class="block text-sm font-medium text-gray-700 mb-2">Start From</label>
+                    <input type="number" id="startFrom" value="0" min="0" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex items-end">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="dryRun" checked class="mr-2">
+                        <span class="text-sm text-gray-700">Dry Run (Preview Only)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex space-x-4 mb-6">
+                <button onclick="runTruncation()" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition-colors">
+                    🔍 Run Truncation
+                </button>
+                <button onclick="clearResults()" 
+                        class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md font-medium transition-colors">
+                    🗑️ Clear Results
+                </button>
+            </div>
+
+            <div id="loading" class="hidden">
+                <div class="flex items-center justify-center py-8">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <span class="ml-3 text-gray-600">Processing studio names...</span>
+                </div>
+            </div>
+
+            <div id="results" class="hidden">
+                <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">📊 Results Summary</h3>
+                    <div id="summary" class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm"></div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Username</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Original Name</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Length</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Truncated Name</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Removed</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTable" class="divide-y divide-gray-200">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-4 flex justify-between items-center">
+                    <div id="pagination" class="text-sm text-gray-600"></div>
+                    <button onclick="runNextBatch()" id="nextBatchBtn" 
+                            class="hidden bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium transition-colors">
+                        ➡️ Process Next Batch
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentBatchStart = 0;
+        let totalProfiles = 0;
+
+        async function runTruncation() {
+            const batchSize = parseInt(document.getElementById('batchSize').value);
+            const startFrom = parseInt(document.getElementById('startFrom').value);
+            const dryRun = document.getElementById('dryRun').checked;
+
+            currentBatchStart = startFrom;
+
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('results').classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/admin/truncate-studio-names', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        batchSize: batchSize,
+                        startFrom: startFrom,
+                        dryRun: dryRun
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayResults(data);
+                    totalProfiles = data.totalProfiles;
+                    currentBatchStart = data.nextBatchStart;
+                } else {
+                    alert('Error: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Network error: ' + error.message);
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+            }
+        }
+
+        function displayResults(data) {
+            document.getElementById('results').classList.remove('hidden');
+
+            // Update summary
+            const summary = document.getElementById('summary');
+            summary.innerHTML = `
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-blue-600">${data.processed}</div>
+                    <div class="text-gray-600">Processed</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-green-600">${data.updated}</div>
+                    <div class="text-gray-600">${data.dryRun ? 'Would Update' : 'Updated'}</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-gray-600">${data.skipped}</div>
+                    <div class="text-gray-600">Skipped (≤45 chars)</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-orange-600">${data.summary.totalCharactersRemoved}</div>
+                    <div class="text-gray-600">Chars Removed</div>
+                </div>
+            `;
+
+            // Update table
+            const tbody = document.getElementById('resultsTable');
+            tbody.innerHTML = '';
+
+            data.results.forEach(result => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-4 py-2 text-sm font-medium text-gray-900">${result.username}</td>
+                    <td class="px-4 py-2 text-sm text-gray-600" title="${result.originalName}">${result.originalName.substring(0, 30)}${result.originalName.length > 30 ? '...' : ''}</td>
+                    <td class="px-4 py-2 text-sm text-center">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${result.originalLength > 45 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}">
+                            ${result.originalLength}
+                        </span>
+                    </td>
+                    <td class="px-4 py-2 text-sm text-gray-600" title="${result.truncatedName}">${result.truncatedName}</td>
+                    <td class="px-4 py-2 text-sm text-center">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                            -${result.charactersRemoved}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Update pagination
+            const pagination = document.getElementById('pagination');
+            pagination.textContent = `Showing ${data.nextBatchStart - data.processed + 1}-${data.nextBatchStart} of ${data.totalProfiles} profiles`;
+
+            // Show next batch button if there are more profiles
+            const nextBtn = document.getElementById('nextBatchBtn');
+            if (data.nextBatchStart < data.totalProfiles) {
+                nextBtn.classList.remove('hidden');
+            } else {
+                nextBtn.classList.add('hidden');
+            }
+        }
+
+        function runNextBatch() {
+            document.getElementById('startFrom').value = currentBatchStart;
+            runTruncation();
+        }
+
+        function clearResults() {
+            document.getElementById('results').classList.add('hidden');
+            document.getElementById('startFrom').value = '0';
+            currentBatchStart = 0;
+        }
+    </script>
+</body>
+</html>

@@ -69,9 +69,9 @@ export default function StudioProfileCard({ studio, showActions = false, onEdit,
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold text-gray-900 truncate">
-                {studio.display_name || studio.username}
+                {studio.display_name || ''}
               </h3>
-              {studio.display_name && studio.username && (
+              {studio.username && (
                 <p className="text-sm text-gray-500">@{studio.username}</p>
               )}
             </div>

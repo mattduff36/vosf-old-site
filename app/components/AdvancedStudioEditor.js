@@ -181,11 +181,21 @@ export default function AdvancedStudioEditor({ studioId, onSave, onCancel }) {
           <input
             type="text"
             value={profile._meta?.first_name || ''}
-            onChange={(e) => handleMetaChange('first_name', e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              const truncatedValue = value.length > 30 ? value.substring(0, 30) : value;
+              handleMetaChange('first_name', truncatedValue);
+            }}
+            maxLength={30}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="e.g. VoiceoverGuy - Yorkshire Voice Recording Studio"
+            placeholder="e.g. VoiceoverGuy - Yorkshire"
           />
-          <p className="text-xs text-gray-500 mt-1">This is the studio display name shown in listings</p>
+          <div className="flex justify-between items-center mt-1">
+            <p className="text-xs text-gray-500">This is the studio display name shown in listings</p>
+            <p className={`text-xs ${(profile._meta?.first_name || '').length > 25 ? 'text-orange-600' : 'text-gray-400'}`}>
+              {(profile._meta?.first_name || '').length}/30
+            </p>
+          </div>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>

@@ -15,7 +15,7 @@ This document maps every field in the Advanced Studio Editor to its correspondin
 | Frontend Field | Database Source | Table.Column | Notes |
 |---|---|---|---|
 | **Username** | `profile.username` | `users.username` | URL-friendly identifier (e.g., "VoiceoverGuy") |
-| **Studio Name** | `profile._meta.first_name` | `user_profiles.firstName` | Studio display name (e.g., "VoiceoverGuy - Yorkshire Recording Studio") |
+| **Studio Name** | `profile._meta.first_name` | `user_profiles.firstName` | Studio display name, max 30 chars (e.g., "VoiceoverGuy - Yorkshire") |
 | **Email** | `profile.email` | `users.email` | User's email address |
 | **Short About** | `profile._meta.shortabout` | `user_profiles.shortAbout` | HTML entities decoded |
 | **Full About** | `profile._meta.about` | `user_profiles.about` | **CRITICAL**: HTML entities decoded, full text |
@@ -284,7 +284,7 @@ profile.display_name = user.displayName; // Can be removed if not needed
 
 **IMPORTANT**: The field mappings are:
 - **Username field** → `users.username` (URL identifier like "VoiceoverGuy")
-- **Studio Name field** → `user_profiles.firstName` (Display name like "VoiceoverGuy - Yorkshire Recording Studio")
+- **Studio Name field** → `user_profiles.firstName` (Display name, max 30 chars, like "VoiceoverGuy - Yorkshire")
 
 ### Database Relationships:
 - **User Account**: `users.username` (e.g., "VoiceoverGuy") - Used for URLs and login
@@ -304,7 +304,37 @@ first_name: decodeHtmlEntities(studio.owner?.profile?.firstName),  // Use profil
 
 This ensures that:
 - **Username field**: Shows "VoiceoverGuy" (for URLs)
-- **Studio Name field**: Shows "VoiceoverGuy - Yorkshire Recording Studio" (from profile, without extra "Studio")
+- **Studio Name field**: Shows "VoiceoverGuy - Yorkshire" (from profile, max 30 chars, empty if no name set)
+
+## Character Limits
+
+### Studio Name Field (30 Character Limit)
+The Studio Name field has a **30-character limit** including spaces to ensure consistent display across all interfaces.
+
+**Frontend Implementation:**
+- Input field has `maxLength={30}` attribute
+- Real-time character counter shows current/30 characters
+- Counter turns orange when approaching limit (25+ characters)
+- Automatic truncation prevents exceeding 30 characters
+
+**Empty Studio Names:**
+- Profiles without studio names show empty (no fallback to "[username]'s Studio")
+- Only the @username is displayed for profiles without custom studio names
+- This prevents cluttered display with auto-generated names
+
+**Database Cleanup:**
+Use the truncation tool at `/truncate-studio-names.html` to:
+- Find all studio names longer than 30 characters
+- Preview changes with dry-run mode
+- Batch update existing profiles to comply with limit
+- Track which profiles were modified
+
+**Statistics:**
+Check studio name statistics at `/studio-name-stats.html` to see:
+- Average length of current studio names
+- Distribution of name lengths
+- Examples of longest/shortest names
+- Percentage of names exceeding various limits
 
 ## Data Migration Status
 

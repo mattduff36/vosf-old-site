@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Name Statistics - VOSF Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen py-8">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h1 class="text-2xl font-bold text-gray-900 mb-6">📊 Studio Name Statistics</h1>
+            
+            <button onclick="loadStats()" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition-colors mb-6">
+                🔍 Load Statistics
+            </button>
+
+            <div id="loading" class="hidden">
+                <div class="flex items-center justify-center py-8">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <span class="ml-3 text-gray-600">Loading statistics...</span>
+                </div>
+            </div>
+
+            <div id="results" class="hidden">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-blue-50 rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-blue-600" id="totalProfiles">-</div>
+                        <div class="text-gray-600">Total Profiles</div>
+                    </div>
+                    <div class="bg-green-50 rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-green-600" id="averageLength">-</div>
+                        <div class="text-gray-600">Average Length</div>
+                    </div>
+                    <div class="bg-orange-50 rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-orange-600" id="over30Chars">-</div>
+                        <div class="text-gray-600">Over 30 Characters</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold mb-3">📏 Length Range</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span>Shortest:</span>
+                                <span id="minLength" class="font-mono">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Longest:</span>
+                                <span id="maxLength" class="font-mono">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold mb-3">📈 Character Limits</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span>Over 20 chars:</span>
+                                <span id="over20Chars">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Over 25 chars:</span>
+                                <span id="over25Chars">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Over 30 chars:</span>
+                                <span id="over30CharsDetail">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                    <h3 class="text-lg font-semibold mb-3">📝 Examples</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">Longest Name:</h4>
+                            <p class="text-sm bg-white p-2 rounded border" id="longestName">-</p>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">Shortest Name:</h4>
+                            <p class="text-sm bg-white p-2 rounded border" id="shortestName">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="rawData" class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="text-lg font-semibold mb-3">🔍 Raw Data</h3>
+                    <pre class="text-xs bg-white p-3 rounded border overflow-auto max-h-64" id="jsonData"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadStats() {
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('results').classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/admin/studio-name-stats');
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayStats(data);
+                } else {
+                    alert('Error: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Network error: ' + error.message);
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+            }
+        }
+
+        function displayStats(data) {
+            document.getElementById('results').classList.remove('hidden');
+
+            // Update main stats
+            document.getElementById('totalProfiles').textContent = data.totalProfiles;
+            document.getElementById('averageLength').textContent = data.averageLength + ' chars';
+            document.getElementById('over30Chars').textContent = data.over30Characters;
+
+            // Update ranges
+            document.getElementById('minLength').textContent = data.minLength + ' chars';
+            document.getElementById('maxLength').textContent = data.maxLength + ' chars';
+
+            // Update character limits
+            document.getElementById('over20Chars').textContent = `${data.over20Characters} (${data.summary.percentageOver20}%)`;
+            document.getElementById('over25Chars').textContent = `${data.over25Characters} (${data.summary.percentageOver25}%)`;
+            document.getElementById('over30CharsDetail').textContent = `${data.over30Characters} (${data.summary.percentageOver30}%)`;
+
+            // Update examples
+            document.getElementById('longestName').textContent = `"${data.longestName}" (${data.maxLength} chars)`;
+            document.getElementById('shortestName').textContent = `"${data.shortestName}" (${data.minLength} chars)`;
+
+            // Update raw data
+            document.getElementById('jsonData').textContent = JSON.stringify(data, null, 2);
+        }
+    </script>
+</body>
+</html>

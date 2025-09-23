@@ -382,7 +382,7 @@ export async function listStudiosAdmin({
     const transformedStudios = studios.map(studio => ({
       id: studio.id,
       username: studio.owner?.username, // Use actual username
-      display_name: studio.owner?.profile?.firstName || studio.name, // Use profile firstName for display, fallback to studio name
+      display_name: studio.owner?.profile?.firstName || '', // Use profile firstName for display, no fallback to avoid "[username]'s Studio"
       email: studio.owner?.email,
       status: studio.status.toLowerCase(),
       joined: studio.createdAt,
