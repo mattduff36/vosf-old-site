@@ -172,18 +172,20 @@ export default function AdvancedStudioEditor({ studioId, onSave, onCancel }) {
             value={profile.username || ''}
             onChange={(e) => handleBasicChange('username', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="e.g. VoiceoverGuy, Shake, S2Blue"
+            placeholder="e.g. VoiceoverGuy"
           />
           <p className="text-xs text-gray-500 mt-1">This is used in URLs and should be unique</p>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Studio Name</label>
           <input
             type="text"
             value={profile._meta?.first_name || ''}
             onChange={(e) => handleMetaChange('first_name', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="e.g. VoiceoverGuy - Yorkshire Voice Recording Studio"
           />
+          <p className="text-xs text-gray-500 mt-1">This is the studio display name shown in listings</p>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>

@@ -15,7 +15,7 @@ This document maps every field in the Advanced Studio Editor to its correspondin
 | Frontend Field | Database Source | Table.Column | Notes |
 |---|---|---|---|
 | **Username** | `profile.username` | `users.username` | URL-friendly identifier (e.g., "VoiceoverGuy") |
-| **First Name** | `profile._meta.first_name` | `user_profiles.firstName` | HTML entities decoded |
+| **Studio Name** | `profile._meta.first_name` | `user_profiles.firstName` | Studio display name (e.g., "VoiceoverGuy - Yorkshire Recording Studio") |
 | **Email** | `profile.email` | `users.email` | User's email address |
 | **Short About** | `profile._meta.shortabout` | `user_profiles.shortAbout` | HTML entities decoded |
 | **Full About** | `profile._meta.about` | `user_profiles.about` | **CRITICAL**: HTML entities decoded, full text |
@@ -280,6 +280,32 @@ profile.display_name = user.displayName; // Can be removed if not needed
 
 **Always**: Fix issues by changing the API or frontend code only.
 
+## Username Mapping for Production Site
+
+**IMPORTANT**: The field mappings are:
+- **Username field** → `users.username` (URL identifier like "VoiceoverGuy")
+- **Studio Name field** → `user_profiles.firstName` (Display name like "VoiceoverGuy - Yorkshire Recording Studio")
+
+### Database Relationships:
+- **User Account**: `users.username` (e.g., "VoiceoverGuy") - Used for URLs and login
+- **Studio Name**: `studios.name` (e.g., "VoiceoverGuy - Yorkshire Voice Recording Studio") - Full display name
+- **Studio Owner**: `studios.owner_id` → `users.id` - Links studio to user account
+
+### For Production Site Implementation:
+```javascript
+// In studio list API:
+username: studio.owner?.username,  // Use actual username for URLs
+display_name: studio.owner?.profile?.firstName || studio.name,  // Use profile firstName for display
+
+// In studio detail API:
+username: studio.owner?.username,  // Use actual username for URLs
+first_name: decodeHtmlEntities(studio.owner?.profile?.firstName),  // Use profile firstName
+```
+
+This ensures that:
+- **Username field**: Shows "VoiceoverGuy" (for URLs)
+- **Studio Name field**: Shows "VoiceoverGuy - Yorkshire Recording Studio" (from profile, without extra "Studio")
+
 ## Data Migration Status
 
 ✅ **Complete**: All profile data has been migrated from the original CSV files:
@@ -288,6 +314,8 @@ profile.display_name = user.displayName; // Can be removed if not needed
 - `old-data/profile_flat_edited.csv` - Complete multi-line about descriptions
 
 ✅ **About Field Migration**: All 529+ profiles now have complete multi-line about descriptions with HTML entities properly decoded.
+
+✅ **Username Mapping Fix**: Username shows actual username, First Name shows studio name consistently.
 
 ## Testing Your Implementation
 

@@ -59,12 +59,12 @@ export async function GET(request, { params }) {
     // Transform to match expected format for the frontend
     const studioData = {
       id: studio.id,
-      username: studio.owner?.username,
-      display_name: studio.owner?.username, // Use username for both fields
+      username: studio.owner?.username, // Use actual username for URLs
+      display_name: studio.owner?.username, // Use actual username for display
       email: studio.owner?.email,
       status: studio.status?.toLowerCase(),
       joined: studio.createdAt,
-      first_name: decodeHtmlEntities(studio.owner?.profile?.firstName),
+      first_name: decodeHtmlEntities(studio.owner?.profile?.firstName), // Use profile first name
       last_name: decodeHtmlEntities(studio.owner?.profile?.lastName),
       location: studio.owner?.profile?.location,
       address: studio.address,
@@ -173,7 +173,7 @@ export async function PUT(request, { params }) {
 
     // Prepare user updates
     const userUpdateData = {};
-    if (body.username !== undefined) userUpdateData.username = body.username;
+    if (body.username !== undefined) userUpdateData.username = body.username; // Username field updates actual username
     if (body.email !== undefined) userUpdateData.email = body.email;
 
     // Prepare studio updates
@@ -187,7 +187,7 @@ export async function PUT(request, { params }) {
 
     // Prepare profile updates
     const profileUpdateData = {};
-    if (body._meta?.first_name !== undefined) profileUpdateData.firstName = body._meta.first_name;
+    if (body._meta?.first_name !== undefined) profileUpdateData.firstName = body._meta.first_name; // First name field updates profile firstName
     if (body._meta?.last_name !== undefined) profileUpdateData.lastName = body._meta.last_name;
     if (body._meta?.location !== undefined) profileUpdateData.location = body._meta.location;
     if (body._meta?.about !== undefined) profileUpdateData.about = body._meta.about;
