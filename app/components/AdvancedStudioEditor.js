@@ -180,11 +180,11 @@ export default function AdvancedStudioEditor({ studioId, onSave, onCancel }) {
           <label className="block text-sm font-medium text-gray-700 mb-1">Studio Name</label>
           <input
             type="text"
-            value={profile._meta?.first_name || ''}
+            value={profile._meta?.studio_name || ''}
             onChange={(e) => {
               const value = e.target.value;
               const truncatedValue = value.length > 30 ? value.substring(0, 30) : value;
-              handleMetaChange('first_name', truncatedValue);
+              handleMetaChange('studio_name', truncatedValue);
             }}
             maxLength={30}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -192,8 +192,8 @@ export default function AdvancedStudioEditor({ studioId, onSave, onCancel }) {
           />
           <div className="flex justify-between items-center mt-1">
             <p className="text-xs text-gray-500">This is the studio display name shown in listings</p>
-            <p className={`text-xs ${(profile._meta?.first_name || '').length > 25 ? 'text-orange-600' : 'text-gray-400'}`}>
-              {(profile._meta?.first_name || '').length}/30
+            <p className={`text-xs ${(profile._meta?.studio_name || '').length > 25 ? 'text-orange-600' : 'text-gray-400'}`}>
+              {(profile._meta?.studio_name || '').length}/30
             </p>
           </div>
         </div>
@@ -270,6 +270,26 @@ export default function AdvancedStudioEditor({ studioId, onSave, onCancel }) {
   const renderContactTab = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+          <input
+            type="text"
+            value={profile._meta?.first_name || ''}
+            onChange={(e) => handleMetaChange('first_name', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="e.g. John"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+          <input
+            type="text"
+            value={profile._meta?.last_name || ''}
+            onChange={(e) => handleMetaChange('last_name', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="e.g. Smith"
+          />
+        </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
           <input

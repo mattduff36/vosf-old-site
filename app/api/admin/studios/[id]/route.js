@@ -104,6 +104,7 @@ export async function GET(request, { params }) {
       
       // All profile fields go in _meta for frontend compatibility
       _meta: {
+        studio_name: studio.name, // Actual studio name from studios table
         first_name: studioData.first_name,
         last_name: studioData.last_name,
         location: studioData.location,
@@ -178,6 +179,7 @@ export async function PUT(request, { params }) {
 
     // Prepare studio updates
     const studioUpdateData = {};
+    if (body._meta?.studio_name !== undefined) studioUpdateData.name = body._meta.studio_name; // Studio name field
     if (body._meta?.address !== undefined) studioUpdateData.address = body._meta.address;
     if (body._meta?.phone !== undefined) studioUpdateData.phone = body._meta.phone;
     if (body._meta?.url !== undefined) studioUpdateData.websiteUrl = body._meta.url;
