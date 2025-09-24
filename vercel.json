@@ -1,0 +1,12 @@
+{
+  "buildCommand": "prisma generate && npm run build",
+  "installCommand": "npm install",
+  "env": {
+    "PRISMA_GENERATE_DATAPROXY": "true"
+  },
+  "functions": {
+    "app/api/**/*.js": {
+      "maxDuration": 30
+    }
+  }
+}
