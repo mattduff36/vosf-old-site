@@ -52,3 +52,5 @@ Thumbs.db
 
 # Workspace files
 *.code-workspace
+
+/app/generated/prisma

@@ -25,63 +25,69 @@ export async function POST(request) {
       );
     }
 
-    const client = await getConnection();
+    const prisma = await getConnection();
     let result = { success: false, message: '', affectedCount: 0 };
-
-    // Create placeholders for the IN clause
-    const placeholders = studioIds.map(() => '?').join(',');
 
     switch (action) {
       case 'activate':
-        const activateResult = await client.execute({
-          sql: `UPDATE shows_users SET status = 1 WHERE id IN (${placeholders})`,
-          args: studioIds
+        const activateResult = await prisma.studio.updateMany({
+          where: { id: { in: studioIds } },
+          data: { status: 'ACTIVE' }
         });
         result = {
           success: true,
-          message: `Successfully activated ${studioIds.length} studio(s)`,
-          affectedCount: studioIds.length
+          message: `Successfully activated ${activateResult.count} studio(s)`,
+          affectedCount: activateResult.count
         };
         break;
 
       case 'deactivate':
-        const deactivateResult = await client.execute({
-          sql: `UPDATE shows_users SET status = 0 WHERE id IN (${placeholders})`,
-          args: studioIds
+        const deactivateResult = await prisma.studio.updateMany({
+          where: { id: { in: studioIds } },
+          data: { status: 'INACTIVE' }
         });
         result = {
           success: true,
-          message: `Successfully deactivated ${studioIds.length} studio(s)`,
-          affectedCount: studioIds.length
+          message: `Successfully deactivated ${deactivateResult.count} studio(s)`,
+          affectedCount: deactivateResult.count
         };
         break;
 
       case 'delete':
-        const deleteResult = await client.execute({
-          sql: `DELETE FROM shows_users WHERE id IN (${placeholders})`,
-          args: studioIds
+        const deleteResult = await prisma.studio.deleteMany({
+          where: { id: { in: studioIds } }
         });
         result = {
           success: true,
-          message: `Successfully deleted ${studioIds.length} studio(s)`,
-          affectedCount: studioIds.length
+          message: `Successfully deleted ${deleteResult.count} studio(s)`,
+          affectedCount: deleteResult.count
         };
         break;
 
       case 'export':
         // Get studio data for export
-        const exportResult = await client.execute({
-          sql: `
-            SELECT 
-              id, username, display_name, email, status, joined, avatar_url
-            FROM shows_users 
-            WHERE id IN (${placeholders})
-            ORDER BY username
-          `,
-          args: studioIds
+        const exportResult = await prisma.studio.findMany({
+          where: { id: { in: studioIds } },
+          include: {
+            owner: {
+              include: {
+                profile: true
+              }
+            }
+          },
+          orderBy: { name: 'asc' }
         });
 
-        const csvData = generateCSV(exportResult.rows);
+        // Transform to match expected CSV format
+        const csvData = generateCSV(exportResult.map(studio => ({
+          id: studio.id,
+          username: studio.owner?.username || '',
+          display_name: studio.name || '',
+          email: studio.owner?.email || '',
+          status: studio.status.toLowerCase(),
+          joined: studio.createdAt,
+          avatar_url: studio.owner?.avatarUrl || ''
+        })));
         
         return new NextResponse(csvData, {
           headers: {

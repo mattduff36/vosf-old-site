@@ -52,6 +52,15 @@ export default function AdminStudioManager() {
   }, []);
 
   const handleBulkAction = async (action, studioIds) => {
+    // Add confirmation for delete action
+    if (action === 'delete') {
+      const count = studioIds.length;
+      const confirmMessage = `Are you sure you want to delete ${count} profile${count !== 1 ? 's' : ''}? This action cannot be undone.`;
+      if (!confirm(confirmMessage)) {
+        return;
+      }
+    }
+
     try {
       const response = await fetch('/api/admin/bulk', {
         method: 'POST',
@@ -126,7 +135,6 @@ export default function AdminStudioManager() {
     }
   };
 
-
   const handlePageChange = (newPage) => {
     setPagination(prev => ({ ...prev, page: newPage }));
   };
@@ -136,6 +144,26 @@ export default function AdminStudioManager() {
     setAdvancedEditingStudio(null);
   };
 
+  // Handle escape key to close modal
+  useEffect(() => {
+    const handleEscapeKey = (event) => {
+      if (event.key === 'Escape' && showAdvancedEditor) {
+        handleAdvancedEditorClose();
+      }
+    };
+
+    if (showAdvancedEditor) {
+      document.addEventListener('keydown', handleEscapeKey);
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+      document.body.style.overflow = 'unset';
+    };
+  }, [showAdvancedEditor]);
+
   const handleAdvancedEditorSave = () => {
     setShowAdvancedEditor(false);
     setAdvancedEditingStudio(null);
@@ -143,15 +171,7 @@ export default function AdminStudioManager() {
   };
 
 
-  if (showAdvancedEditor) {
-    return (
-      <AdvancedStudioEditor
-        studioId={advancedEditingStudio?.id}
-        onSave={handleAdvancedEditorSave}
-        onCancel={handleAdvancedEditorClose}
-      />
-    );
-  }
+  // Modal rendering logic moved to JSX below
 
   return (
     <div className="space-y-6">
@@ -383,6 +403,48 @@ export default function AdminStudioManager() {
           </>
         )}
       </div>
+
+      {/* Studio Edit Modal */}
+      {showAdvancedEditor && (
+        <div className="fixed inset-0 z-50 overflow-y-auto animate-fadeIn">
+          {/* Modal backdrop */}
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-60 transition-opacity duration-300"
+            onClick={handleAdvancedEditorClose}
+          ></div>
+          
+          {/* Modal container */}
+          <div className="flex min-h-full items-center justify-center p-4">
+            <div className="relative w-full max-w-7xl mx-auto animate-slideIn">
+              {/* Modal content */}
+              <div className="bg-gray-50 rounded-xl shadow-2xl border-4 border-gray-400 max-h-[90vh] overflow-hidden transform transition-all duration-300">
+                {/* Modal header with close button */}
+                <div className="bg-gradient-to-r from-gray-200 to-gray-300 px-6 py-4 border-b-2 border-gray-400 flex justify-between items-center">
+                  <h2 className="text-xl font-bold text-gray-800">
+                    📝 Edit Studio Profile
+                  </h2>
+                  <button
+                    onClick={handleAdvancedEditorClose}
+                    className="text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center text-xl font-bold transition-colors duration-200"
+                    title="Close modal (Esc)"
+                  >
+                    ×
+                  </button>
+                </div>
+                
+                {/* Modal body with scrollable content */}
+                <div className="overflow-y-auto max-h-[calc(90vh-80px)] bg-white">
+                  <AdvancedStudioEditor
+                    studioId={advancedEditingStudio?.id}
+                    onSave={handleAdvancedEditorSave}
+                    onCancel={handleAdvancedEditorClose}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

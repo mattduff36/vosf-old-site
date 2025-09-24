@@ -1,0 +1,12 @@
+{
+  "timestamp": "2025-09-24T18:53:59.438Z",
+  "purpose": "HTML Entity Fix Project - Manual Backup",
+  "database": "PostgreSQL on Neon",
+  "tables": [
+    "users",
+    "user_profiles",
+    "studios"
+  ],
+  "connection": "Direct PostgreSQL client",
+  "notes": "Created before HTML entity fixes"
+}
