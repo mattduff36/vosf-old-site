@@ -73,13 +73,13 @@ export async function getAdminStats() {
       // Total studios count
       prisma.studio.count(),
       
-      // Studios with complete profiles (have first_name and about)
+      // Studios with complete profiles (have studio_name and about)
       prisma.studio.count({
         where: {
           owner: {
             profile: {
               AND: [
-                { firstName: { not: null } },
+                { studioName: { not: null } },
                 { about: { not: null } }
               ]
             }
@@ -193,7 +193,7 @@ export async function listStudios({ q, hasCoords, limit = 50, offset = 0 } = {})
                 { displayName: { contains: q, mode: 'insensitive' } },
                 { profile: {
                   OR: [
-                    { firstName: { contains: q, mode: 'insensitive' } },
+                    { studioName: { contains: q, mode: 'insensitive' } },
                     { lastName: { contains: q, mode: 'insensitive' } }
                   ]
                 }}
@@ -242,7 +242,7 @@ export async function listStudios({ q, hasCoords, limit = 50, offset = 0 } = {})
       username: studio.owner?.username,
       displayname: studio.owner?.displayName,
       email: studio.owner?.email,
-      first_name: studio.owner?.profile?.firstName,
+      studio_name: studio.owner?.profile?.studioName || studio.name,
       last_name: studio.owner?.profile?.lastName,
       status: 'active', // All returned studios are active
       joined: studio.createdAt
@@ -279,7 +279,7 @@ export async function getStudioById(id) {
       email: studio.owner?.email,
       status: studio.status.toLowerCase(),
       created_at: studio.createdAt,
-      first_name: studio.owner?.profile?.firstName,
+      studio_name: studio.owner?.profile?.studioName || studio.name,
       last_name: studio.owner?.profile?.lastName,
       location: studio.owner?.profile?.location,
       address: studio.address,
@@ -330,7 +330,7 @@ export async function listStudiosAdmin({
                 { email: { contains: search, mode: 'insensitive' } },
                 { profile: {
                   OR: [
-                    { firstName: { contains: search, mode: 'insensitive' } },
+                    { studioName: { contains: search, mode: 'insensitive' } },
                     { lastName: { contains: search, mode: 'insensitive' } },
                     { about: { contains: search, mode: 'insensitive' } },
                     { location: { contains: search, mode: 'insensitive' } }
@@ -382,11 +382,11 @@ export async function listStudiosAdmin({
     const transformedStudios = studios.map(studio => ({
       id: studio.id,
       username: studio.owner?.username, // Use actual username
-      display_name: studio.owner?.profile?.firstName || '', // Use profile firstName for display, no fallback to avoid "[username]'s Studio"
+      display_name: studio.owner?.profile?.studioName || studio.name || '', // Use profile studioName for display, fallback to studio.name
       email: studio.owner?.email,
       status: studio.status.toLowerCase(),
       joined: studio.createdAt,
-      first_name: studio.owner?.profile?.firstName,
+      studio_name: studio.owner?.profile?.studioName || studio.name, // Map to studio_name for compatibility
       last_name: studio.owner?.profile?.lastName,
       location: studio.owner?.profile?.location,
       phone: studio.phone,
@@ -453,7 +453,7 @@ export async function createStudio(studioData) {
       const profile = await tx.userProfile.create({
         data: {
           userId: user.id,
-          firstName: first_name,
+          studioName: first_name, // Map first_name to studioName for compatibility
           lastName: last_name,
           location,
           phone,
@@ -509,7 +509,7 @@ export async function updateStudio(id, updateData) {
     if (updateData.displayname) userFields.displayName = updateData.displayname;
     if (updateData.email) userFields.email = updateData.email;
     
-    if (updateData.first_name) profileFields.firstName = updateData.first_name;
+    if (updateData.first_name) profileFields.studioName = updateData.first_name; // Map first_name to studioName
     if (updateData.last_name) profileFields.lastName = updateData.last_name;
     if (updateData.location) profileFields.location = updateData.location;
     if (updateData.instagram) profileFields.instagramUrl = updateData.instagram;
