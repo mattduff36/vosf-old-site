@@ -271,16 +271,6 @@ export default function AdvancedStudioEditor({ studioId, onSave, onCancel }) {
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-          <input
-            type="text"
-            value={profile._meta?.first_name || ''}
-            onChange={(e) => handleMetaChange('first_name', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="e.g. John"
-          />
-        </div>
-        <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
           <input
             type="text"

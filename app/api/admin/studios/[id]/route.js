@@ -64,7 +64,6 @@ export async function GET(request, { params }) {
       email: studio.owner?.email,
       status: studio.status?.toLowerCase(),
       joined: studio.createdAt,
-      first_name: decodeHtmlEntities(studio.owner?.profile?.firstName), // Use profile first name
       last_name: decodeHtmlEntities(studio.owner?.profile?.lastName),
       location: studio.owner?.profile?.location,
       address: studio.address,
@@ -105,7 +104,6 @@ export async function GET(request, { params }) {
       // All profile fields go in _meta for frontend compatibility
       _meta: {
         studio_name: studio.name, // Actual studio name from studios table
-        first_name: studioData.first_name,
         last_name: studioData.last_name,
         location: studioData.location,
         address: studioData.address,
@@ -189,7 +187,6 @@ export async function PUT(request, { params }) {
 
     // Prepare profile updates
     const profileUpdateData = {};
-    if (body._meta?.first_name !== undefined) profileUpdateData.firstName = body._meta.first_name; // First name field updates profile firstName
     if (body._meta?.last_name !== undefined) profileUpdateData.lastName = body._meta.last_name;
     if (body._meta?.location !== undefined) profileUpdateData.location = body._meta.location;
     if (body._meta?.about !== undefined) profileUpdateData.about = body._meta.about;
